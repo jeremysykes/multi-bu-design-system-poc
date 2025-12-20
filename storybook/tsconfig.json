@@ -1,0 +1,18 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@multi-bu/ui": ["../packages/ui/src"],
+			"@multi-bu/themes": ["../packages/themes/src"],
+			"@theme-engine/*": ["../theme-engine/src/*"]
+		}
+	},
+	"include": [
+		"**/*.ts",
+		"**/*.tsx",
+		".storybook/**/*.ts",
+		".storybook/**/*.tsx"
+	],
+	"exclude": ["node_modules", "dist"]
+}

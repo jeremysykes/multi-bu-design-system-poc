@@ -1,0 +1,14 @@
+{
+	"surface": {
+		"default": "palette.neutral.50",
+		"elevated": "palette.neutral.0"
+	},
+	"text": {
+		"primary": "palette.neutral.900",
+		"secondary": "palette.neutral.700"
+	},
+	"action": {
+		"primary": "palette.primary.500",
+		"secondary": "palette.secondary.500"
+	}
+}

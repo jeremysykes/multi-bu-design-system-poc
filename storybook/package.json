@@ -1,0 +1,35 @@
+{
+	"name": "@multi-bu/storybook",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Storybook for multi-BU design system",
+	"scripts": {
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build",
+		"test:visual": "chromatic --exit-zero-on-changes"
+	},
+	"dependencies": {
+		"@multi-bu/ui": "workspace:*",
+		"@multi-bu/themes": "workspace:*",
+		"@emotion/react": "^11.11.1",
+		"@emotion/styled": "^11.11.0",
+		"@mui/material": "^5.15.0",
+		"@storybook/addon-essentials": "^7.6.6",
+		"@storybook/addon-interactions": "^7.6.6",
+		"@storybook/addon-links": "^7.6.6",
+		"@storybook/blocks": "^7.6.6",
+		"@storybook/react": "^7.6.6",
+		"@storybook/react-vite": "^7.6.6",
+		"@storybook/test": "^7.6.6",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"devDependencies": {
+		"@chromatic-com/storybook": "^1.2.0",
+		"@storybook/test-runner": "^0.15.0",
+		"chromatic": "^11.3.0",
+		"storybook": "^7.6.6",
+		"typescript": "^5.3.3",
+		"vite": "^4.5.0"
+	}
+}

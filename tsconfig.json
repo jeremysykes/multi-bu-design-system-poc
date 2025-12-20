@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "paths": {
+      "@theme-engine/*": ["./theme-engine/src/*"],
+      "@ui/*": ["./packages/ui/src/*"],
+      "@themes/*": ["./packages/themes/src/*"]
+    }
+  },
+  "include": ["scripts/**/*", "*.ts"],
+  "exclude": ["node_modules", "dist", "**/dist", "**/node_modules"]
+}

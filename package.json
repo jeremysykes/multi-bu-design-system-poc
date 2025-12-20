@@ -1,0 +1,26 @@
+{
+  "name": "multi-bu-design-system-poc",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Proof of concept demonstrating multi-BU design system on MUI with token-driven theming, governance, and validation",
+  "scripts": {
+    "build": "pnpm --filter \"*\" run build",
+    "validate:tokens": "tsx scripts/validate-tokens.ts",
+    "lint:design-system": "tsx scripts/lint-design-system.ts",
+    "build:themes": "pnpm --filter theme-engine run build",
+    "test": "pnpm --filter \"*\" run test",
+    "test:visual": "pnpm --filter storybook run test:visual",
+    "storybook": "pnpm --filter storybook run storybook",
+    "lint": "pnpm --filter \"*\" run lint",
+    "type-check": "pnpm exec tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
