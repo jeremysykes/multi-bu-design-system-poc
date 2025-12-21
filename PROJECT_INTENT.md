@@ -193,16 +193,58 @@ A “crucial step” means:
 8. After visual regression gate is wired
 9. After docs are written and “add a BU” instructions are validated
 
-At each check-in, Cursor must provide:
+At each check-in, Cursor must:
 
-- What was built
-- What files changed
-- How to run it
-- What risk or ambiguity exists
-- A short list of next actions
-- One direct question for Jeremy to approve direction before proceeding
+1. **Update PROJECT_PROGRESS.md** - Log the completed work, fixes, or changes in the appropriate phase section
+2. **Provide summary:**
+   - What was built
+   - What files changed
+   - How to run it
+   - What risk or ambiguity exists
+   - A short list of next actions
+   - One direct question for Jeremy to approve direction before proceeding
 
 If there are forks in approach (example: CSS variables vs classic theme), Cursor should propose a recommendation with a reason, then ask for approval before implementing.
+
+## Project Progress Tracking
+
+**IMPORTANT:** The `PROJECT_PROGRESS.md` file must be maintained and updated as work progresses.
+
+### When to Update PROJECT_PROGRESS.md
+
+Cursor must update `PROJECT_PROGRESS.md` in the following situations:
+
+1. **After completing a feature or phase** - Log the completion with status indicators
+2. **After fixing critical issues** - Document the fix in the relevant phase section
+3. **After making significant architectural changes** - Update the relevant phase with notes
+4. **When reaching milestones** - Update the "Current Status" section
+5. **When blocking issues are resolved** - Document the resolution
+
+### Update Format
+
+- Use log-style entries with clear timestamps or phase markers
+- Mark completed features/phases with ✅
+- Document any fixes, improvements, or changes in the relevant phase section
+- Keep the "Current Status" section up-to-date with the latest working state
+- Update "Next Steps" as work progresses
+
+### Example Update Pattern
+
+```markdown
+### Phase X: [Phase Name] ✅
+
+**Status:** Completed
+
+- **Feature N:** [Description]
+- **Feature N+1:** [Description]
+
+**Recent Fixes/Updates:**
+
+- Fixed [issue description]
+- Updated [component/configuration]
+```
+
+**Remember:** `PROJECT_PROGRESS.md` serves as a living record of project progress. Keep it accurate and current.
 
 ## Implementation guidance (preferred defaults)
 
