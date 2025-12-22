@@ -29,7 +29,7 @@ const sideBySideDecorator = (Story: React.ComponentType) => {
 				<div
 					style={{ marginBottom: '16px', fontWeight: 'bold', color: '#666' }}
 				>
-					BU A
+					Core Banking Platform
 				</div>
 				<ThemeProvider theme={buATheme}>
 					<Story />
@@ -46,7 +46,7 @@ const sideBySideDecorator = (Story: React.ComponentType) => {
 				<div
 					style={{ marginBottom: '16px', fontWeight: 'bold', color: '#666' }}
 				>
-					BU B
+					Growth & Payments Experience
 				</div>
 				<ThemeProvider theme={buBTheme}>
 					<Story />
@@ -68,8 +68,8 @@ const preview: Preview = {
 		},
 		chromatic: {
 			modes: {
-				'BU A': {},
-				'BU B': {},
+				'Core Banking Platform': {},
+				'Growth & Payments Experience': {},
 			},
 		},
 	},

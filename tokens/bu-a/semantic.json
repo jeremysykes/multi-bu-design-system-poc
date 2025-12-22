@@ -5,7 +5,12 @@
 	},
 	"text": {
 		"primary": "palette.neutral.900",
-		"secondary": "palette.neutral.700"
+		"secondary": "palette.neutral.800"
+	},
+	"border": {
+		"default": "palette.neutral.400",
+		"focus": "palette.primary.500",
+		"error": "palette.error.500"
 	},
 	"action": {
 		"primary": "palette.primary.500",

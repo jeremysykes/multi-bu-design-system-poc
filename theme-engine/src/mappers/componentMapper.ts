@@ -108,21 +108,37 @@ export function mapComponents(
 					backgroundColor: tokens.feedback?.error
 						? resolveToken(tokens.feedback.error)
 						: undefined,
+					color: _theme.palette.error?.contrastText || '#ffffff',
+					'& .MuiAlert-icon': {
+						color: _theme.palette.error?.contrastText || '#ffffff',
+					},
 				},
 				standardWarning: {
 					backgroundColor: tokens.feedback?.warning
 						? resolveToken(tokens.feedback.warning)
 						: undefined,
+					color: _theme.palette.warning?.contrastText || '#ffffff',
+					'& .MuiAlert-icon': {
+						color: _theme.palette.warning?.contrastText || '#ffffff',
+					},
 				},
 				standardInfo: {
 					backgroundColor: tokens.feedback?.info
 						? resolveToken(tokens.feedback.info)
 						: undefined,
+					color: _theme.palette.info?.contrastText || '#ffffff',
+					'& .MuiAlert-icon': {
+						color: _theme.palette.info?.contrastText || '#ffffff',
+					},
 				},
 				standardSuccess: {
 					backgroundColor: tokens.feedback?.success
 						? resolveToken(tokens.feedback.success)
 						: undefined,
+					color: _theme.palette.success?.contrastText || '#ffffff',
+					'& .MuiAlert-icon': {
+						color: _theme.palette.success?.contrastText || '#ffffff',
+					},
 				},
 			},
 		},

@@ -3,8 +3,11 @@ import { loadTokens } from '@theme-engine/loadTokens.browser';
 import type { Theme } from '@mui/material/styles';
 
 /**
- * BU B Theme
+ * Growth & Payments Experience Theme
  * Compiled from tokens/bu-b/*.json
+ * 
+ * Visual intent: Expressive, spacious, modern, approachable
+ * External-facing, revenue and conversion focused
  */
 
 let buBTheme: Theme | null = null;

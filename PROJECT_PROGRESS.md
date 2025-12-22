@@ -165,10 +165,128 @@ Multi-BU Design System - Granular Feature Implementation Plan
 - All story files loading successfully
 - Side-by-side theme rendering functional
 
+**Fintech Business Units:** ✅ Implemented
+
+- Core Banking Platform (bu-a) and Growth & Payments Experience (bu-b) configured
+- Visual differentiation achieved using existing token categories only
+- All token validation passing
+
 **Next Steps:**
 
-- Awaiting feedback on Storybook implementation
 - Ready for review and refinement
+
+---
+
+## Fintech Business Unit Implementation
+
+**Date:** 2024-12-21
+
+### Overview
+
+Replaced generic BU A and BU B with two fintech business units by adjusting values within existing token categories only. No new categories, names, or structural changes were introduced.
+
+### Core Banking Platform (bu-a)
+
+**Visual Intent:** Conservative, dense, predictable, low visual noise  
+**Use Case:** Internal, regulated, operational tooling
+
+**Token Adjustments:**
+
+1. **Palette (`tokens/bu-a/palette.json`)**
+   - Primary: Shifted to deeper navy-blue tones (#3A5B81 at 500) for professional, trustworthy appearance
+   - Secondary: Muted gray-blue tones (#818D9F at 500) for conservative, low-visual-noise aesthetic
+   - **Existing tokens used:** `primary`, `secondary` color ramps (50-900 scale)
+
+2. **Typography (`tokens/bu-a/typography.json`)**
+   - Base font size: Reduced from 1rem to 0.875rem for denser information display
+   - Font size scale: Proportionally reduced (xs: 0.6875rem, sm: 0.8125rem, etc.)
+   - **Existing tokens used:** `fontSize` scale (xs, sm, base, lg, xl, 2xl, 3xl, 4xl)
+
+3. **Semantic (`tokens/bu-a/semantic.json`)**
+   - Text primary: Higher contrast using `palette.neutral.900` (darker)
+   - Text secondary: More distinct using `palette.neutral.800` (darker than core)
+   - Border default: More defined using `palette.neutral.400` (darker than core's 300)
+   - **Existing tokens used:** `text.primary`, `text.secondary`, `border.default`
+
+**Visual Result:** Denser layout, higher contrast, more defined boundaries, professional appearance
+
+### Growth & Payments Experience (bu-b)
+
+**Visual Intent:** Expressive, spacious, modern, approachable  
+**Use Case:** External-facing, revenue and conversion focused
+
+**Token Adjustments:**
+
+1. **Palette (`tokens/bu-b/palette.json`)**
+   - Primary: Vibrant cyan/blue-green tones (#00BCD4 at 500) for energetic, growth-oriented feel
+   - Secondary: Warm amber/yellow tones (#FFC107 at 500) for approachable, conversion-focused accent
+   - **Existing tokens used:** `primary`, `secondary` color ramps (50-900 scale)
+
+2. **Typography (`tokens/bu-b/typography.json`)**
+   - Base font size: Increased from 1rem to 1.125rem for more spacious, readable display
+   - Font size scale: Proportionally increased (xs: 0.875rem, sm: 1rem, etc.)
+   - **Existing tokens used:** `fontSize` scale (xs, sm, base, lg, xl, 2xl, 3xl, 4xl)
+
+3. **Semantic (`tokens/bu-b/semantic.json`)**
+   - Text primary: Softer contrast using `palette.neutral.800` (lighter than Core Banking)
+   - Text secondary: More subtle using `palette.neutral.600` (lighter than Core Banking)
+   - Border default: Lighter using `palette.neutral.200` (softer than Core Banking's 400)
+   - **Existing tokens used:** `text.primary`, `text.secondary`, `border.default`
+
+**Visual Result:** More spacious layout, softer colors, lighter borders, modern and approachable appearance
+
+### Storybook Updates
+
+**File:** `storybook/.storybook/preview.tsx`
+- Updated labels from "BU A" / "BU B" to full business unit names:
+  - "Core Banking Platform"
+  - "Growth & Payments Experience"
+- Updated Chromatic visual regression modes to use full names
+- All decorator logic preserved unchanged
+
+### Theme File Documentation
+
+**Files Updated:**
+- `packages/themes/src/bu-a.ts` - Added comment describing Core Banking Platform
+- `packages/themes/src/bu-b.ts` - Added comment describing Growth & Payments Experience
+- `packages/themes/src/index.ts` - Added business unit descriptions in package documentation
+
+### Validation
+
+**Token Validation:** ✅ All tokens pass schema validation
+- Run: `pnpm run validate:tokens`
+- Result: All token files valid, no schema violations
+
+### Limitations & Constraints
+
+**What Was NOT Changed:**
+- No new token categories introduced
+- No new token names within existing categories
+- No component API changes
+- No theme engine logic changes
+- No new abstraction layers
+
+**Shared Tokens (Not Differentiated):**
+- **Spacing:** Remains in `tokens/core/spacing.json` - shared across all BUs
+  - *Limitation:* Cannot differentiate density through spacing tokens without creating BU-specific spacing files
+  - *Workaround:* Typography size adjustments help create visual density perception
+- **Shape (borderRadius/elevation):** Remains in `tokens/core/shape.json` - shared across all BUs
+  - *Limitation:* Cannot differentiate angular vs. rounded aesthetics without BU-specific shape tokens
+  - *Note:* This limitation is acceptable for current visual differentiation goals
+
+**Achieved Differentiation:**
+- ✅ Color palette (primary/secondary) - distinct visual identity
+- ✅ Typography scale - density vs. spaciousness
+- ✅ Text contrast - conservative vs. approachable
+- ✅ Border definition - structured vs. soft
+
+### Visual Differentiation Summary
+
+The two business units are now visually distinct:
+- **Core Banking Platform:** Deeper blues, smaller fonts, higher contrast, defined borders → conservative, dense, professional
+- **Growth & Payments Experience:** Vibrant cyan, larger fonts, softer contrast, lighter borders → expressive, spacious, modern
+
+Differences are immediately obvious when viewing the same component side-by-side in Storybook.
 
 ---
 

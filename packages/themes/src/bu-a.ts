@@ -3,8 +3,11 @@ import { loadTokens } from '@theme-engine/loadTokens.browser';
 import type { Theme } from '@mui/material/styles';
 
 /**
- * BU A Theme
+ * Core Banking Platform Theme
  * Compiled from tokens/bu-a/*.json
+ * 
+ * Visual intent: Conservative, dense, predictable, low visual noise
+ * Internal, regulated, operational tooling
  */
 
 let buATheme: Theme | null = null;
