@@ -21,9 +21,23 @@ export function mapTypography(tokens: TypographyTokens): {
 	body2?: any;
 	button?: any;
 } {
+	// Helper to parse base fontSize (MUI expects number in px)
+	const parseBaseFontSize = (size: string): number => {
+		if (size.endsWith('rem')) {
+			const num = parseFloat(size);
+			// Convert rem to px (assuming 16px base)
+			return num * 16;
+		}
+		if (size.endsWith('px')) {
+			return parseFloat(size);
+		}
+		// Fallback: try to parse as number
+		return parseFloat(size) || 16;
+	};
+
 	return {
 		fontFamily: tokens.fontFamily.primary,
-		fontSize: parseFloat(tokens.fontSize.base),
+		fontSize: parseBaseFontSize(tokens.fontSize.base),
 		fontWeightLight: tokens.fontWeight.light || 300,
 		fontWeightRegular: tokens.fontWeight.regular,
 		fontWeightMedium: tokens.fontWeight.medium || 500,
@@ -96,7 +110,9 @@ export function mapTypography(tokens: TypographyTokens): {
 					: parseFloat(tokens.lineHeight.normal),
 		},
 		button: {
+			fontSize: tokens.fontSize.base,
 			fontWeight: tokens.fontWeight.medium || tokens.fontWeight.regular,
+			lineHeight: 1.5,
 		},
 	};
 }

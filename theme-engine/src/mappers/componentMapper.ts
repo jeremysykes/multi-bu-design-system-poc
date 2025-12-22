@@ -49,11 +49,25 @@ export function mapComponents(
 				},
 				containedPrimary: {
 					backgroundColor: resolveToken(tokens.action.primary),
+					color: _theme.palette.primary.contrastText,
 				},
 				containedSecondary: {
 					backgroundColor: resolveToken(
 						tokens.action.secondary || tokens.action.primary
 					),
+					color: _theme.palette.secondary.contrastText,
+				},
+				containedError: {
+					color: _theme.palette.error?.contrastText || '#ffffff',
+				},
+				containedWarning: {
+					color: _theme.palette.warning?.contrastText || '#ffffff',
+				},
+				containedInfo: {
+					color: _theme.palette.info?.contrastText || '#ffffff',
+				},
+				containedSuccess: {
+					color: _theme.palette.success?.contrastText || '#ffffff',
 				},
 			},
 		},
