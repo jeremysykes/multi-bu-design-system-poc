@@ -63,8 +63,7 @@ pnpm install
 ├── packages/
 │   ├── ui/             # Component wrapper library
 │   └── themes/         # Compiled MUI themes
-├── storybook/          # Storybook stories
-├── .storybook/         # Storybook configuration
+├── storybook/          # Storybook stories and configuration
 ├── scripts/            # Governance scripts
 └── docs/               # Documentation
 ```
