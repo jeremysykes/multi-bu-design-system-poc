@@ -2,6 +2,16 @@
 
 Proof of concept demonstrating how to manage multiple business-unit design systems at enterprise scale using MUI. Focused on token-driven theming, governance, validation, versioning, and shared component APIs, addressing the gaps MUI intentionally leaves out.
 
+## MUI Gaps Addressed
+
+MUI provides excellent component APIs and theming, but intentionally leaves out enterprise-scale concerns:
+
+- **Token architecture** - MUI expects manual theme creation; this POC provides a structured token system with schema validation
+- **Multi-tenant theming** - MUI doesn't provide patterns for managing multiple brand identities; this POC demonstrates token-driven BU differentiation
+- **Governance enforcement** - MUI doesn't enforce design system rules; this POC adds automated validation and linting
+- **Versioning discipline** - MUI doesn't provide versioning strategy for design tokens; this POC includes versioning policies
+- **Deterministic compilation** - MUI themes are manually crafted; this POC compiles themes deterministically from tokens
+
 ## Overview
 
 This POC demonstrates:
@@ -89,10 +99,10 @@ const theme = await getBuATheme();
 
 // Use components
 <ThemeProvider theme={theme}>
-  <Button variant="contained" color="primary">
-    Click Me
-  </Button>
-</ThemeProvider>
+	<Button variant='contained' color='primary'>
+		Click Me
+	</Button>
+</ThemeProvider>;
 ```
 
 ## Architecture
@@ -116,6 +126,7 @@ Tokens (JSON) → Token Schema → Theme Engine → MUI Themes → Component Wra
 See `docs/adding-a-bu.md` for complete step-by-step instructions. The process has been validated by adding BU C to this repository.
 
 **Quick steps:**
+
 1. Create `tokens/bu-x/` directory
 2. Add `palette.json`, `typography.json`, `semantic.json`
 3. Create theme file in `packages/themes/src/bu-x.ts`
@@ -133,6 +144,7 @@ pnpm run validate:tokens
 ```
 
 Checks:
+
 - Schema compliance
 - Semantic token coverage
 - Token format (hex colors, CSS values)
@@ -146,6 +158,7 @@ pnpm run lint:design-system
 ```
 
 Detects:
+
 - Hardcoded hex colors (`#RRGGBB`)
 - Hardcoded spacing (`16px`, `1rem`)
 - Hardcoded typography values
