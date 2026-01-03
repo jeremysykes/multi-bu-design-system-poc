@@ -3,7 +3,7 @@ import { Card, Typography } from '@multi-bu/ui';
 import { CardContent } from '@mui/material';
 
 const meta: Meta<typeof Card> = {
-	title: 'Components/Card',
+	title: 'Organisms/Card',
 	component: Card,
 	tags: ['autodocs'],
 };

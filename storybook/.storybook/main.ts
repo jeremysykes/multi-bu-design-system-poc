@@ -38,6 +38,16 @@ const config: StorybookConfig = {
 					'@theme-engine': resolve(projectRoot, 'theme-engine/src'),
 				},
 			},
+			optimizeDeps: {
+				// Force emotion packages to be pre-bundled, ensuring version consistency
+				// Note: The emotion duplicate loading warning cannot be fully eliminated
+				// because Storybook's manager and preview are separate bundles (different
+				// JavaScript execution contexts). Emotion's singleton check will always
+				// detect them as separate instances. This is a known Storybook limitation
+				// and the warning is harmless - it doesn't affect functionality.
+				include: ['@emotion/react', '@emotion/styled'],
+				force: true, // Force fresh bundling even if cache exists
+			},
 			server: {
 				fs: {
 					// Allow serving files from the project root

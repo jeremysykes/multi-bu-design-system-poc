@@ -32,6 +32,8 @@ Rules:
 - No visual values are defined inside components (no literal hex, px, rem in component code except in the theme engine)
 - Each BU has a token set that extends or overrides core in a controlled way
 - Tokens must follow a shared schema
+- Components consume meaning (semantic tokens), not values (raw tokens)
+- Token flow: Design Token Files → MUI Theme → Components → Product Code
 
 Deliverables:
 
@@ -72,25 +74,56 @@ Implement at least two distinct BUs:
 
 ### 4) Component wrapper layer
 
-Create a thin wrapper library that standardizes component usage across apps.
+Create a thin wrapper library that standardizes component usage across apps, organized using atomic design principles.
+
+**Atomic Design Structure:**
+
+Components are organized into a clear hierarchy:
+
+- **Atoms**: Basic building blocks (Button, Typography)
+- **Molecules**: Simple combinations (TextField, Alert)
+- **Organisms**: Complex components (Card)
+- **Templates**: Page-level layouts (FormLayout)
+- **Pages**: Specific page instances (LoginPage)
+
 Example wrappers:
 
-- Button
-- TextField
-- Card
-- Alert
-- Typography
-- AppShell or Header (optional)
+- Button (Atom)
+- Typography (Atom)
+- TextField (Molecule)
+- Alert (Molecule)
+- Card (Organism)
+- FormLayout (Template)
+- LoginPage (Page)
+
+**Token Paradigm:**
+
+The system follows a strict token paradigm where components consume meaning (semantic tokens), not values (raw tokens):
+
+```
+Figma Tokens (Future) → Design Token Files → MUI Theme → Wrapped Components → Product Code
+```
+
+- Raw tokens define values (e.g., `palette.neutral.900` = `#1A1A1A`)
+- Semantic tokens define meaning (e.g., `text.primary` → `palette.neutral.900`)
+- Themes implement tokens in the framework
+- Components consume meaning — never values (e.g., use `theme.palette.text.primary`, not `theme.palette.neutral.900`)
 
 Rules:
 
 - Wrappers expose stable, BU-agnostic APIs
 - Styling and variants resolve through the theme
 - The wrapper layer prevents app teams from bypassing governance
+- Components/templates/pages use semantic tokens for colors (meaning), spacing tokens for layout
+- All styling via MUI's `sx` prop, `Box`, `Stack`, `Grid`, `Container` - no custom CSS files
 
 Deliverables:
 
-- `packages/ui/src/*`
+- `packages/ui/src/atoms/*`
+- `packages/ui/src/molecules/*`
+- `packages/ui/src/organisms/*`
+- `packages/ui/src/templates/*`
+- `packages/ui/src/pages/*`
 - Lint or rule that discourages direct `@mui/*` imports in consuming apps (POC level is fine)
 
 ### 5) Governance and validation (enforcement, not suggestions)

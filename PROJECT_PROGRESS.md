@@ -303,4 +303,57 @@ Differences are immediately obvious when viewing the same component side-by-side
 
 ---
 
-_Last Updated: 2024-12-19_
+---
+
+## Atomic Design Reorganization
+
+**Date:** 2024-12-21
+
+### Overview
+
+Reorganized the component library to follow atomic design principles, creating a clear hierarchy: Atoms → Molecules → Organisms → Templates → Pages.
+
+### Implementation
+
+**Directory Structure:**
+- Created atomic-level directories: `atoms/`, `molecules/`, `organisms/`, `templates/`, `pages/`
+- Moved existing components to appropriate levels:
+  - Atoms: `Typography`, `Button`
+  - Molecules: `TextField`, `Alert`
+  - Organisms: `Card`
+
+**New Components:**
+- `FormLayout` (Template): Minimal template demonstrating form structure with token-driven styling
+- `LoginPage` (Page): Minimal page example demonstrating template usage and composition
+
+**Token Paradigm:**
+- All components/templates/pages follow token paradigm: consume meaning (semantic tokens), not values (raw tokens)
+- All styling via MUI's `sx` prop, `Box`, `Stack`, `Container` - no custom CSS files
+- Spacing from `theme.spacing()` (maps to tokens)
+- Colors use semantic meaning via MUI palette (`theme.palette.background.default`, `theme.palette.divider`)
+
+**Storybook Updates:**
+- Updated story titles to reflect atomic structure: `Atoms/Button`, `Molecules/TextField`, etc.
+- Added stories for `FormLayout` (Template) and `LoginPage` (Page)
+- All imports maintained backward compatibility via root `@multi-bu/ui` exports
+
+**Exports:**
+- Maintained backward-compatible flat exports from root `index.ts`
+- Added atomic-level exports for new organization
+- All existing imports continue to work
+
+**Documentation:**
+- Updated `PROJECT_INTENT.md` with atomic design principles and token paradigm
+- Updated `PROJECT_PROGRESS.md` with reorganization details
+
+### Key Principles Enforced
+
+1. **Atomic Design Hierarchy**: Clear organization from atoms to pages
+2. **Token-Driven**: All visual values trace to design tokens
+3. **Semantic Consumption**: Components use semantic tokens (meaning), not raw tokens (values)
+4. **MUI-Only Styling**: No custom CSS files, all styling via MUI's system
+5. **Backward Compatibility**: All existing imports continue to work
+
+---
+
+_Last Updated: 2024-12-21_
