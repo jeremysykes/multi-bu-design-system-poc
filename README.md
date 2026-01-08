@@ -261,13 +261,9 @@ See `docs/governance.md` for detailed governance rules and CI integration patter
 
 ## Visual Divergence
 
-The three business units express distinct visual identities while sharing the same component APIs:
+The three business units express distinct visual identities while sharing the same component APIs. See `docs/business-units.md` for detailed descriptions of visual differences and how each BU is differentiated through tokens.
 
-- **BU A (Core Banking)**: Deep navy blue, dense typography, high contrast → Conservative, professional
-- **BU B (Growth & Payments)**: Vibrant cyan, spacious typography, softer contrast → Modern, approachable
-- **BU C (Wealth Management)**: Rich purple/indigo, balanced typography, refined contrast → Sophisticated, premium
-
-**All visual differences are driven by tokens, not component code changes.**
+**Key principle**: All visual differences are driven by tokens, not component code changes.
 
 View in Storybook (theme switcher) or demo site (runtime switching) to see visual divergence across all three BUs.
 
@@ -280,7 +276,7 @@ This is a proof of concept. See `PROJECT_PROGRESS.md` for project intent, requir
 - ✅ **Token-driven architecture** - No hardcoded values in components; all styling from tokens
 - ✅ **Token-first pipeline** - Design tokens → validation → compilation → themes → components
 - ✅ **Multi-BU support** - Three fully realized BUs share component APIs with different brand expression
-- ✅ **BU C fully realized** - Structurally consistent, visually distinct, used throughout Storybook and demo site
+- ✅ **Three fully realized BUs** - All BUs are structurally consistent, visually distinct, and integrated throughout Storybook and demo site
 - ✅ **Governance enforcement** - Validation, versioning, and linting enforced in CI (not suggestions)
 - ✅ **Versioning discipline** - Token versioning system with enforcement
 - ✅ **Token diffing** - Scripts for comparing tokens and tracking changes
