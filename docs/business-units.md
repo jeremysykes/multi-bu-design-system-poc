@@ -15,9 +15,11 @@ The multi-BU design system supports four business units, each with a distinct vi
 - **Primary Color**: Deep navy blue (#3A5B81 at 500)
   - Professional, trustworthy appearance
   - Conservative and authoritative
-- **Secondary Color**: Muted gray-blue (#818D9F at 500)
-  - Low visual noise
-  - Supporting conservative aesthetic
+  - Conveys stability and reliability
+- **Secondary Color**: Sage green (#45AE60 at 500)
+  - Complementary to navy blue
+  - Professional and harmonious
+  - Adds subtle warmth while maintaining conservative aesthetic
 - **Typography**: Dense, information-focused
   - Base font size: 0.875rem (smaller, more compact)
   - Proportional font scale for efficient information display
@@ -27,6 +29,7 @@ The multi-BU design system supports four business units, each with a distinct vi
 ### When to Use
 
 Core Banking Platform is designed for:
+
 - Internal banking tools
 - Regulatory compliance interfaces
 - Operational dashboards
@@ -40,12 +43,14 @@ Core Banking Platform is designed for:
 
 ### Design Characteristics
 
-- **Primary Color**: Vibrant cyan (#00BCD4 at 500)
+- **Primary Color**: Vibrant teal (#00BCD4 at 500)
   - Energetic, growth-oriented feel
   - Modern and approachable
-- **Secondary Color**: Warm amber (#FFC107 at 500)
-  - Conversion-focused accent
-  - Approachable and inviting
+  - Evokes innovation and progress
+- **Secondary Color**: Warm coral (#FF5C5C at 500)
+  - Energetic accent color
+  - Creates action and urgency
+  - Complements teal for vibrant, modern appeal
 - **Typography**: Spacious, readable
   - Base font size: 1.125rem (larger, more spacious)
   - Proportional font scale for comfortable reading
@@ -55,6 +60,7 @@ Core Banking Platform is designed for:
 ### When to Use
 
 Growth & Payments Experience is designed for:
+
 - Customer-facing applications
 - Payment interfaces
 - Marketing and growth tools
@@ -72,11 +78,12 @@ Growth & Payments Experience is designed for:
 - **Primary Color**: Rich deep purple/indigo (#673AB7 at 500)
   - Sophisticated and refined
   - Premium aesthetic
-  - Conveys trust and expertise
-- **Secondary Color**: Warm gold/amber (#FFC107 at 500)
+  - Conveys trust, expertise, and exclusivity
+- **Secondary Color**: Refined gold (#D4AF37 at 500)
   - Premium accent color
-  - Luxury feel
-  - Wealth and prosperity associations
+  - Sophisticated luxury feel
+  - Classic wealth and prosperity associations
+  - More refined than bright amber
 - **Typography**: Balanced, elegant
   - Base font size: 1rem (balanced, moderate)
   - Elegant serif font option (Georgia) for primary
@@ -86,6 +93,7 @@ Growth & Payments Experience is designed for:
 ### When to Use
 
 Wealth Management is designed for:
+
 - High-net-worth client portals
 - Investment advisory tools
 - Premium service interfaces
@@ -100,14 +108,14 @@ Wealth Management is designed for:
 
 ### Design Characteristics
 
-- **Primary Color**: Cyan/teal (#00BCD4 at 500)
-  - Technology and code associations
-  - Developer tooling aesthetic
-  - Modern and technical
-- **Secondary Color**: Blue-gray (#607D8B at 500)
-  - Tech/professional appearance
-  - Complementary to primary
-  - Developer-focused
+- **Primary Color**: Electric blue (#2196F3 at 500)
+  - Technology and innovation associations
+  - Modern developer tooling aesthetic
+  - Clean, professional tech appearance
+- **Secondary Color**: Slate gray (#8495AB at 500)
+  - Professional tech appearance
+  - Complements electric blue
+  - Sophisticated developer-focused palette
 - **Typography**: Developer-friendly
   - Base font size: 1rem (balanced, readable)
   - Monospace primary font (Roboto Mono, SF Mono, Monaco, etc.)
@@ -117,6 +125,7 @@ Wealth Management is designed for:
 ### When to Use
 
 Developer Platform is designed for:
+
 - Internal developer tools
 - API documentation interfaces
 - Developer portal applications
@@ -129,12 +138,14 @@ Developer Platform is designed for:
 The four BUs form a comprehensive design system portfolio:
 
 1. **Coverage**: Together they cover the full spectrum of financial services needs
+
    - Internal operations (Core Banking)
    - Customer acquisition (Growth & Payments)
    - Premium services (Wealth Management)
    - Developer tooling (Developer Platform)
 
 2. **Visual Range**: Each BU represents a distinct position on the visual spectrum
+
    - Dense vs. Spacious (Core Banking vs. Growth & Payments)
    - Conservative vs. Modern (Core Banking vs. Growth & Payments)
    - Functional vs. Premium (Core Banking/Growth vs. Wealth Management)
@@ -152,12 +163,14 @@ The four BUs form a comprehensive design system portfolio:
 When selecting a BU for a new application:
 
 1. **Consider the audience**
+
    - Internal operations → Core Banking Platform
    - Consumer-facing → Growth & Payments Experience
    - Premium/high-value → Wealth Management
    - Developers/engineers → Developer Platform
 
 2. **Consider the use case**
+
    - Data-heavy operations → Core Banking Platform
    - Conversion-focused → Growth & Payments Experience
    - Advisory services → Wealth Management
@@ -171,14 +184,14 @@ When selecting a BU for a new application:
 
 ## Token Differences Summary
 
-| Aspect | Core Banking | Growth & Payments | Wealth Management | Developer Platform |
-|--------|--------------|-------------------|-------------------|-------------------|
-| Primary Color | Deep Navy (#3A5B81) | Vibrant Cyan (#00BCD4) | Deep Purple (#673AB7) | Cyan/Teal (#00BCD4) |
-| Secondary Color | Muted Gray-Blue (#818D9F) | Warm Amber (#FFC107) | Warm Gold (#FFC107) | Blue-Gray (#607D8B) |
-| Base Font Size | 0.875rem (dense) | 1.125rem (spacious) | 1rem (balanced) | 1rem (balanced) |
-| Font Family | Sans-serif (Inter) | Sans-serif (Inter) | Serif (Georgia) / Sans-serif | Monospace (Roboto Mono) / Sans-serif |
-| Text Contrast | High (neutral-900) | Soft (neutral-800) | Refined (neutral-900) | High (neutral-900) |
-| Border Definition | Defined (neutral-400) | Soft (neutral-200) | Standard (neutral-300) | Standard (neutral-300) |
+| Aspect            | Core Banking          | Growth & Payments      | Wealth Management            | Developer Platform                   |
+| ----------------- | --------------------- | ---------------------- | ---------------------------- | ------------------------------------ |
+| Primary Color     | Deep Navy (#3A5B81)   | Vibrant Teal (#00BCD4) | Deep Purple (#673AB7)        | Electric Blue (#2196F3)              |
+| Secondary Color   | Sage Green (#45AE60)  | Warm Coral (#FF5C5C)   | Refined Gold (#D4AF37)       | Slate Gray (#8495AB)                 |
+| Base Font Size    | 0.875rem (dense)      | 1.125rem (spacious)    | 1rem (balanced)              | 1rem (balanced)                      |
+| Font Family       | Sans-serif (Inter)    | Sans-serif (Inter)     | Serif (Georgia) / Sans-serif | Monospace (Roboto Mono) / Sans-serif |
+| Text Contrast     | High (neutral-900)    | Soft (neutral-800)     | Refined (neutral-900)        | High (neutral-900)                   |
+| Border Definition | Defined (neutral-400) | Soft (neutral-200)     | Standard (neutral-300)       | Standard (neutral-300)               |
 
 ## Visual Differentiation
 
@@ -190,4 +203,3 @@ When viewing the same component side-by-side across BUs:
 - **Borders**: Border weight contributes to overall feel
 
 All differences are driven by tokens, not component code changes. The same component code renders differently based on the selected theme.
-

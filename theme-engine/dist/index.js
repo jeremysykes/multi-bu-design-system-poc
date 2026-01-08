@@ -39,6 +39,35 @@ function extractValue(token) {
 }
 
 // src/mappers/paletteMapper.ts
+function getContrastRatio(foreground, background) {
+  const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+      parseInt(result[1], 16),
+      parseInt(result[2], 16),
+      parseInt(result[3], 16)
+    ] : [0, 0, 0];
+  };
+  const getLuminance = (rgb) => {
+    const [r, g, b] = rgb.map((val) => {
+      val = val / 255;
+      return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const fgRgb = hexToRgb(foreground);
+  const bgRgb = hexToRgb(background);
+  const fgLum = getLuminance(fgRgb);
+  const bgLum = getLuminance(bgRgb);
+  const lighter = Math.max(fgLum, bgLum);
+  const darker = Math.min(fgLum, bgLum);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+function getContrastText(background) {
+  const blackContrast = getContrastRatio("#000000", background);
+  const whiteContrast = getContrastRatio("#ffffff", background);
+  return whiteContrast > blackContrast ? "#ffffff" : "#000000";
+}
 function mapPalette(colorTokens) {
   const getColor = (category, shade) => {
     const flattenedKey = `${category}-${shade}`;
@@ -55,7 +84,9 @@ function mapPalette(colorTokens) {
       }
     }
     if (process.env.NODE_ENV === "development") {
-      console.warn(`Missing color token: ${category}-${shade}, falling back to #000000`);
+      console.warn(
+        `Missing color token: ${category}-${shade}, falling back to #000000`
+      );
     }
     return "#000000";
   };
@@ -68,43 +99,57 @@ function mapPalette(colorTokens) {
     }
     return false;
   };
+  const primaryMain = getColor("primary", "500");
+  const secondaryMain = getColor("secondary", "500");
   return {
     primary: {
-      main: getColor("primary", "500"),
+      main: primaryMain,
       light: getColor("primary", "300"),
-      dark: getColor("primary", "700")
-      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
+      dark: getColor("primary", "700"),
+      contrastText: getContrastText(primaryMain)
     },
     secondary: {
-      main: getColor("secondary", "500"),
+      main: secondaryMain,
       light: getColor("secondary", "300"),
-      dark: getColor("secondary", "700")
-      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
+      dark: getColor("secondary", "700"),
+      contrastText: getContrastText(secondaryMain)
     },
-    error: hasCategory("error") ? {
-      main: getColor("error", "500"),
-      light: getColor("error", "300"),
-      dark: getColor("error", "700")
-      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
-    } : void 0,
-    warning: hasCategory("warning") ? {
-      main: getColor("warning", "500"),
-      light: getColor("warning", "300"),
-      dark: getColor("warning", "700")
-      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
-    } : void 0,
-    info: hasCategory("info") ? {
-      main: getColor("info", "500"),
-      light: getColor("info", "300"),
-      dark: getColor("info", "700")
-      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
-    } : void 0,
-    success: hasCategory("success") ? {
-      main: getColor("success", "500"),
-      light: getColor("success", "300"),
-      dark: getColor("success", "700")
-      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
-    } : void 0,
+    error: hasCategory("error") ? (() => {
+      const errorMain = getColor("error", "500");
+      return {
+        main: errorMain,
+        light: getColor("error", "300"),
+        dark: getColor("error", "700"),
+        contrastText: getContrastText(errorMain)
+      };
+    })() : void 0,
+    warning: hasCategory("warning") ? (() => {
+      const warningMain = getColor("warning", "500");
+      return {
+        main: warningMain,
+        light: getColor("warning", "300"),
+        dark: getColor("warning", "700"),
+        contrastText: getContrastText(warningMain)
+      };
+    })() : void 0,
+    info: hasCategory("info") ? (() => {
+      const infoMain = getColor("info", "500");
+      return {
+        main: infoMain,
+        light: getColor("info", "300"),
+        dark: getColor("info", "700"),
+        contrastText: getContrastText(infoMain)
+      };
+    })() : void 0,
+    success: hasCategory("success") ? (() => {
+      const successMain = getColor("success", "500");
+      return {
+        main: successMain,
+        light: getColor("success", "300"),
+        dark: getColor("success", "700"),
+        contrastText: getContrastText(successMain)
+      };
+    })() : void 0,
     grey: {
       50: getColor("neutral", "50"),
       100: getColor("neutral", "100"),
@@ -260,6 +305,64 @@ function mapShape(shapeTokens) {
 }
 
 // src/mappers/componentMapper.ts
+function getContrastRatio2(foreground, background) {
+  const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+      parseInt(result[1], 16),
+      parseInt(result[2], 16),
+      parseInt(result[3], 16)
+    ] : [0, 0, 0];
+  };
+  const getLuminance = (rgb) => {
+    const [r, g, b] = rgb.map((val) => {
+      val = val / 255;
+      return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const fgRgb = hexToRgb(foreground);
+  const bgRgb = hexToRgb(background);
+  const fgLum = getLuminance(fgRgb);
+  const bgLum = getLuminance(bgRgb);
+  const lighter = Math.max(fgLum, bgLum);
+  const darker = Math.min(fgLum, bgLum);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+function isBlueOrPurple(color) {
+  if (!color || typeof color !== "string" || !color.startsWith("#")) {
+    return false;
+  }
+  const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+      parseInt(result[1], 16),
+      parseInt(result[2], 16),
+      parseInt(result[3], 16)
+    ] : null;
+  };
+  const rgb = hexToRgb(color);
+  if (!rgb) return false;
+  const [r, g, b] = rgb;
+  const isBlue = b > r && b > g && r < 200 && g < 200;
+  const isPurple = r > 100 && b > 100 && g < Math.max(r, b) * 0.8;
+  const isNavyBlue = r < 100 && g < 100 && b > 50 && b > r && b > g;
+  return isBlue || isPurple || isNavyBlue;
+}
+function getContrastText2(background) {
+  if (!background || typeof background !== "string" || !background.startsWith("#")) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn(`Invalid background color for contrast calculation: ${background}, defaulting to white text`);
+    }
+    return "#ffffff";
+  }
+  if (isBlueOrPurple(background)) {
+    return "#ffffff";
+  }
+  const blackContrast = getContrastRatio2("#000000", background);
+  const whiteContrast = getContrastRatio2("#ffffff", background);
+  return whiteContrast > blackContrast ? "#ffffff" : "#000000";
+}
 function mapComponents(semanticTokens, allTokens, _theme) {
   const resolveToken = (tokenValue) => {
     let tokenRef = typeof tokenValue === "object" ? extractValue(tokenValue) : tokenValue;
@@ -296,6 +399,33 @@ function mapComponents(semanticTokens, allTokens, _theme) {
     const value = extractValue(token);
     return resolveToken(value);
   };
+  const getDarkerShadeForHover = (category, key) => {
+    const token = semanticTokens[category]?.[key];
+    if (!token) return "#000000";
+    let tokenRef = typeof token === "object" ? extractValue(token) : token;
+    if (typeof tokenRef === "string" && tokenRef.startsWith("{") && tokenRef.endsWith("}")) {
+      const path = tokenRef.slice(1, -1);
+      const parts = path.split(".");
+      if (parts.length === 2 && parts[0] === "color" && parts[1].includes("-")) {
+        const colorParts = parts[1].split("-");
+        if (colorParts.length === 2) {
+          const category2 = colorParts[0];
+          const shade = parseInt(colorParts[1]);
+          const darkerShade = shade >= 600 ? 700 : 600;
+          const darkerKey = `${category2}-${darkerShade}`;
+          if (allTokens.color && allTokens.color[darkerKey]) {
+            return extractValue(allTokens.color[darkerKey]);
+          }
+        }
+      }
+    }
+    const baseColor = getSemanticValue(category, key);
+    return baseColor;
+  };
+  const primaryBg = getSemanticValue("action", "primary");
+  const secondaryBg = getSemanticValue("action", "secondary") || primaryBg;
+  const primaryHoverBg = getDarkerShadeForHover("action", "primary");
+  const secondaryHoverBg = semanticTokens.action?.secondary ? getDarkerShadeForHover("action", "secondary") : primaryHoverBg;
   return {
     MuiButton: {
       styleOverrides: {
@@ -303,24 +433,54 @@ function mapComponents(semanticTokens, allTokens, _theme) {
           textTransform: "none"
         },
         containedPrimary: {
-          backgroundColor: getSemanticValue("action", "primary"),
-          color: _theme.palette.primary.contrastText
+          backgroundColor: primaryBg,
+          // Calculate contrastText dynamically based on the actual background color
+          color: getContrastText2(primaryBg),
+          // Hover state uses a darker shade of the same color
+          "&:hover": {
+            backgroundColor: primaryHoverBg,
+            // Maintain same text color (white for blue/purple, calculated for others)
+            color: getContrastText2(primaryHoverBg)
+          }
         },
         containedSecondary: {
-          backgroundColor: getSemanticValue("action", "secondary") || getSemanticValue("action", "primary"),
-          color: _theme.palette.secondary.contrastText
+          backgroundColor: secondaryBg,
+          // Calculate contrastText dynamically based on the actual background color
+          color: getContrastText2(secondaryBg),
+          // Hover state uses a darker shade of the same color
+          "&:hover": {
+            backgroundColor: secondaryHoverBg,
+            // Maintain same text color (white for blue/purple, calculated for others)
+            color: getContrastText2(secondaryHoverBg)
+          }
         },
         containedError: {
-          color: _theme.palette.error?.contrastText || "#ffffff"
+          color: _theme.palette.error?.contrastText || "#ffffff",
+          "&:hover": {
+            backgroundColor: _theme.palette.error?.dark,
+            color: _theme.palette.error?.contrastText || "#ffffff"
+          }
         },
         containedWarning: {
-          color: _theme.palette.warning?.contrastText || "#ffffff"
+          color: _theme.palette.warning?.contrastText || "#ffffff",
+          "&:hover": {
+            backgroundColor: _theme.palette.warning?.dark,
+            color: _theme.palette.warning?.contrastText || "#ffffff"
+          }
         },
         containedInfo: {
-          color: _theme.palette.info?.contrastText || "#ffffff"
+          color: _theme.palette.info?.contrastText || "#ffffff",
+          "&:hover": {
+            backgroundColor: _theme.palette.info?.dark,
+            color: _theme.palette.info?.contrastText || "#ffffff"
+          }
         },
         containedSuccess: {
-          color: _theme.palette.success?.contrastText || "#ffffff"
+          color: _theme.palette.success?.contrastText || "#ffffff",
+          "&:hover": {
+            backgroundColor: _theme.palette.success?.dark,
+            color: _theme.palette.success?.contrastText || "#ffffff"
+          }
         }
       }
     },
@@ -1058,43 +1218,43 @@ var tokens_default2 = {
       $type: "color"
     },
     "secondary-50": {
-      $value: "#F0F2F5",
+      $value: "#E8F5EA",
       $type: "color"
     },
     "secondary-100": {
-      $value: "#D9DDE3",
+      $value: "#C8E6D1",
       $type: "color"
     },
     "secondary-200": {
-      $value: "#C0C6CF",
+      $value: "#A5D6B3",
       $type: "color"
     },
     "secondary-300": {
-      $value: "#A7AFBB",
+      $value: "#7EC695",
       $type: "color"
     },
     "secondary-400": {
-      $value: "#949EAD",
+      $value: "#61BA7A",
       $type: "color"
     },
     "secondary-500": {
-      $value: "#818D9F",
+      $value: "#45AE60",
       $type: "color"
     },
     "secondary-600": {
-      $value: "#797F8F",
+      $value: "#3D9F55",
       $type: "color"
     },
     "secondary-700": {
-      $value: "#6E717D",
+      $value: "#348F49",
       $type: "color"
     },
     "secondary-800": {
-      $value: "#64676B",
+      $value: "#2C7F3E",
       $type: "color"
     },
     "secondary-900": {
-      $value: "#515459",
+      $value: "#1F622C",
       $type: "color"
     },
     "neutral-50": {
@@ -1647,43 +1807,43 @@ var tokens_default3 = {
       $type: "color"
     },
     "secondary-50": {
-      $value: "#FFF8E1",
+      $value: "#FFE5E5",
       $type: "color"
     },
     "secondary-100": {
-      $value: "#FFECB3",
+      $value: "#FFCCCC",
       $type: "color"
     },
     "secondary-200": {
-      $value: "#FFE082",
+      $value: "#FFAAAA",
       $type: "color"
     },
     "secondary-300": {
-      $value: "#FFD54F",
+      $value: "#FF8888",
       $type: "color"
     },
     "secondary-400": {
-      $value: "#FFCA28",
+      $value: "#FF7272",
       $type: "color"
     },
     "secondary-500": {
-      $value: "#FFC107",
+      $value: "#FF5C5C",
       $type: "color"
     },
     "secondary-600": {
-      $value: "#FFB300",
+      $value: "#E85050",
       $type: "color"
     },
     "secondary-700": {
-      $value: "#FFA000",
+      $value: "#D04444",
       $type: "color"
     },
     "secondary-800": {
-      $value: "#FF8F00",
+      $value: "#B83838",
       $type: "color"
     },
     "secondary-900": {
-      $value: "#FF6F00",
+      $value: "#9F2C2C",
       $type: "color"
     },
     "neutral-50": {
@@ -2236,43 +2396,43 @@ var tokens_default4 = {
       $type: "color"
     },
     "secondary-50": {
-      $value: "#FFF8E1",
+      $value: "#FAF5E6",
       $type: "color"
     },
     "secondary-100": {
-      $value: "#FFECB3",
+      $value: "#F5EBCD",
       $type: "color"
     },
     "secondary-200": {
-      $value: "#FFE082",
+      $value: "#EDDEB3",
       $type: "color"
     },
     "secondary-300": {
-      $value: "#FFD54F",
+      $value: "#E4CF99",
       $type: "color"
     },
     "secondary-400": {
-      $value: "#FFCA28",
+      $value: "#DBC470",
       $type: "color"
     },
     "secondary-500": {
-      $value: "#FFC107",
+      $value: "#D4AF37",
       $type: "color"
     },
     "secondary-600": {
-      $value: "#FFB300",
+      $value: "#C09E2F",
       $type: "color"
     },
     "secondary-700": {
-      $value: "#FFA000",
+      $value: "#AC8D27",
       $type: "color"
     },
     "secondary-800": {
-      $value: "#FF8F00",
+      $value: "#987C1F",
       $type: "color"
     },
     "secondary-900": {
-      $value: "#FF6F00",
+      $value: "#846B17",
       $type: "color"
     },
     "neutral-50": {
@@ -2793,83 +2953,83 @@ var tokens_default5 = {
   $schema: "https://schemas.figma.com/tokens/v1",
   color: {
     "primary-50": {
-      $value: "#E0F7FA",
+      $value: "#E3F2FD",
       $type: "color"
     },
     "primary-100": {
-      $value: "#B2EBF2",
+      $value: "#BBDEFB",
       $type: "color"
     },
     "primary-200": {
-      $value: "#80DEEA",
+      $value: "#90CAF9",
       $type: "color"
     },
     "primary-300": {
-      $value: "#4DD0E1",
+      $value: "#64B5F6",
       $type: "color"
     },
     "primary-400": {
-      $value: "#26C6DA",
+      $value: "#42A5F5",
       $type: "color"
     },
     "primary-500": {
-      $value: "#00BCD4",
+      $value: "#2196F3",
       $type: "color"
     },
     "primary-600": {
-      $value: "#00ACC1",
+      $value: "#1E88E5",
       $type: "color"
     },
     "primary-700": {
-      $value: "#0097A7",
+      $value: "#1976D2",
       $type: "color"
     },
     "primary-800": {
-      $value: "#00838F",
+      $value: "#1565C0",
       $type: "color"
     },
     "primary-900": {
-      $value: "#006064",
+      $value: "#0D47A1",
       $type: "color"
     },
     "secondary-50": {
-      $value: "#ECEFF1",
+      $value: "#F5F6F8",
       $type: "color"
     },
     "secondary-100": {
-      $value: "#CFD8DC",
+      $value: "#E8EBED",
       $type: "color"
     },
     "secondary-200": {
-      $value: "#B0BEC5",
+      $value: "#D1D5DB",
       $type: "color"
     },
     "secondary-300": {
-      $value: "#90A4AE",
+      $value: "#B8BFC7",
       $type: "color"
     },
     "secondary-400": {
-      $value: "#78909C",
+      $value: "#9CA5B3",
       $type: "color"
     },
     "secondary-500": {
-      $value: "#607D8B",
+      $value: "#8495AB",
       $type: "color"
     },
     "secondary-600": {
-      $value: "#546E7A",
+      $value: "#6B7C93",
       $type: "color"
     },
     "secondary-700": {
-      $value: "#455A64",
+      $value: "#5A6B7F",
       $type: "color"
     },
     "secondary-800": {
-      $value: "#37474F",
+      $value: "#4A556B",
       $type: "color"
     },
     "secondary-900": {
-      $value: "#263238",
+      $value: "#3A4057",
       $type: "color"
     },
     "neutral-50": {
