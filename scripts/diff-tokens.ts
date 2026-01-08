@@ -7,7 +7,7 @@
  * showing added, removed, and changed tokens.
  */
 
-import { readFile, readdir, stat } from 'fs/promises';
+import { readFile, stat } from 'fs/promises';
 import { join, resolve } from 'path';
 
 interface TokenDiff {

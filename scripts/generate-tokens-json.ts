@@ -12,18 +12,9 @@
  * structure to the new single-file structure for Figma integration.
  */
 
-import { readFile, writeFile, mkdir, access } from 'fs/promises';
+import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import type { TokenSchema } from '../theme-engine/src/types';
-
-async function fileExists(filePath: string): Promise<boolean> {
-	try {
-		await access(filePath);
-		return true;
-	} catch {
-		return false;
-	}
-}
 
 async function writeJsonFile(filePath: string, data: unknown): Promise<void> {
 	const dir = dirname(filePath);
@@ -48,13 +39,12 @@ async function generateTokensJson(buId: 'bu-a' | 'bu-b' | 'bu-c'): Promise<void>
 	const buSemantic = JSON.parse(await readFile(join(buPath, 'semantic.json'), 'utf-8'));
 
 	// Merge: BU tokens override/extend core tokens
+	// Using DTCG format (not legacy base.palette format)
 	const mergedTokens: TokenSchema = {
-		base: {
-			palette: { ...corePalette, ...buPalette },
-			typography: { ...coreTypography, ...buTypography },
-			spacing: coreSpacing, // Spacing typically doesn't vary by BU
-			shape: coreShape, // Shape typically doesn't vary by BU
-		},
+		color: { ...corePalette, ...buPalette },
+		typography: { ...coreTypography, ...buTypography },
+		spacing: coreSpacing, // Spacing typically doesn't vary by BU
+		shape: coreShape, // Shape typically doesn't vary by BU
 		semantic: { ...coreSemantic, ...buSemantic },
 	};
 

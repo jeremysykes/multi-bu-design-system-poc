@@ -4,17 +4,18 @@
   "private": true,
   "description": "Theme compilation engine for multi-BU design system",
   "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts --external @mui/material --external @mui/system --external zod",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch --external @mui/material --external @mui/system --external zod",
     "lint": "eslint src --ext .ts",
     "test": "vitest run",
     "type-check": "tsc --noEmit"

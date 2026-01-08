@@ -1,0 +1,3591 @@
+// src/buildTheme.ts
+import { createTheme } from "@mui/material/styles";
+
+// src/utils/extractValue.ts
+function extractValue(token) {
+  if (token && typeof token === "object" && "$value" in token) {
+    return token.$value;
+  }
+  return token;
+}
+
+// src/mappers/paletteMapper.ts
+function mapPalette(colorTokens) {
+  const getColor = (category, shade) => {
+    const flattenedKey = `${category}-${shade}`;
+    if (colorTokens[flattenedKey]) {
+      const value = extractValue(colorTokens[flattenedKey]);
+      if (typeof value === "string" && (value.startsWith("#") || value.startsWith("rgb"))) {
+        return value;
+      }
+    }
+    if (colorTokens[category]?.[shade]) {
+      const value = extractValue(colorTokens[category][shade]);
+      if (typeof value === "string" && (value.startsWith("#") || value.startsWith("rgb"))) {
+        return value;
+      }
+    }
+    if (process.env.NODE_ENV === "development") {
+      console.warn(`Missing color token: ${category}-${shade}, falling back to #000000`);
+    }
+    return "#000000";
+  };
+  const hasCategory = (category) => {
+    if (colorTokens[`${category}-50`] || colorTokens[`${category}-100`] || colorTokens[`${category}-500`]) {
+      return true;
+    }
+    if (colorTokens[category] && typeof colorTokens[category] === "object") {
+      return true;
+    }
+    return false;
+  };
+  return {
+    primary: {
+      main: getColor("primary", "500"),
+      light: getColor("primary", "300"),
+      dark: getColor("primary", "700")
+      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
+    },
+    secondary: {
+      main: getColor("secondary", "500"),
+      light: getColor("secondary", "300"),
+      dark: getColor("secondary", "700")
+      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
+    },
+    error: hasCategory("error") ? {
+      main: getColor("error", "500"),
+      light: getColor("error", "300"),
+      dark: getColor("error", "700")
+      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
+    } : void 0,
+    warning: hasCategory("warning") ? {
+      main: getColor("warning", "500"),
+      light: getColor("warning", "300"),
+      dark: getColor("warning", "700")
+      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
+    } : void 0,
+    info: hasCategory("info") ? {
+      main: getColor("info", "500"),
+      light: getColor("info", "300"),
+      dark: getColor("info", "700")
+      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
+    } : void 0,
+    success: hasCategory("success") ? {
+      main: getColor("success", "500"),
+      light: getColor("success", "300"),
+      dark: getColor("success", "700")
+      // contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
+    } : void 0,
+    grey: {
+      50: getColor("neutral", "50"),
+      100: getColor("neutral", "100"),
+      200: getColor("neutral", "200"),
+      300: getColor("neutral", "300"),
+      400: getColor("neutral", "400"),
+      500: getColor("neutral", "500"),
+      600: getColor("neutral", "600"),
+      700: getColor("neutral", "700"),
+      800: getColor("neutral", "800"),
+      900: getColor("neutral", "900")
+    }
+  };
+}
+
+// src/mappers/typographyMapper.ts
+function mapTypography(typographyTokens) {
+  const getTokenValue = (group, key) => {
+    const token = typographyTokens[group]?.[key];
+    return token ? extractValue(token) : void 0;
+  };
+  const parseBaseFontSize = (size) => {
+    if (size.endsWith("rem")) {
+      const num = parseFloat(size);
+      return num * 16;
+    }
+    if (size.endsWith("px")) {
+      return parseFloat(size);
+    }
+    return parseFloat(size) || 16;
+  };
+  const fontFamily = getTokenValue("fontFamily", "primary") || "Roboto, Arial, sans-serif";
+  const baseFontSize = getTokenValue("fontSize", "base") || "1rem";
+  const fontSizeNumber = parseBaseFontSize(baseFontSize);
+  const fontWeightLight = getTokenValue("fontWeight", "light") || 300;
+  const fontWeightRegular = getTokenValue("fontWeight", "regular") || 400;
+  const fontWeightMedium = getTokenValue("fontWeight", "medium") || 500;
+  const fontWeightBold = getTokenValue("fontWeight", "bold") || 700;
+  const fontSizeXs = getTokenValue("fontSize", "xs") || "0.75rem";
+  const fontSizeSm = getTokenValue("fontSize", "sm") || "0.875rem";
+  const fontSizeBase = getTokenValue("fontSize", "base") || "1rem";
+  const fontSizeLg = getTokenValue("fontSize", "lg") || "1.125rem";
+  const fontSizeXl = getTokenValue("fontSize", "xl") || "1.25rem";
+  const fontSize2xl = getTokenValue("fontSize", "2xl") || "1.5rem";
+  const fontSize3xl = getTokenValue("fontSize", "3xl") || "1.875rem";
+  const fontSize4xl = getTokenValue("fontSize", "4xl") || "2.25rem";
+  const lineHeightNormal = getTokenValue("lineHeight", "normal");
+  const lineHeightTight = getTokenValue("lineHeight", "tight");
+  const lineHeightRelaxed = getTokenValue("lineHeight", "relaxed");
+  const parseLineHeight = (lh, fallback) => {
+    if (lh === void 0) return fallback;
+    if (typeof lh === "number") return lh;
+    const parsed = parseFloat(lh);
+    return isNaN(parsed) ? fallback : parsed;
+  };
+  return {
+    fontFamily,
+    fontSize: fontSizeNumber,
+    fontWeightLight,
+    fontWeightRegular,
+    fontWeightMedium,
+    fontWeightBold,
+    h1: {
+      fontSize: fontSize4xl,
+      fontWeight: fontWeightBold,
+      lineHeight: parseLineHeight(lineHeightTight, 1.2),
+      fontFamily
+    },
+    h2: {
+      fontSize: fontSize3xl,
+      fontWeight: fontWeightBold,
+      lineHeight: parseLineHeight(lineHeightTight, 1.3),
+      fontFamily
+    },
+    h3: {
+      fontSize: fontSize2xl,
+      fontWeight: fontWeightMedium,
+      lineHeight: parseLineHeight(lineHeightNormal, 1.4),
+      fontFamily
+    },
+    h4: {
+      fontSize: fontSizeXl,
+      fontWeight: fontWeightMedium,
+      lineHeight: parseLineHeight(lineHeightNormal, 1.4),
+      fontFamily
+    },
+    h5: {
+      fontSize: fontSizeLg,
+      fontWeight: fontWeightRegular,
+      lineHeight: parseLineHeight(lineHeightNormal, 1.5),
+      fontFamily
+    },
+    h6: {
+      fontSize: fontSizeBase,
+      fontWeight: fontWeightMedium,
+      lineHeight: parseLineHeight(lineHeightNormal, 1.5),
+      fontFamily
+    },
+    body1: {
+      fontSize: fontSizeBase,
+      fontWeight: fontWeightRegular,
+      lineHeight: parseLineHeight(lineHeightNormal, 1.5),
+      fontFamily
+    },
+    body2: {
+      fontSize: fontSizeSm,
+      fontWeight: fontWeightRegular,
+      lineHeight: parseLineHeight(lineHeightRelaxed, 1.6),
+      fontFamily
+    },
+    button: {
+      fontSize: fontSizeBase,
+      fontWeight: fontWeightMedium,
+      lineHeight: 1.75,
+      fontFamily,
+      textTransform: "none"
+    }
+  };
+}
+
+// src/mappers/spacingMapper.ts
+function mapSpacing(spacingTokens) {
+  const spacingValues = Object.entries(spacingTokens).reduce((acc, [key, token]) => {
+    const value = extractValue(token);
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue)) {
+      acc[parseInt(key, 10)] = numValue;
+    }
+    return acc;
+  }, {});
+  const unit = spacingValues[1] || 4;
+  return (factor) => {
+    return `${factor * unit}px`;
+  };
+}
+
+// src/mappers/shapeMapper.ts
+function mapShape(shapeTokens) {
+  const borderRadiusToken = shapeTokens.borderRadius?.base;
+  const borderRadiusValue = borderRadiusToken ? extractValue(borderRadiusToken) : "8px";
+  const parseBorderRadius = (value) => {
+    if (value.endsWith("px")) {
+      return parseFloat(value);
+    }
+    if (value.endsWith("rem")) {
+      return parseFloat(value) * 16;
+    }
+    return parseFloat(value) || 8;
+  };
+  return {
+    borderRadius: parseBorderRadius(borderRadiusValue)
+  };
+}
+
+// src/mappers/componentMapper.ts
+function mapComponents(semanticTokens, allTokens, _theme) {
+  const resolveToken = (tokenValue) => {
+    let tokenRef = typeof tokenValue === "object" ? extractValue(tokenValue) : tokenValue;
+    if (typeof tokenRef === "string" && tokenRef.startsWith("#")) {
+      return tokenRef;
+    }
+    if (typeof tokenRef === "string" && tokenRef.startsWith("rgba")) {
+      return tokenRef;
+    }
+    if (typeof tokenRef === "string" && tokenRef.startsWith("{") && tokenRef.endsWith("}")) {
+      const path = tokenRef.slice(1, -1);
+      const parts = path.split(".");
+      if (parts.length === 2 && parts[0] === "color" && parts[1].includes("-")) {
+        const colorKey = parts[1];
+        if (allTokens.color && allTokens.color[colorKey]) {
+          return extractValue(allTokens.color[colorKey]);
+        }
+      }
+      let value = allTokens;
+      for (const part of parts) {
+        if (value && typeof value === "object" && part in value) {
+          value = value[part];
+        } else {
+          return tokenRef;
+        }
+      }
+      return extractValue(value);
+    }
+    return typeof tokenRef === "string" ? tokenRef : String(tokenRef);
+  };
+  const getSemanticValue = (category, key) => {
+    const token = semanticTokens[category]?.[key];
+    if (!token) return "#000000";
+    const value = extractValue(token);
+    return resolveToken(value);
+  };
+  return {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none"
+        },
+        containedPrimary: {
+          backgroundColor: getSemanticValue("action", "primary"),
+          color: _theme.palette.primary.contrastText
+        },
+        containedSecondary: {
+          backgroundColor: getSemanticValue("action", "secondary") || getSemanticValue("action", "primary"),
+          color: _theme.palette.secondary.contrastText
+        },
+        containedError: {
+          color: _theme.palette.error?.contrastText || "#ffffff"
+        },
+        containedWarning: {
+          color: _theme.palette.warning?.contrastText || "#ffffff"
+        },
+        containedInfo: {
+          color: _theme.palette.info?.contrastText || "#ffffff"
+        },
+        containedSuccess: {
+          color: _theme.palette.success?.contrastText || "#ffffff"
+        }
+      }
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: getSemanticValue("border", "default")
+            },
+            "&:hover fieldset": {
+              borderColor: getSemanticValue("border", "default")
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: getSemanticValue("border", "focus") || getSemanticValue("action", "primary")
+            }
+          }
+        }
+      }
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: getSemanticValue("surface", "default")
+        }
+      }
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          "&.MuiAlert-standardError": {
+            backgroundColor: getSemanticValue("feedback", "error") || getSemanticValue("action", "primary"),
+            // Use MUI's automatically calculated contrastText for accessibility
+            color: _theme.palette.error?.contrastText || _theme.palette.error?.main || "#ffffff"
+          },
+          "&.MuiAlert-standardWarning": {
+            backgroundColor: getSemanticValue("feedback", "warning") || getSemanticValue("action", "primary"),
+            // Use MUI's automatically calculated contrastText for accessibility
+            color: _theme.palette.warning?.contrastText || _theme.palette.warning?.main || "#ffffff"
+          },
+          "&.MuiAlert-standardInfo": {
+            backgroundColor: getSemanticValue("feedback", "info") || getSemanticValue("action", "primary"),
+            // Use MUI's automatically calculated contrastText for accessibility
+            color: _theme.palette.info?.contrastText || _theme.palette.info?.main || "#ffffff"
+          },
+          "&.MuiAlert-standardSuccess": {
+            backgroundColor: getSemanticValue("feedback", "success") || getSemanticValue("action", "primary"),
+            // Use MUI's automatically calculated contrastText for accessibility
+            color: _theme.palette.success?.contrastText || _theme.palette.success?.main || "#ffffff"
+          }
+        }
+      }
+    }
+  };
+}
+
+// src/buildTheme.ts
+function buildTheme(tokens) {
+  const theme = createTheme({
+    palette: mapPalette(tokens.color || {}),
+    typography: mapTypography(tokens.typography || {}),
+    spacing: mapSpacing(tokens.spacing || {}),
+    shape: mapShape(tokens.shape || {})
+  });
+  const components = mapComponents(tokens.semantic || {}, tokens, theme);
+  return createTheme({
+    ...theme,
+    components
+  });
+}
+
+// ../tokens/core/tokens.json
+var tokens_default = {
+  $schema: "https://schemas.figma.com/tokens/v1",
+  color: {
+    "primary-50": {
+      $value: "#E3F2FD",
+      $type: "color"
+    },
+    "primary-100": {
+      $value: "#BBDEFB",
+      $type: "color"
+    },
+    "primary-200": {
+      $value: "#90CAF9",
+      $type: "color"
+    },
+    "primary-300": {
+      $value: "#64B5F6",
+      $type: "color"
+    },
+    "primary-400": {
+      $value: "#42A5F5",
+      $type: "color"
+    },
+    "primary-500": {
+      $value: "#2196F3",
+      $type: "color"
+    },
+    "primary-600": {
+      $value: "#1E88E5",
+      $type: "color"
+    },
+    "primary-700": {
+      $value: "#1976D2",
+      $type: "color"
+    },
+    "primary-800": {
+      $value: "#1565C0",
+      $type: "color"
+    },
+    "primary-900": {
+      $value: "#0D47A1",
+      $type: "color"
+    },
+    "secondary-50": {
+      $value: "#F3E5F5",
+      $type: "color"
+    },
+    "secondary-100": {
+      $value: "#E1BEE7",
+      $type: "color"
+    },
+    "secondary-200": {
+      $value: "#CE93D8",
+      $type: "color"
+    },
+    "secondary-300": {
+      $value: "#BA68C8",
+      $type: "color"
+    },
+    "secondary-400": {
+      $value: "#AB47BC",
+      $type: "color"
+    },
+    "secondary-500": {
+      $value: "#9C27B0",
+      $type: "color"
+    },
+    "secondary-600": {
+      $value: "#8E24AA",
+      $type: "color"
+    },
+    "secondary-700": {
+      $value: "#7B1FA2",
+      $type: "color"
+    },
+    "secondary-800": {
+      $value: "#6A1B9A",
+      $type: "color"
+    },
+    "secondary-900": {
+      $value: "#4A148C",
+      $type: "color"
+    },
+    "neutral-50": {
+      $value: "#FAFAFA",
+      $type: "color"
+    },
+    "neutral-100": {
+      $value: "#F5F5F5",
+      $type: "color"
+    },
+    "neutral-200": {
+      $value: "#EEEEEE",
+      $type: "color"
+    },
+    "neutral-300": {
+      $value: "#E0E0E0",
+      $type: "color"
+    },
+    "neutral-400": {
+      $value: "#BDBDBD",
+      $type: "color"
+    },
+    "neutral-500": {
+      $value: "#9E9E9E",
+      $type: "color"
+    },
+    "neutral-600": {
+      $value: "#757575",
+      $type: "color"
+    },
+    "neutral-700": {
+      $value: "#616161",
+      $type: "color"
+    },
+    "neutral-800": {
+      $value: "#424242",
+      $type: "color"
+    },
+    "neutral-900": {
+      $value: "#212121",
+      $type: "color"
+    },
+    "error-50": {
+      $value: "#FFEBEE",
+      $type: "color"
+    },
+    "error-100": {
+      $value: "#FFCDD2",
+      $type: "color"
+    },
+    "error-200": {
+      $value: "#EF9A9A",
+      $type: "color"
+    },
+    "error-300": {
+      $value: "#E57373",
+      $type: "color"
+    },
+    "error-400": {
+      $value: "#EF5350",
+      $type: "color"
+    },
+    "error-500": {
+      $value: "#F44336",
+      $type: "color"
+    },
+    "error-600": {
+      $value: "#E53935",
+      $type: "color"
+    },
+    "error-700": {
+      $value: "#D32F2F",
+      $type: "color"
+    },
+    "error-800": {
+      $value: "#C62828",
+      $type: "color"
+    },
+    "error-900": {
+      $value: "#B71C1C",
+      $type: "color"
+    },
+    "warning-50": {
+      $value: "#FFF3E0",
+      $type: "color"
+    },
+    "warning-100": {
+      $value: "#FFE0B2",
+      $type: "color"
+    },
+    "warning-200": {
+      $value: "#FFCC80",
+      $type: "color"
+    },
+    "warning-300": {
+      $value: "#FFB74D",
+      $type: "color"
+    },
+    "warning-400": {
+      $value: "#FFA726",
+      $type: "color"
+    },
+    "warning-500": {
+      $value: "#FF9800",
+      $type: "color"
+    },
+    "warning-600": {
+      $value: "#FB8C00",
+      $type: "color"
+    },
+    "warning-700": {
+      $value: "#F57C00",
+      $type: "color"
+    },
+    "warning-800": {
+      $value: "#EF6C00",
+      $type: "color"
+    },
+    "warning-900": {
+      $value: "#E65100",
+      $type: "color"
+    },
+    "info-50": {
+      $value: "#E0F2F1",
+      $type: "color"
+    },
+    "info-100": {
+      $value: "#B2DFDB",
+      $type: "color"
+    },
+    "info-200": {
+      $value: "#80CBC4",
+      $type: "color"
+    },
+    "info-300": {
+      $value: "#4DB6AC",
+      $type: "color"
+    },
+    "info-400": {
+      $value: "#26A69A",
+      $type: "color"
+    },
+    "info-500": {
+      $value: "#009688",
+      $type: "color"
+    },
+    "info-600": {
+      $value: "#00897B",
+      $type: "color"
+    },
+    "info-700": {
+      $value: "#00796B",
+      $type: "color"
+    },
+    "info-800": {
+      $value: "#00695C",
+      $type: "color"
+    },
+    "info-900": {
+      $value: "#004D40",
+      $type: "color"
+    },
+    "success-50": {
+      $value: "#E8F5E9",
+      $type: "color"
+    },
+    "success-100": {
+      $value: "#C8E6C9",
+      $type: "color"
+    },
+    "success-200": {
+      $value: "#A5D6A7",
+      $type: "color"
+    },
+    "success-300": {
+      $value: "#81C784",
+      $type: "color"
+    },
+    "success-400": {
+      $value: "#66BB6A",
+      $type: "color"
+    },
+    "success-500": {
+      $value: "#4CAF50",
+      $type: "color"
+    },
+    "success-600": {
+      $value: "#43A047",
+      $type: "color"
+    },
+    "success-700": {
+      $value: "#388E3C",
+      $type: "color"
+    },
+    "success-800": {
+      $value: "#2E7D32",
+      $type: "color"
+    },
+    "success-900": {
+      $value: "#1B5E20",
+      $type: "color"
+    }
+  },
+  typography: {
+    fontFamily: {
+      primary: {
+        $value: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+        $type: "fontFamily"
+      },
+      secondary: {
+        $value: '"Roboto", "Helvetica", "Arial", sans-serif',
+        $type: "fontFamily"
+      },
+      mono: {
+        $value: '"Roboto Mono", "Courier New", monospace',
+        $type: "fontFamily"
+      }
+    },
+    fontSize: {
+      xs: {
+        $value: "0.75rem",
+        $type: "dimension"
+      },
+      sm: {
+        $value: "0.875rem",
+        $type: "dimension"
+      },
+      base: {
+        $value: "1rem",
+        $type: "dimension"
+      },
+      lg: {
+        $value: "1.125rem",
+        $type: "dimension"
+      },
+      xl: {
+        $value: "1.25rem",
+        $type: "dimension"
+      },
+      "2xl": {
+        $value: "1.5rem",
+        $type: "dimension"
+      },
+      "3xl": {
+        $value: "1.875rem",
+        $type: "dimension"
+      },
+      "4xl": {
+        $value: "2.25rem",
+        $type: "dimension"
+      },
+      "5xl": {
+        $value: "3rem",
+        $type: "dimension"
+      },
+      "6xl": {
+        $value: "3.75rem",
+        $type: "dimension"
+      }
+    },
+    fontWeight: {
+      light: {
+        $value: 300,
+        $type: "number"
+      },
+      regular: {
+        $value: 400,
+        $type: "number"
+      },
+      medium: {
+        $value: 500,
+        $type: "number"
+      },
+      semibold: {
+        $value: 600,
+        $type: "number"
+      },
+      bold: {
+        $value: 700,
+        $type: "number"
+      }
+    },
+    lineHeight: {
+      none: {
+        $value: 1,
+        $type: "number"
+      },
+      tight: {
+        $value: 1.25,
+        $type: "number"
+      },
+      snug: {
+        $value: 1.375,
+        $type: "number"
+      },
+      normal: {
+        $value: 1.5,
+        $type: "number"
+      },
+      relaxed: {
+        $value: 1.625,
+        $type: "number"
+      },
+      loose: {
+        $value: 2,
+        $type: "number"
+      }
+    }
+  },
+  spacing: {
+    "0": {
+      $value: "0px",
+      $type: "dimension"
+    },
+    "1": {
+      $value: "4px",
+      $type: "dimension"
+    },
+    "2": {
+      $value: "8px",
+      $type: "dimension"
+    },
+    "3": {
+      $value: "12px",
+      $type: "dimension"
+    },
+    "4": {
+      $value: "16px",
+      $type: "dimension"
+    },
+    "5": {
+      $value: "20px",
+      $type: "dimension"
+    },
+    "6": {
+      $value: "24px",
+      $type: "dimension"
+    },
+    "7": {
+      $value: "28px",
+      $type: "dimension"
+    },
+    "8": {
+      $value: "32px",
+      $type: "dimension"
+    },
+    "9": {
+      $value: "36px",
+      $type: "dimension"
+    },
+    "10": {
+      $value: "40px",
+      $type: "dimension"
+    },
+    "12": {
+      $value: "48px",
+      $type: "dimension"
+    },
+    "14": {
+      $value: "56px",
+      $type: "dimension"
+    },
+    "16": {
+      $value: "64px",
+      $type: "dimension"
+    },
+    "20": {
+      $value: "80px",
+      $type: "dimension"
+    },
+    "24": {
+      $value: "96px",
+      $type: "dimension"
+    },
+    "32": {
+      $value: "128px",
+      $type: "dimension"
+    },
+    "40": {
+      $value: "160px",
+      $type: "dimension"
+    },
+    "48": {
+      $value: "192px",
+      $type: "dimension"
+    },
+    "56": {
+      $value: "224px",
+      $type: "dimension"
+    },
+    "64": {
+      $value: "256px",
+      $type: "dimension"
+    }
+  },
+  shape: {
+    borderRadius: {
+      none: {
+        $value: "0",
+        $type: "dimension"
+      },
+      sm: {
+        $value: "4px",
+        $type: "dimension"
+      },
+      base: {
+        $value: "8px",
+        $type: "dimension"
+      },
+      md: {
+        $value: "12px",
+        $type: "dimension"
+      },
+      lg: {
+        $value: "16px",
+        $type: "dimension"
+      },
+      xl: {
+        $value: "24px",
+        $type: "dimension"
+      },
+      "2xl": {
+        $value: "32px",
+        $type: "dimension"
+      },
+      full: {
+        $value: "9999px",
+        $type: "dimension"
+      }
+    },
+    elevation: {
+      "0": {
+        $value: "none",
+        $type: "string"
+      },
+      "1": {
+        $value: "0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24)",
+        $type: "string"
+      },
+      "2": {
+        $value: "0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23)",
+        $type: "string"
+      },
+      "3": {
+        $value: "0px 10px 20px rgba(0, 0, 0, 0.19), 0px 6px 6px rgba(0, 0, 0, 0.23)",
+        $type: "string"
+      },
+      "4": {
+        $value: "0px 14px 28px rgba(0, 0, 0, 0.25), 0px 10px 10px rgba(0, 0, 0, 0.22)",
+        $type: "string"
+      },
+      "5": {
+        $value: "0px 19px 38px rgba(0, 0, 0, 0.30), 0px 15px 12px rgba(0, 0, 0, 0.22)",
+        $type: "string"
+      }
+    }
+  },
+  semantic: {
+    surface: {
+      default: {
+        $value: "{color.neutral.50}",
+        $type: "color"
+      },
+      elevated: {
+        $value: "{color.neutral.0}",
+        $type: "color"
+      },
+      overlay: {
+        $value: "rgba(0, 0, 0, 0.5)",
+        $type: "color"
+      }
+    },
+    text: {
+      primary: {
+        $value: "{color.neutral.900}",
+        $type: "color"
+      },
+      secondary: {
+        $value: "{color.neutral.700}",
+        $type: "color"
+      },
+      disabled: {
+        $value: "{color.neutral.400}",
+        $type: "color"
+      },
+      inverse: {
+        $value: "{color.neutral.50}",
+        $type: "color"
+      }
+    },
+    border: {
+      default: {
+        $value: "{color.neutral.300}",
+        $type: "color"
+      },
+      focus: {
+        $value: "{color.primary.500}",
+        $type: "color"
+      },
+      error: {
+        $value: "{color.error.500}",
+        $type: "color"
+      }
+    },
+    action: {
+      primary: {
+        $value: "{color.primary.500}",
+        $type: "color"
+      },
+      secondary: {
+        $value: "{color.secondary.500}",
+        $type: "color"
+      },
+      disabled: {
+        $value: "{color.neutral.300}",
+        $type: "color"
+      }
+    },
+    feedback: {
+      error: {
+        $value: "{color.error.500}",
+        $type: "color"
+      },
+      warning: {
+        $value: "{color.warning.500}",
+        $type: "color"
+      },
+      info: {
+        $value: "{color.info.500}",
+        $type: "color"
+      },
+      success: {
+        $value: "{color.success.500}",
+        $type: "color"
+      }
+    }
+  }
+};
+
+// ../tokens/bu-a/tokens.json
+var tokens_default2 = {
+  $schema: "https://schemas.figma.com/tokens/v1",
+  color: {
+    "primary-50": {
+      $value: "#E3E8F0",
+      $type: "color"
+    },
+    "primary-100": {
+      $value: "#C1CBD9",
+      $type: "color"
+    },
+    "primary-200": {
+      $value: "#9BABC0",
+      $type: "color"
+    },
+    "primary-300": {
+      $value: "#748BA7",
+      $type: "color"
+    },
+    "primary-400": {
+      $value: "#577394",
+      $type: "color"
+    },
+    "primary-500": {
+      $value: "#3A5B81",
+      $type: "color"
+    },
+    "primary-600": {
+      $value: "#345375",
+      $type: "color"
+    },
+    "primary-700": {
+      $value: "#2C4967",
+      $type: "color"
+    },
+    "primary-800": {
+      $value: "#253F59",
+      $type: "color"
+    },
+    "primary-900": {
+      $value: "#182E47",
+      $type: "color"
+    },
+    "secondary-50": {
+      $value: "#F0F2F5",
+      $type: "color"
+    },
+    "secondary-100": {
+      $value: "#D9DDE3",
+      $type: "color"
+    },
+    "secondary-200": {
+      $value: "#C0C6CF",
+      $type: "color"
+    },
+    "secondary-300": {
+      $value: "#A7AFBB",
+      $type: "color"
+    },
+    "secondary-400": {
+      $value: "#949EAD",
+      $type: "color"
+    },
+    "secondary-500": {
+      $value: "#818D9F",
+      $type: "color"
+    },
+    "secondary-600": {
+      $value: "#797F8F",
+      $type: "color"
+    },
+    "secondary-700": {
+      $value: "#6E717D",
+      $type: "color"
+    },
+    "secondary-800": {
+      $value: "#64676B",
+      $type: "color"
+    },
+    "secondary-900": {
+      $value: "#515459",
+      $type: "color"
+    },
+    "neutral-50": {
+      $value: "#FAFAFA",
+      $type: "color"
+    },
+    "neutral-100": {
+      $value: "#F5F5F5",
+      $type: "color"
+    },
+    "neutral-200": {
+      $value: "#EEEEEE",
+      $type: "color"
+    },
+    "neutral-300": {
+      $value: "#E0E0E0",
+      $type: "color"
+    },
+    "neutral-400": {
+      $value: "#BDBDBD",
+      $type: "color"
+    },
+    "neutral-500": {
+      $value: "#9E9E9E",
+      $type: "color"
+    },
+    "neutral-600": {
+      $value: "#757575",
+      $type: "color"
+    },
+    "neutral-700": {
+      $value: "#616161",
+      $type: "color"
+    },
+    "neutral-800": {
+      $value: "#424242",
+      $type: "color"
+    },
+    "neutral-900": {
+      $value: "#212121",
+      $type: "color"
+    },
+    "error-50": {
+      $value: "#FFEBEE",
+      $type: "color"
+    },
+    "error-100": {
+      $value: "#FFCDD2",
+      $type: "color"
+    },
+    "error-200": {
+      $value: "#EF9A9A",
+      $type: "color"
+    },
+    "error-300": {
+      $value: "#E57373",
+      $type: "color"
+    },
+    "error-400": {
+      $value: "#EF5350",
+      $type: "color"
+    },
+    "error-500": {
+      $value: "#F44336",
+      $type: "color"
+    },
+    "error-600": {
+      $value: "#E53935",
+      $type: "color"
+    },
+    "error-700": {
+      $value: "#D32F2F",
+      $type: "color"
+    },
+    "error-800": {
+      $value: "#C62828",
+      $type: "color"
+    },
+    "error-900": {
+      $value: "#B71C1C",
+      $type: "color"
+    },
+    "warning-50": {
+      $value: "#FFF3E0",
+      $type: "color"
+    },
+    "warning-100": {
+      $value: "#FFE0B2",
+      $type: "color"
+    },
+    "warning-200": {
+      $value: "#FFCC80",
+      $type: "color"
+    },
+    "warning-300": {
+      $value: "#FFB74D",
+      $type: "color"
+    },
+    "warning-400": {
+      $value: "#FFA726",
+      $type: "color"
+    },
+    "warning-500": {
+      $value: "#FF9800",
+      $type: "color"
+    },
+    "warning-600": {
+      $value: "#FB8C00",
+      $type: "color"
+    },
+    "warning-700": {
+      $value: "#F57C00",
+      $type: "color"
+    },
+    "warning-800": {
+      $value: "#EF6C00",
+      $type: "color"
+    },
+    "warning-900": {
+      $value: "#E65100",
+      $type: "color"
+    },
+    "info-50": {
+      $value: "#E0F2F1",
+      $type: "color"
+    },
+    "info-100": {
+      $value: "#B2DFDB",
+      $type: "color"
+    },
+    "info-200": {
+      $value: "#80CBC4",
+      $type: "color"
+    },
+    "info-300": {
+      $value: "#4DB6AC",
+      $type: "color"
+    },
+    "info-400": {
+      $value: "#26A69A",
+      $type: "color"
+    },
+    "info-500": {
+      $value: "#009688",
+      $type: "color"
+    },
+    "info-600": {
+      $value: "#00897B",
+      $type: "color"
+    },
+    "info-700": {
+      $value: "#00796B",
+      $type: "color"
+    },
+    "info-800": {
+      $value: "#00695C",
+      $type: "color"
+    },
+    "info-900": {
+      $value: "#004D40",
+      $type: "color"
+    },
+    "success-50": {
+      $value: "#E8F5E9",
+      $type: "color"
+    },
+    "success-100": {
+      $value: "#C8E6C9",
+      $type: "color"
+    },
+    "success-200": {
+      $value: "#A5D6A7",
+      $type: "color"
+    },
+    "success-300": {
+      $value: "#81C784",
+      $type: "color"
+    },
+    "success-400": {
+      $value: "#66BB6A",
+      $type: "color"
+    },
+    "success-500": {
+      $value: "#4CAF50",
+      $type: "color"
+    },
+    "success-600": {
+      $value: "#43A047",
+      $type: "color"
+    },
+    "success-700": {
+      $value: "#388E3C",
+      $type: "color"
+    },
+    "success-800": {
+      $value: "#2E7D32",
+      $type: "color"
+    },
+    "success-900": {
+      $value: "#1B5E20",
+      $type: "color"
+    }
+  },
+  typography: {
+    fontFamily: {
+      primary: {
+        $value: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+        $type: "fontFamily"
+      }
+    },
+    fontSize: {
+      xs: {
+        $value: "0.6875rem",
+        $type: "dimension"
+      },
+      sm: {
+        $value: "0.8125rem",
+        $type: "dimension"
+      },
+      base: {
+        $value: "0.875rem",
+        $type: "dimension"
+      },
+      lg: {
+        $value: "0.9375rem",
+        $type: "dimension"
+      },
+      xl: {
+        $value: "1rem",
+        $type: "dimension"
+      },
+      "2xl": {
+        $value: "1.25rem",
+        $type: "dimension"
+      },
+      "3xl": {
+        $value: "1.5rem",
+        $type: "dimension"
+      },
+      "4xl": {
+        $value: "1.75rem",
+        $type: "dimension"
+      }
+    },
+    fontWeight: {
+      light: {
+        $value: 300,
+        $type: "number"
+      },
+      regular: {
+        $value: 400,
+        $type: "number"
+      },
+      medium: {
+        $value: 500,
+        $type: "number"
+      },
+      semibold: {
+        $value: 600,
+        $type: "number"
+      },
+      bold: {
+        $value: 700,
+        $type: "number"
+      }
+    },
+    lineHeight: {
+      none: {
+        $value: 1,
+        $type: "number"
+      },
+      tight: {
+        $value: 1.25,
+        $type: "number"
+      },
+      snug: {
+        $value: 1.375,
+        $type: "number"
+      },
+      normal: {
+        $value: 1.5,
+        $type: "number"
+      },
+      relaxed: {
+        $value: 1.625,
+        $type: "number"
+      },
+      loose: {
+        $value: 2,
+        $type: "number"
+      }
+    }
+  },
+  spacing: {
+    "0": {
+      $value: "0px",
+      $type: "dimension"
+    },
+    "1": {
+      $value: "4px",
+      $type: "dimension"
+    },
+    "2": {
+      $value: "8px",
+      $type: "dimension"
+    },
+    "3": {
+      $value: "12px",
+      $type: "dimension"
+    },
+    "4": {
+      $value: "16px",
+      $type: "dimension"
+    },
+    "5": {
+      $value: "20px",
+      $type: "dimension"
+    },
+    "6": {
+      $value: "24px",
+      $type: "dimension"
+    },
+    "7": {
+      $value: "28px",
+      $type: "dimension"
+    },
+    "8": {
+      $value: "32px",
+      $type: "dimension"
+    },
+    "9": {
+      $value: "36px",
+      $type: "dimension"
+    },
+    "10": {
+      $value: "40px",
+      $type: "dimension"
+    },
+    "12": {
+      $value: "48px",
+      $type: "dimension"
+    },
+    "14": {
+      $value: "56px",
+      $type: "dimension"
+    },
+    "16": {
+      $value: "64px",
+      $type: "dimension"
+    },
+    "20": {
+      $value: "80px",
+      $type: "dimension"
+    },
+    "24": {
+      $value: "96px",
+      $type: "dimension"
+    },
+    "32": {
+      $value: "128px",
+      $type: "dimension"
+    },
+    "40": {
+      $value: "160px",
+      $type: "dimension"
+    },
+    "48": {
+      $value: "192px",
+      $type: "dimension"
+    },
+    "56": {
+      $value: "224px",
+      $type: "dimension"
+    },
+    "64": {
+      $value: "256px",
+      $type: "dimension"
+    }
+  },
+  shape: {
+    borderRadius: {
+      none: {
+        $value: "0",
+        $type: "dimension"
+      },
+      sm: {
+        $value: "4px",
+        $type: "dimension"
+      },
+      base: {
+        $value: "8px",
+        $type: "dimension"
+      },
+      md: {
+        $value: "12px",
+        $type: "dimension"
+      },
+      lg: {
+        $value: "16px",
+        $type: "dimension"
+      },
+      xl: {
+        $value: "24px",
+        $type: "dimension"
+      },
+      "2xl": {
+        $value: "32px",
+        $type: "dimension"
+      },
+      full: {
+        $value: "9999px",
+        $type: "dimension"
+      }
+    },
+    elevation: {
+      "0": {
+        $value: "none",
+        $type: "string"
+      },
+      "1": {
+        $value: "0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24)",
+        $type: "string"
+      },
+      "2": {
+        $value: "0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23)",
+        $type: "string"
+      },
+      "3": {
+        $value: "0px 10px 20px rgba(0, 0, 0, 0.19), 0px 6px 6px rgba(0, 0, 0, 0.23)",
+        $type: "string"
+      },
+      "4": {
+        $value: "0px 14px 28px rgba(0, 0, 0, 0.25), 0px 10px 10px rgba(0, 0, 0, 0.22)",
+        $type: "string"
+      },
+      "5": {
+        $value: "0px 19px 38px rgba(0, 0, 0, 0.30), 0px 15px 12px rgba(0, 0, 0, 0.22)",
+        $type: "string"
+      }
+    }
+  },
+  semantic: {
+    surface: {
+      default: {
+        $value: "{color.neutral-50}",
+        $type: "color"
+      },
+      elevated: {
+        $value: "{color.neutral-0}",
+        $type: "color"
+      }
+    },
+    text: {
+      primary: {
+        $value: "{color.neutral-900}",
+        $type: "color"
+      },
+      secondary: {
+        $value: "{color.neutral-800}",
+        $type: "color"
+      }
+    },
+    border: {
+      default: {
+        $value: "{color.neutral-400}",
+        $type: "color"
+      },
+      focus: {
+        $value: "{color.primary-500}",
+        $type: "color"
+      },
+      error: {
+        $value: "{color.error-500}",
+        $type: "color"
+      }
+    },
+    action: {
+      primary: {
+        $value: "{color.primary-500}",
+        $type: "color"
+      },
+      secondary: {
+        $value: "{color.secondary-500}",
+        $type: "color"
+      }
+    },
+    feedback: {
+      error: {
+        $value: "{color.error-500}",
+        $type: "color"
+      },
+      warning: {
+        $value: "{color.warning-500}",
+        $type: "color"
+      },
+      info: {
+        $value: "{color.info-500}",
+        $type: "color"
+      },
+      success: {
+        $value: "{color.success-500}",
+        $type: "color"
+      }
+    }
+  }
+};
+
+// ../tokens/bu-b/tokens.json
+var tokens_default3 = {
+  $schema: "https://schemas.figma.com/tokens/v1",
+  color: {
+    "primary-50": {
+      $value: "#E0F7FA",
+      $type: "color"
+    },
+    "primary-100": {
+      $value: "#B2EBF2",
+      $type: "color"
+    },
+    "primary-200": {
+      $value: "#80DEEA",
+      $type: "color"
+    },
+    "primary-300": {
+      $value: "#4DD0E1",
+      $type: "color"
+    },
+    "primary-400": {
+      $value: "#26C6DA",
+      $type: "color"
+    },
+    "primary-500": {
+      $value: "#00BCD4",
+      $type: "color"
+    },
+    "primary-600": {
+      $value: "#00ACC1",
+      $type: "color"
+    },
+    "primary-700": {
+      $value: "#0097A7",
+      $type: "color"
+    },
+    "primary-800": {
+      $value: "#00838F",
+      $type: "color"
+    },
+    "primary-900": {
+      $value: "#006064",
+      $type: "color"
+    },
+    "secondary-50": {
+      $value: "#FFF8E1",
+      $type: "color"
+    },
+    "secondary-100": {
+      $value: "#FFECB3",
+      $type: "color"
+    },
+    "secondary-200": {
+      $value: "#FFE082",
+      $type: "color"
+    },
+    "secondary-300": {
+      $value: "#FFD54F",
+      $type: "color"
+    },
+    "secondary-400": {
+      $value: "#FFCA28",
+      $type: "color"
+    },
+    "secondary-500": {
+      $value: "#FFC107",
+      $type: "color"
+    },
+    "secondary-600": {
+      $value: "#FFB300",
+      $type: "color"
+    },
+    "secondary-700": {
+      $value: "#FFA000",
+      $type: "color"
+    },
+    "secondary-800": {
+      $value: "#FF8F00",
+      $type: "color"
+    },
+    "secondary-900": {
+      $value: "#FF6F00",
+      $type: "color"
+    },
+    "neutral-50": {
+      $value: "#FAFAFA",
+      $type: "color"
+    },
+    "neutral-100": {
+      $value: "#F5F5F5",
+      $type: "color"
+    },
+    "neutral-200": {
+      $value: "#EEEEEE",
+      $type: "color"
+    },
+    "neutral-300": {
+      $value: "#E0E0E0",
+      $type: "color"
+    },
+    "neutral-400": {
+      $value: "#BDBDBD",
+      $type: "color"
+    },
+    "neutral-500": {
+      $value: "#9E9E9E",
+      $type: "color"
+    },
+    "neutral-600": {
+      $value: "#757575",
+      $type: "color"
+    },
+    "neutral-700": {
+      $value: "#616161",
+      $type: "color"
+    },
+    "neutral-800": {
+      $value: "#424242",
+      $type: "color"
+    },
+    "neutral-900": {
+      $value: "#212121",
+      $type: "color"
+    },
+    "error-50": {
+      $value: "#FFEBEE",
+      $type: "color"
+    },
+    "error-100": {
+      $value: "#FFCDD2",
+      $type: "color"
+    },
+    "error-200": {
+      $value: "#EF9A9A",
+      $type: "color"
+    },
+    "error-300": {
+      $value: "#E57373",
+      $type: "color"
+    },
+    "error-400": {
+      $value: "#EF5350",
+      $type: "color"
+    },
+    "error-500": {
+      $value: "#F44336",
+      $type: "color"
+    },
+    "error-600": {
+      $value: "#E53935",
+      $type: "color"
+    },
+    "error-700": {
+      $value: "#D32F2F",
+      $type: "color"
+    },
+    "error-800": {
+      $value: "#C62828",
+      $type: "color"
+    },
+    "error-900": {
+      $value: "#B71C1C",
+      $type: "color"
+    },
+    "warning-50": {
+      $value: "#FFF3E0",
+      $type: "color"
+    },
+    "warning-100": {
+      $value: "#FFE0B2",
+      $type: "color"
+    },
+    "warning-200": {
+      $value: "#FFCC80",
+      $type: "color"
+    },
+    "warning-300": {
+      $value: "#FFB74D",
+      $type: "color"
+    },
+    "warning-400": {
+      $value: "#FFA726",
+      $type: "color"
+    },
+    "warning-500": {
+      $value: "#FF9800",
+      $type: "color"
+    },
+    "warning-600": {
+      $value: "#FB8C00",
+      $type: "color"
+    },
+    "warning-700": {
+      $value: "#F57C00",
+      $type: "color"
+    },
+    "warning-800": {
+      $value: "#EF6C00",
+      $type: "color"
+    },
+    "warning-900": {
+      $value: "#E65100",
+      $type: "color"
+    },
+    "info-50": {
+      $value: "#E0F2F1",
+      $type: "color"
+    },
+    "info-100": {
+      $value: "#B2DFDB",
+      $type: "color"
+    },
+    "info-200": {
+      $value: "#80CBC4",
+      $type: "color"
+    },
+    "info-300": {
+      $value: "#4DB6AC",
+      $type: "color"
+    },
+    "info-400": {
+      $value: "#26A69A",
+      $type: "color"
+    },
+    "info-500": {
+      $value: "#009688",
+      $type: "color"
+    },
+    "info-600": {
+      $value: "#00897B",
+      $type: "color"
+    },
+    "info-700": {
+      $value: "#00796B",
+      $type: "color"
+    },
+    "info-800": {
+      $value: "#00695C",
+      $type: "color"
+    },
+    "info-900": {
+      $value: "#004D40",
+      $type: "color"
+    },
+    "success-50": {
+      $value: "#E8F5E9",
+      $type: "color"
+    },
+    "success-100": {
+      $value: "#C8E6C9",
+      $type: "color"
+    },
+    "success-200": {
+      $value: "#A5D6A7",
+      $type: "color"
+    },
+    "success-300": {
+      $value: "#81C784",
+      $type: "color"
+    },
+    "success-400": {
+      $value: "#66BB6A",
+      $type: "color"
+    },
+    "success-500": {
+      $value: "#4CAF50",
+      $type: "color"
+    },
+    "success-600": {
+      $value: "#43A047",
+      $type: "color"
+    },
+    "success-700": {
+      $value: "#388E3C",
+      $type: "color"
+    },
+    "success-800": {
+      $value: "#2E7D32",
+      $type: "color"
+    },
+    "success-900": {
+      $value: "#1B5E20",
+      $type: "color"
+    }
+  },
+  typography: {
+    fontFamily: {
+      primary: {
+        $value: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+        $type: "fontFamily"
+      }
+    },
+    fontSize: {
+      xs: {
+        $value: "0.875rem",
+        $type: "dimension"
+      },
+      sm: {
+        $value: "1rem",
+        $type: "dimension"
+      },
+      base: {
+        $value: "1.125rem",
+        $type: "dimension"
+      },
+      lg: {
+        $value: "1.25rem",
+        $type: "dimension"
+      },
+      xl: {
+        $value: "1.5rem",
+        $type: "dimension"
+      },
+      "2xl": {
+        $value: "1.875rem",
+        $type: "dimension"
+      },
+      "3xl": {
+        $value: "2.25rem",
+        $type: "dimension"
+      },
+      "4xl": {
+        $value: "2.75rem",
+        $type: "dimension"
+      }
+    },
+    fontWeight: {
+      light: {
+        $value: 300,
+        $type: "number"
+      },
+      regular: {
+        $value: 400,
+        $type: "number"
+      },
+      medium: {
+        $value: 500,
+        $type: "number"
+      },
+      semibold: {
+        $value: 600,
+        $type: "number"
+      },
+      bold: {
+        $value: 700,
+        $type: "number"
+      }
+    },
+    lineHeight: {
+      none: {
+        $value: 1,
+        $type: "number"
+      },
+      tight: {
+        $value: 1.25,
+        $type: "number"
+      },
+      snug: {
+        $value: 1.375,
+        $type: "number"
+      },
+      normal: {
+        $value: 1.5,
+        $type: "number"
+      },
+      relaxed: {
+        $value: 1.625,
+        $type: "number"
+      },
+      loose: {
+        $value: 2,
+        $type: "number"
+      }
+    }
+  },
+  spacing: {
+    "0": {
+      $value: "0px",
+      $type: "dimension"
+    },
+    "1": {
+      $value: "4px",
+      $type: "dimension"
+    },
+    "2": {
+      $value: "8px",
+      $type: "dimension"
+    },
+    "3": {
+      $value: "12px",
+      $type: "dimension"
+    },
+    "4": {
+      $value: "16px",
+      $type: "dimension"
+    },
+    "5": {
+      $value: "20px",
+      $type: "dimension"
+    },
+    "6": {
+      $value: "24px",
+      $type: "dimension"
+    },
+    "7": {
+      $value: "28px",
+      $type: "dimension"
+    },
+    "8": {
+      $value: "32px",
+      $type: "dimension"
+    },
+    "9": {
+      $value: "36px",
+      $type: "dimension"
+    },
+    "10": {
+      $value: "40px",
+      $type: "dimension"
+    },
+    "12": {
+      $value: "48px",
+      $type: "dimension"
+    },
+    "14": {
+      $value: "56px",
+      $type: "dimension"
+    },
+    "16": {
+      $value: "64px",
+      $type: "dimension"
+    },
+    "20": {
+      $value: "80px",
+      $type: "dimension"
+    },
+    "24": {
+      $value: "96px",
+      $type: "dimension"
+    },
+    "32": {
+      $value: "128px",
+      $type: "dimension"
+    },
+    "40": {
+      $value: "160px",
+      $type: "dimension"
+    },
+    "48": {
+      $value: "192px",
+      $type: "dimension"
+    },
+    "56": {
+      $value: "224px",
+      $type: "dimension"
+    },
+    "64": {
+      $value: "256px",
+      $type: "dimension"
+    }
+  },
+  shape: {
+    borderRadius: {
+      none: {
+        $value: "0",
+        $type: "dimension"
+      },
+      sm: {
+        $value: "4px",
+        $type: "dimension"
+      },
+      base: {
+        $value: "8px",
+        $type: "dimension"
+      },
+      md: {
+        $value: "12px",
+        $type: "dimension"
+      },
+      lg: {
+        $value: "16px",
+        $type: "dimension"
+      },
+      xl: {
+        $value: "24px",
+        $type: "dimension"
+      },
+      "2xl": {
+        $value: "32px",
+        $type: "dimension"
+      },
+      full: {
+        $value: "9999px",
+        $type: "dimension"
+      }
+    },
+    elevation: {
+      "0": {
+        $value: "none",
+        $type: "string"
+      },
+      "1": {
+        $value: "0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24)",
+        $type: "string"
+      },
+      "2": {
+        $value: "0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23)",
+        $type: "string"
+      },
+      "3": {
+        $value: "0px 10px 20px rgba(0, 0, 0, 0.19), 0px 6px 6px rgba(0, 0, 0, 0.23)",
+        $type: "string"
+      },
+      "4": {
+        $value: "0px 14px 28px rgba(0, 0, 0, 0.25), 0px 10px 10px rgba(0, 0, 0, 0.22)",
+        $type: "string"
+      },
+      "5": {
+        $value: "0px 19px 38px rgba(0, 0, 0, 0.30), 0px 15px 12px rgba(0, 0, 0, 0.22)",
+        $type: "string"
+      }
+    }
+  },
+  semantic: {
+    surface: {
+      default: {
+        $value: "{color.neutral-50}",
+        $type: "color"
+      },
+      elevated: {
+        $value: "{color.neutral-0}",
+        $type: "color"
+      }
+    },
+    text: {
+      primary: {
+        $value: "{color.neutral-800}",
+        $type: "color"
+      },
+      secondary: {
+        $value: "{color.neutral-600}",
+        $type: "color"
+      }
+    },
+    border: {
+      default: {
+        $value: "{color.neutral-200}",
+        $type: "color"
+      },
+      focus: {
+        $value: "{color.primary-500}",
+        $type: "color"
+      },
+      error: {
+        $value: "{color.error-500}",
+        $type: "color"
+      }
+    },
+    action: {
+      primary: {
+        $value: "{color.primary-500}",
+        $type: "color"
+      },
+      secondary: {
+        $value: "{color.secondary-500}",
+        $type: "color"
+      }
+    },
+    feedback: {
+      error: {
+        $value: "{color.error-500}",
+        $type: "color"
+      },
+      warning: {
+        $value: "{color.warning-500}",
+        $type: "color"
+      },
+      info: {
+        $value: "{color.info-500}",
+        $type: "color"
+      },
+      success: {
+        $value: "{color.success-500}",
+        $type: "color"
+      }
+    }
+  }
+};
+
+// ../tokens/bu-c/tokens.json
+var tokens_default4 = {
+  $schema: "https://schemas.figma.com/tokens/v1",
+  color: {
+    "primary-50": {
+      $value: "#EDE7F6",
+      $type: "color"
+    },
+    "primary-100": {
+      $value: "#D1C4E9",
+      $type: "color"
+    },
+    "primary-200": {
+      $value: "#B39DDB",
+      $type: "color"
+    },
+    "primary-300": {
+      $value: "#9575CD",
+      $type: "color"
+    },
+    "primary-400": {
+      $value: "#7E57C2",
+      $type: "color"
+    },
+    "primary-500": {
+      $value: "#673AB7",
+      $type: "color"
+    },
+    "primary-600": {
+      $value: "#5E35B1",
+      $type: "color"
+    },
+    "primary-700": {
+      $value: "#512DA8",
+      $type: "color"
+    },
+    "primary-800": {
+      $value: "#4527A0",
+      $type: "color"
+    },
+    "primary-900": {
+      $value: "#311B92",
+      $type: "color"
+    },
+    "secondary-50": {
+      $value: "#FFF8E1",
+      $type: "color"
+    },
+    "secondary-100": {
+      $value: "#FFECB3",
+      $type: "color"
+    },
+    "secondary-200": {
+      $value: "#FFE082",
+      $type: "color"
+    },
+    "secondary-300": {
+      $value: "#FFD54F",
+      $type: "color"
+    },
+    "secondary-400": {
+      $value: "#FFCA28",
+      $type: "color"
+    },
+    "secondary-500": {
+      $value: "#FFC107",
+      $type: "color"
+    },
+    "secondary-600": {
+      $value: "#FFB300",
+      $type: "color"
+    },
+    "secondary-700": {
+      $value: "#FFA000",
+      $type: "color"
+    },
+    "secondary-800": {
+      $value: "#FF8F00",
+      $type: "color"
+    },
+    "secondary-900": {
+      $value: "#FF6F00",
+      $type: "color"
+    },
+    "neutral-50": {
+      $value: "#FAFAFA",
+      $type: "color"
+    },
+    "neutral-100": {
+      $value: "#F5F5F5",
+      $type: "color"
+    },
+    "neutral-200": {
+      $value: "#EEEEEE",
+      $type: "color"
+    },
+    "neutral-300": {
+      $value: "#E0E0E0",
+      $type: "color"
+    },
+    "neutral-400": {
+      $value: "#BDBDBD",
+      $type: "color"
+    },
+    "neutral-500": {
+      $value: "#9E9E9E",
+      $type: "color"
+    },
+    "neutral-600": {
+      $value: "#757575",
+      $type: "color"
+    },
+    "neutral-700": {
+      $value: "#616161",
+      $type: "color"
+    },
+    "neutral-800": {
+      $value: "#424242",
+      $type: "color"
+    },
+    "neutral-900": {
+      $value: "#212121",
+      $type: "color"
+    },
+    "error-50": {
+      $value: "#FFEBEE",
+      $type: "color"
+    },
+    "error-100": {
+      $value: "#FFCDD2",
+      $type: "color"
+    },
+    "error-200": {
+      $value: "#EF9A9A",
+      $type: "color"
+    },
+    "error-300": {
+      $value: "#E57373",
+      $type: "color"
+    },
+    "error-400": {
+      $value: "#EF5350",
+      $type: "color"
+    },
+    "error-500": {
+      $value: "#F44336",
+      $type: "color"
+    },
+    "error-600": {
+      $value: "#E53935",
+      $type: "color"
+    },
+    "error-700": {
+      $value: "#D32F2F",
+      $type: "color"
+    },
+    "error-800": {
+      $value: "#C62828",
+      $type: "color"
+    },
+    "error-900": {
+      $value: "#B71C1C",
+      $type: "color"
+    },
+    "warning-50": {
+      $value: "#FFF3E0",
+      $type: "color"
+    },
+    "warning-100": {
+      $value: "#FFE0B2",
+      $type: "color"
+    },
+    "warning-200": {
+      $value: "#FFCC80",
+      $type: "color"
+    },
+    "warning-300": {
+      $value: "#FFB74D",
+      $type: "color"
+    },
+    "warning-400": {
+      $value: "#FFA726",
+      $type: "color"
+    },
+    "warning-500": {
+      $value: "#FF9800",
+      $type: "color"
+    },
+    "warning-600": {
+      $value: "#FB8C00",
+      $type: "color"
+    },
+    "warning-700": {
+      $value: "#F57C00",
+      $type: "color"
+    },
+    "warning-800": {
+      $value: "#EF6C00",
+      $type: "color"
+    },
+    "warning-900": {
+      $value: "#E65100",
+      $type: "color"
+    },
+    "info-50": {
+      $value: "#E0F2F1",
+      $type: "color"
+    },
+    "info-100": {
+      $value: "#B2DFDB",
+      $type: "color"
+    },
+    "info-200": {
+      $value: "#80CBC4",
+      $type: "color"
+    },
+    "info-300": {
+      $value: "#4DB6AC",
+      $type: "color"
+    },
+    "info-400": {
+      $value: "#26A69A",
+      $type: "color"
+    },
+    "info-500": {
+      $value: "#009688",
+      $type: "color"
+    },
+    "info-600": {
+      $value: "#00897B",
+      $type: "color"
+    },
+    "info-700": {
+      $value: "#00796B",
+      $type: "color"
+    },
+    "info-800": {
+      $value: "#00695C",
+      $type: "color"
+    },
+    "info-900": {
+      $value: "#004D40",
+      $type: "color"
+    },
+    "success-50": {
+      $value: "#E8F5E9",
+      $type: "color"
+    },
+    "success-100": {
+      $value: "#C8E6C9",
+      $type: "color"
+    },
+    "success-200": {
+      $value: "#A5D6A7",
+      $type: "color"
+    },
+    "success-300": {
+      $value: "#81C784",
+      $type: "color"
+    },
+    "success-400": {
+      $value: "#66BB6A",
+      $type: "color"
+    },
+    "success-500": {
+      $value: "#4CAF50",
+      $type: "color"
+    },
+    "success-600": {
+      $value: "#43A047",
+      $type: "color"
+    },
+    "success-700": {
+      $value: "#388E3C",
+      $type: "color"
+    },
+    "success-800": {
+      $value: "#2E7D32",
+      $type: "color"
+    },
+    "success-900": {
+      $value: "#1B5E20",
+      $type: "color"
+    }
+  },
+  typography: {
+    fontFamily: {
+      primary: {
+        $value: '"Georgia", "Times New Roman", serif',
+        $type: "fontFamily"
+      },
+      secondary: {
+        $value: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+        $type: "fontFamily"
+      },
+      mono: {
+        $value: '"Roboto Mono", "Courier New", monospace',
+        $type: "fontFamily"
+      }
+    },
+    fontSize: {
+      xs: {
+        $value: "0.75rem",
+        $type: "dimension"
+      },
+      sm: {
+        $value: "0.875rem",
+        $type: "dimension"
+      },
+      base: {
+        $value: "1rem",
+        $type: "dimension"
+      },
+      lg: {
+        $value: "1.125rem",
+        $type: "dimension"
+      },
+      xl: {
+        $value: "1.25rem",
+        $type: "dimension"
+      },
+      "2xl": {
+        $value: "1.5rem",
+        $type: "dimension"
+      },
+      "3xl": {
+        $value: "1.875rem",
+        $type: "dimension"
+      },
+      "4xl": {
+        $value: "2.25rem",
+        $type: "dimension"
+      }
+    },
+    fontWeight: {
+      light: {
+        $value: 300,
+        $type: "number"
+      },
+      regular: {
+        $value: 400,
+        $type: "number"
+      },
+      medium: {
+        $value: 500,
+        $type: "number"
+      },
+      semibold: {
+        $value: 600,
+        $type: "number"
+      },
+      bold: {
+        $value: 700,
+        $type: "number"
+      }
+    },
+    lineHeight: {
+      none: {
+        $value: 1,
+        $type: "number"
+      },
+      tight: {
+        $value: 1.25,
+        $type: "number"
+      },
+      snug: {
+        $value: 1.375,
+        $type: "number"
+      },
+      normal: {
+        $value: 1.5,
+        $type: "number"
+      },
+      relaxed: {
+        $value: 1.625,
+        $type: "number"
+      },
+      loose: {
+        $value: 2,
+        $type: "number"
+      }
+    }
+  },
+  spacing: {
+    "0": {
+      $value: "0px",
+      $type: "dimension"
+    },
+    "1": {
+      $value: "4px",
+      $type: "dimension"
+    },
+    "2": {
+      $value: "8px",
+      $type: "dimension"
+    },
+    "3": {
+      $value: "12px",
+      $type: "dimension"
+    },
+    "4": {
+      $value: "16px",
+      $type: "dimension"
+    },
+    "5": {
+      $value: "20px",
+      $type: "dimension"
+    },
+    "6": {
+      $value: "24px",
+      $type: "dimension"
+    },
+    "7": {
+      $value: "28px",
+      $type: "dimension"
+    },
+    "8": {
+      $value: "32px",
+      $type: "dimension"
+    },
+    "9": {
+      $value: "36px",
+      $type: "dimension"
+    },
+    "10": {
+      $value: "40px",
+      $type: "dimension"
+    },
+    "12": {
+      $value: "48px",
+      $type: "dimension"
+    },
+    "14": {
+      $value: "56px",
+      $type: "dimension"
+    },
+    "16": {
+      $value: "64px",
+      $type: "dimension"
+    },
+    "20": {
+      $value: "80px",
+      $type: "dimension"
+    },
+    "24": {
+      $value: "96px",
+      $type: "dimension"
+    },
+    "32": {
+      $value: "128px",
+      $type: "dimension"
+    },
+    "40": {
+      $value: "160px",
+      $type: "dimension"
+    },
+    "48": {
+      $value: "192px",
+      $type: "dimension"
+    },
+    "56": {
+      $value: "224px",
+      $type: "dimension"
+    },
+    "64": {
+      $value: "256px",
+      $type: "dimension"
+    }
+  },
+  shape: {
+    borderRadius: {
+      none: {
+        $value: "0",
+        $type: "dimension"
+      },
+      sm: {
+        $value: "4px",
+        $type: "dimension"
+      },
+      base: {
+        $value: "8px",
+        $type: "dimension"
+      },
+      md: {
+        $value: "12px",
+        $type: "dimension"
+      },
+      lg: {
+        $value: "16px",
+        $type: "dimension"
+      },
+      xl: {
+        $value: "24px",
+        $type: "dimension"
+      },
+      "2xl": {
+        $value: "32px",
+        $type: "dimension"
+      },
+      full: {
+        $value: "9999px",
+        $type: "dimension"
+      }
+    },
+    elevation: {
+      "0": {
+        $value: "none",
+        $type: "string"
+      },
+      "1": {
+        $value: "0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24)",
+        $type: "string"
+      },
+      "2": {
+        $value: "0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23)",
+        $type: "string"
+      },
+      "3": {
+        $value: "0px 10px 20px rgba(0, 0, 0, 0.19), 0px 6px 6px rgba(0, 0, 0, 0.23)",
+        $type: "string"
+      },
+      "4": {
+        $value: "0px 14px 28px rgba(0, 0, 0, 0.25), 0px 10px 10px rgba(0, 0, 0, 0.22)",
+        $type: "string"
+      },
+      "5": {
+        $value: "0px 19px 38px rgba(0, 0, 0, 0.30), 0px 15px 12px rgba(0, 0, 0, 0.22)",
+        $type: "string"
+      }
+    }
+  },
+  semantic: {
+    surface: {
+      default: {
+        $value: "{color.neutral-50}",
+        $type: "color"
+      },
+      elevated: {
+        $value: "#FFFFFF",
+        $type: "color"
+      }
+    },
+    text: {
+      primary: {
+        $value: "{color.neutral-900}",
+        $type: "color"
+      },
+      secondary: {
+        $value: "{color.neutral-700}",
+        $type: "color"
+      }
+    },
+    border: {
+      default: {
+        $value: "{color.neutral-300}",
+        $type: "color"
+      },
+      focus: {
+        $value: "{color.primary-500}",
+        $type: "color"
+      },
+      error: {
+        $value: "{color.error-500}",
+        $type: "color"
+      }
+    },
+    action: {
+      primary: {
+        $value: "{color.primary-600}",
+        $type: "color"
+      },
+      secondary: {
+        $value: "{color.secondary-600}",
+        $type: "color"
+      }
+    },
+    feedback: {
+      error: {
+        $value: "{color.error-500}",
+        $type: "color"
+      },
+      warning: {
+        $value: "{color.warning-500}",
+        $type: "color"
+      },
+      info: {
+        $value: "{color.info-500}",
+        $type: "color"
+      },
+      success: {
+        $value: "{color.success-500}",
+        $type: "color"
+      }
+    }
+  }
+};
+
+// ../tokens/bu-d/tokens.json
+var tokens_default5 = {
+  $schema: "https://schemas.figma.com/tokens/v1",
+  color: {
+    "primary-50": {
+      $value: "#E0F7FA",
+      $type: "color"
+    },
+    "primary-100": {
+      $value: "#B2EBF2",
+      $type: "color"
+    },
+    "primary-200": {
+      $value: "#80DEEA",
+      $type: "color"
+    },
+    "primary-300": {
+      $value: "#4DD0E1",
+      $type: "color"
+    },
+    "primary-400": {
+      $value: "#26C6DA",
+      $type: "color"
+    },
+    "primary-500": {
+      $value: "#00BCD4",
+      $type: "color"
+    },
+    "primary-600": {
+      $value: "#00ACC1",
+      $type: "color"
+    },
+    "primary-700": {
+      $value: "#0097A7",
+      $type: "color"
+    },
+    "primary-800": {
+      $value: "#00838F",
+      $type: "color"
+    },
+    "primary-900": {
+      $value: "#006064",
+      $type: "color"
+    },
+    "secondary-50": {
+      $value: "#ECEFF1",
+      $type: "color"
+    },
+    "secondary-100": {
+      $value: "#CFD8DC",
+      $type: "color"
+    },
+    "secondary-200": {
+      $value: "#B0BEC5",
+      $type: "color"
+    },
+    "secondary-300": {
+      $value: "#90A4AE",
+      $type: "color"
+    },
+    "secondary-400": {
+      $value: "#78909C",
+      $type: "color"
+    },
+    "secondary-500": {
+      $value: "#607D8B",
+      $type: "color"
+    },
+    "secondary-600": {
+      $value: "#546E7A",
+      $type: "color"
+    },
+    "secondary-700": {
+      $value: "#455A64",
+      $type: "color"
+    },
+    "secondary-800": {
+      $value: "#37474F",
+      $type: "color"
+    },
+    "secondary-900": {
+      $value: "#263238",
+      $type: "color"
+    },
+    "neutral-50": {
+      $value: "{color.neutral-50}",
+      $type: "color"
+    },
+    "neutral-100": {
+      $value: "{color.neutral-100}",
+      $type: "color"
+    },
+    "neutral-200": {
+      $value: "{color.neutral-200}",
+      $type: "color"
+    },
+    "neutral-300": {
+      $value: "{color.neutral-300}",
+      $type: "color"
+    },
+    "neutral-400": {
+      $value: "{color.neutral-400}",
+      $type: "color"
+    },
+    "neutral-500": {
+      $value: "{color.neutral-500}",
+      $type: "color"
+    },
+    "neutral-600": {
+      $value: "{color.neutral-600}",
+      $type: "color"
+    },
+    "neutral-700": {
+      $value: "{color.neutral-700}",
+      $type: "color"
+    },
+    "neutral-800": {
+      $value: "{color.neutral-800}",
+      $type: "color"
+    },
+    "neutral-900": {
+      $value: "{color.neutral-900}",
+      $type: "color"
+    },
+    "error-50": {
+      $value: "{color.error-50}",
+      $type: "color"
+    },
+    "error-100": {
+      $value: "{color.error-100}",
+      $type: "color"
+    },
+    "error-200": {
+      $value: "{color.error-200}",
+      $type: "color"
+    },
+    "error-300": {
+      $value: "{color.error-300}",
+      $type: "color"
+    },
+    "error-400": {
+      $value: "{color.error-400}",
+      $type: "color"
+    },
+    "error-500": {
+      $value: "{color.error-500}",
+      $type: "color"
+    },
+    "error-600": {
+      $value: "{color.error-600}",
+      $type: "color"
+    },
+    "error-700": {
+      $value: "{color.error-700}",
+      $type: "color"
+    },
+    "error-800": {
+      $value: "{color.error-800}",
+      $type: "color"
+    },
+    "error-900": {
+      $value: "{color.error-900}",
+      $type: "color"
+    },
+    "warning-50": {
+      $value: "{color.warning-50}",
+      $type: "color"
+    },
+    "warning-100": {
+      $value: "{color.warning-100}",
+      $type: "color"
+    },
+    "warning-200": {
+      $value: "{color.warning-200}",
+      $type: "color"
+    },
+    "warning-300": {
+      $value: "{color.warning-300}",
+      $type: "color"
+    },
+    "warning-400": {
+      $value: "{color.warning-400}",
+      $type: "color"
+    },
+    "warning-500": {
+      $value: "{color.warning-500}",
+      $type: "color"
+    },
+    "warning-600": {
+      $value: "{color.warning-600}",
+      $type: "color"
+    },
+    "warning-700": {
+      $value: "{color.warning-700}",
+      $type: "color"
+    },
+    "warning-800": {
+      $value: "{color.warning-800}",
+      $type: "color"
+    },
+    "warning-900": {
+      $value: "{color.warning-900}",
+      $type: "color"
+    },
+    "info-50": {
+      $value: "{color.info-50}",
+      $type: "color"
+    },
+    "info-100": {
+      $value: "{color.info-100}",
+      $type: "color"
+    },
+    "info-200": {
+      $value: "{color.info-200}",
+      $type: "color"
+    },
+    "info-300": {
+      $value: "{color.info-300}",
+      $type: "color"
+    },
+    "info-400": {
+      $value: "{color.info-400}",
+      $type: "color"
+    },
+    "info-500": {
+      $value: "{color.info-500}",
+      $type: "color"
+    },
+    "info-600": {
+      $value: "{color.info-600}",
+      $type: "color"
+    },
+    "info-700": {
+      $value: "{color.info-700}",
+      $type: "color"
+    },
+    "info-800": {
+      $value: "{color.info-800}",
+      $type: "color"
+    },
+    "info-900": {
+      $value: "{color.info-900}",
+      $type: "color"
+    },
+    "success-50": {
+      $value: "{color.success-50}",
+      $type: "color"
+    },
+    "success-100": {
+      $value: "{color.success-100}",
+      $type: "color"
+    },
+    "success-200": {
+      $value: "{color.success-200}",
+      $type: "color"
+    },
+    "success-300": {
+      $value: "{color.success-300}",
+      $type: "color"
+    },
+    "success-400": {
+      $value: "{color.success-400}",
+      $type: "color"
+    },
+    "success-500": {
+      $value: "{color.success-500}",
+      $type: "color"
+    },
+    "success-600": {
+      $value: "{color.success-600}",
+      $type: "color"
+    },
+    "success-700": {
+      $value: "{color.success-700}",
+      $type: "color"
+    },
+    "success-800": {
+      $value: "{color.success-800}",
+      $type: "color"
+    },
+    "success-900": {
+      $value: "{color.success-900}",
+      $type: "color"
+    }
+  },
+  typography: {
+    fontFamily: {
+      primary: {
+        $value: '"Roboto Mono", "SF Mono", "Monaco", "Inconsolata", "Fira Code", "Droid Sans Mono", "Source Code Pro", monospace',
+        $type: "fontFamily"
+      },
+      secondary: {
+        $value: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+        $type: "fontFamily"
+      },
+      mono: {
+        $value: '"Roboto Mono", "Courier New", monospace',
+        $type: "fontFamily"
+      }
+    },
+    fontSize: {
+      xs: {
+        $value: "{typography.fontSize.xs}",
+        $type: "dimension"
+      },
+      sm: {
+        $value: "{typography.fontSize.sm}",
+        $type: "dimension"
+      },
+      base: {
+        $value: "1rem",
+        $type: "dimension"
+      },
+      lg: {
+        $value: "{typography.fontSize.lg}",
+        $type: "dimension"
+      },
+      xl: {
+        $value: "{typography.fontSize.xl}",
+        $type: "dimension"
+      },
+      "2xl": {
+        $value: "{typography.fontSize.2xl}",
+        $type: "dimension"
+      },
+      "3xl": {
+        $value: "{typography.fontSize.3xl}",
+        $type: "dimension"
+      },
+      "4xl": {
+        $value: "{typography.fontSize.4xl}",
+        $type: "dimension"
+      }
+    },
+    fontWeight: {
+      light: {
+        $value: "{typography.fontWeight.light}",
+        $type: "number"
+      },
+      regular: {
+        $value: "{typography.fontWeight.regular}",
+        $type: "number"
+      },
+      medium: {
+        $value: "{typography.fontWeight.medium}",
+        $type: "number"
+      },
+      semibold: {
+        $value: "{typography.fontWeight.semibold}",
+        $type: "number"
+      },
+      bold: {
+        $value: "{typography.fontWeight.bold}",
+        $type: "number"
+      }
+    },
+    lineHeight: {
+      none: {
+        $value: "{typography.lineHeight.none}",
+        $type: "number"
+      },
+      tight: {
+        $value: "{typography.lineHeight.tight}",
+        $type: "number"
+      },
+      snug: {
+        $value: "{typography.lineHeight.snug}",
+        $type: "number"
+      },
+      normal: {
+        $value: "{typography.lineHeight.normal}",
+        $type: "number"
+      },
+      relaxed: {
+        $value: "{typography.lineHeight.relaxed}",
+        $type: "number"
+      },
+      loose: {
+        $value: "{typography.lineHeight.loose}",
+        $type: "number"
+      }
+    }
+  },
+  spacing: {
+    "0": {
+      $value: "{spacing.0}",
+      $type: "dimension"
+    },
+    "1": {
+      $value: "{spacing.1}",
+      $type: "dimension"
+    },
+    "2": {
+      $value: "{spacing.2}",
+      $type: "dimension"
+    },
+    "3": {
+      $value: "{spacing.3}",
+      $type: "dimension"
+    },
+    "4": {
+      $value: "{spacing.4}",
+      $type: "dimension"
+    },
+    "5": {
+      $value: "{spacing.5}",
+      $type: "dimension"
+    },
+    "6": {
+      $value: "{spacing.6}",
+      $type: "dimension"
+    },
+    "7": {
+      $value: "{spacing.7}",
+      $type: "dimension"
+    },
+    "8": {
+      $value: "{spacing.8}",
+      $type: "dimension"
+    },
+    "9": {
+      $value: "{spacing.9}",
+      $type: "dimension"
+    },
+    "10": {
+      $value: "{spacing.10}",
+      $type: "dimension"
+    },
+    "12": {
+      $value: "{spacing.12}",
+      $type: "dimension"
+    },
+    "14": {
+      $value: "{spacing.14}",
+      $type: "dimension"
+    },
+    "16": {
+      $value: "{spacing.16}",
+      $type: "dimension"
+    },
+    "20": {
+      $value: "{spacing.20}",
+      $type: "dimension"
+    },
+    "24": {
+      $value: "{spacing.24}",
+      $type: "dimension"
+    },
+    "32": {
+      $value: "{spacing.32}",
+      $type: "dimension"
+    },
+    "40": {
+      $value: "{spacing.40}",
+      $type: "dimension"
+    },
+    "48": {
+      $value: "{spacing.48}",
+      $type: "dimension"
+    },
+    "56": {
+      $value: "{spacing.56}",
+      $type: "dimension"
+    },
+    "64": {
+      $value: "{spacing.64}",
+      $type: "dimension"
+    }
+  },
+  shape: {
+    borderRadius: {
+      none: {
+        $value: "{shape.borderRadius.none}",
+        $type: "dimension"
+      },
+      sm: {
+        $value: "{shape.borderRadius.sm}",
+        $type: "dimension"
+      },
+      base: {
+        $value: "{shape.borderRadius.base}",
+        $type: "dimension"
+      },
+      md: {
+        $value: "{shape.borderRadius.md}",
+        $type: "dimension"
+      },
+      lg: {
+        $value: "{shape.borderRadius.lg}",
+        $type: "dimension"
+      },
+      xl: {
+        $value: "{shape.borderRadius.xl}",
+        $type: "dimension"
+      },
+      "2xl": {
+        $value: "{shape.borderRadius.2xl}",
+        $type: "dimension"
+      },
+      full: {
+        $value: "{shape.borderRadius.full}",
+        $type: "dimension"
+      }
+    },
+    elevation: {
+      "0": {
+        $value: "{shape.elevation.0}",
+        $type: "string"
+      },
+      "1": {
+        $value: "{shape.elevation.1}",
+        $type: "string"
+      },
+      "2": {
+        $value: "{shape.elevation.2}",
+        $type: "string"
+      },
+      "3": {
+        $value: "{shape.elevation.3}",
+        $type: "string"
+      },
+      "4": {
+        $value: "{shape.elevation.4}",
+        $type: "string"
+      },
+      "5": {
+        $value: "{shape.elevation.5}",
+        $type: "string"
+      }
+    }
+  },
+  semantic: {
+    surface: {
+      default: {
+        $value: "{color.neutral-100}",
+        $type: "color"
+      },
+      elevated: {
+        $value: "#FFFFFF",
+        $type: "color"
+      }
+    },
+    text: {
+      primary: {
+        $value: "{color.neutral-900}",
+        $type: "color"
+      },
+      secondary: {
+        $value: "{color.neutral-700}",
+        $type: "color"
+      }
+    },
+    border: {
+      default: {
+        $value: "{color.neutral-300}",
+        $type: "color"
+      },
+      focus: {
+        $value: "{color.primary-500}",
+        $type: "color"
+      },
+      error: {
+        $value: "{color.error-500}",
+        $type: "color"
+      }
+    },
+    action: {
+      primary: {
+        $value: "{color.primary-600}",
+        $type: "color"
+      },
+      secondary: {
+        $value: "{color.secondary-600}",
+        $type: "color"
+      }
+    },
+    feedback: {
+      error: {
+        $value: "{color.error-500}",
+        $type: "color"
+      },
+      warning: {
+        $value: "{color.warning-500}",
+        $type: "color"
+      },
+      info: {
+        $value: "{color.info-500}",
+        $type: "color"
+      },
+      success: {
+        $value: "{color.success-500}",
+        $type: "color"
+      }
+    }
+  }
+};
+
+// src/loadTokens.browser.ts
+function resolveReference(reference, tokenObject) {
+  if (!reference.startsWith("{") || !reference.endsWith("}")) {
+    return reference;
+  }
+  const path = reference.slice(1, -1);
+  const parts = path.split(".");
+  if (parts.length === 2 && parts[0] === "color" && parts[1].includes("-")) {
+    const colorKey = parts[1];
+    const token = tokenObject.color?.[colorKey];
+    if (token && typeof token === "object" && "$value" in token) {
+      const value = token.$value;
+      if (typeof value === "string" && value.startsWith("{") && value !== reference) {
+        return resolveReference(value, tokenObject);
+      }
+      return value;
+    }
+    return void 0;
+  }
+  let current = tokenObject;
+  for (const part of parts) {
+    if (current && typeof current === "object" && part in current) {
+      current = current[part];
+    } else {
+      return void 0;
+    }
+  }
+  if (current && typeof current === "object" && "$value" in current) {
+    const value = current.$value;
+    if (typeof value === "string" && value.startsWith("{") && value !== reference) {
+      return resolveReference(value, tokenObject);
+    }
+    return value;
+  }
+  return void 0;
+}
+function deepMerge(core, bu, resolveFrom = core) {
+  const result = { ...core };
+  for (const key in bu) {
+    if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key]) && "$value" in bu[key]) {
+      const value = bu[key].$value;
+      if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) {
+        const resolved = resolveReference(value, resolveFrom);
+        if (resolved !== void 0) {
+          result[key] = {
+            ...bu[key],
+            $value: resolved
+          };
+        } else {
+          result[key] = bu[key];
+        }
+      } else {
+        result[key] = bu[key];
+      }
+    } else if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key])) {
+      result[key] = deepMerge(core[key] || {}, bu[key], resolveFrom);
+    } else {
+      result[key] = bu[key];
+    }
+  }
+  return result;
+}
+var tokenRegistry = {
+  "core": tokens_default,
+  "bu-a": tokens_default2,
+  "bu-b": tokens_default3,
+  "bu-c": tokens_default4,
+  "bu-d": tokens_default5
+};
+async function loadTokens(buId) {
+  const tokens = tokenRegistry[buId];
+  if (!tokens) {
+    throw new Error(`Unknown business unit: ${buId}`);
+  }
+  if (buId === "core") {
+    return tokens;
+  }
+  const merged = deepMerge(tokens_default, tokens);
+  return merged;
+}
+
+// src/loadTokens.ts
+import { readFile, access } from "fs/promises";
+import { join } from "path";
+async function fileExists(filePath) {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+function resolveReference2(reference, tokenObject) {
+  if (!reference.startsWith("{") || !reference.endsWith("}")) {
+    return reference;
+  }
+  const path = reference.slice(1, -1);
+  const parts = path.split(".");
+  if (parts.length === 2 && parts[0] === "color" && parts[1].includes("-")) {
+    const colorKey = parts[1];
+    const token = tokenObject.color?.[colorKey];
+    if (token && typeof token === "object" && "$value" in token) {
+      const value = token.$value;
+      if (typeof value === "string" && value.startsWith("{") && value !== reference) {
+        return resolveReference2(value, tokenObject);
+      }
+      return value;
+    }
+    return void 0;
+  }
+  let current = tokenObject;
+  for (const part of parts) {
+    if (current && typeof current === "object" && part in current) {
+      current = current[part];
+    } else {
+      return void 0;
+    }
+  }
+  if (current && typeof current === "object" && "$value" in current) {
+    const value = current.$value;
+    if (typeof value === "string" && value.startsWith("{") && value !== reference) {
+      return resolveReference2(value, tokenObject);
+    }
+    return value;
+  }
+  return void 0;
+}
+function deepMerge2(core, bu, resolveFrom = core) {
+  const result = { ...core };
+  for (const key in bu) {
+    if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key]) && "$value" in bu[key]) {
+      const value = bu[key].$value;
+      if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) {
+        const resolved = resolveReference2(value, resolveFrom);
+        if (resolved !== void 0) {
+          result[key] = {
+            ...bu[key],
+            $value: resolved
+          };
+        } else {
+          result[key] = bu[key];
+        }
+      } else {
+        result[key] = bu[key];
+      }
+    } else if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key])) {
+      result[key] = deepMerge2(core[key] || {}, bu[key], resolveFrom);
+    } else {
+      result[key] = bu[key];
+    }
+  }
+  return result;
+}
+async function loadTokens2(buId) {
+  if (buId === "core") {
+    const tokensPath = join(process.cwd(), "tokens", "core", "tokens.json");
+    const content = await readFile(tokensPath, "utf-8");
+    return JSON.parse(content);
+  }
+  const coreTokensPath = join(process.cwd(), "tokens", "core", "tokens.json");
+  const coreContent = await readFile(coreTokensPath, "utf-8");
+  const coreTokens = JSON.parse(coreContent);
+  const buTokensPath = join(process.cwd(), "tokens", buId, "tokens.json");
+  if (!await fileExists(buTokensPath)) {
+    throw new Error(`Token file not found at tokens/${buId}/tokens.json`);
+  }
+  const buContent = await readFile(buTokensPath, "utf-8");
+  const buTokens = JSON.parse(buContent);
+  const merged = deepMerge2(coreTokens, buTokens);
+  return merged;
+}
+
+// src/tokenSchema.ts
+import { z } from "zod";
+var dtcgTokenValueSchema = z.object({
+  $value: z.any(),
+  // Value can be string, number, or object
+  $type: z.string().optional(),
+  // Type is optional but recommended
+  $description: z.string().optional()
+});
+var dtcgTokenOrGroup = z.union([
+  dtcgTokenValueSchema,
+  z.record(z.string(), z.any())
+  // Nested groups
+]);
+var colorGroupSchema = z.record(z.string(), dtcgTokenOrGroup);
+var typographyGroupSchema = z.object({
+  fontFamily: z.record(z.string(), dtcgTokenOrGroup).optional(),
+  fontSize: z.record(z.string(), dtcgTokenOrGroup).optional(),
+  fontWeight: z.record(z.string(), dtcgTokenOrGroup).optional(),
+  lineHeight: z.record(z.string(), dtcgTokenOrGroup).optional()
+});
+var spacingGroupSchema = z.record(z.string(), dtcgTokenOrGroup);
+var shapeGroupSchema = z.object({
+  borderRadius: z.record(z.string(), dtcgTokenOrGroup).optional(),
+  elevation: z.record(z.string(), dtcgTokenOrGroup).optional()
+});
+var semanticGroupSchema = z.object({
+  surface: z.record(z.string(), dtcgTokenOrGroup).optional(),
+  text: z.record(z.string(), dtcgTokenOrGroup).optional(),
+  border: z.record(z.string(), dtcgTokenOrGroup).optional(),
+  action: z.record(z.string(), dtcgTokenOrGroup).optional(),
+  feedback: z.record(z.string(), dtcgTokenOrGroup).optional()
+});
+var dtcgTokenSchema = z.object({
+  $schema: z.string().optional(),
+  // Optional schema reference
+  color: colorGroupSchema.optional(),
+  typography: typographyGroupSchema.optional(),
+  spacing: spacingGroupSchema.optional(),
+  shape: shapeGroupSchema.optional(),
+  semantic: semanticGroupSchema.optional()
+});
+
+// src/validators/validateTokens.ts
+function validateTokens(tokens) {
+  const result = dtcgTokenSchema.safeParse(tokens);
+  if (result.success) {
+    return { valid: true, errors: [] };
+  }
+  const errors = result.error.errors.map((err) => ({
+    path: err.path.join("."),
+    message: err.message
+  }));
+  return { valid: false, errors };
+}
+export {
+  buildTheme,
+  loadTokens,
+  loadTokens2 as loadTokensNode,
+  validateTokens
+};

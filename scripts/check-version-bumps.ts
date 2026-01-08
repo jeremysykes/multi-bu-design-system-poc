@@ -8,7 +8,7 @@
  */
 
 import { readFile, readdir, stat } from 'fs/promises';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import { execSync } from 'child_process';
 
 interface VersionInfo {
@@ -29,32 +29,6 @@ function getGitDiff(filePath: string): boolean {
 	}
 }
 
-/**
- * Get git status for a file (checks if file is staged)
- */
-function getGitStatus(filePath: string): 'modified' | 'added' | 'untracked' | 'unchanged' {
-	try {
-		const result = execSync(`git status --porcelain ${filePath}`, { encoding: 'utf-8' });
-		if (!result.trim()) {
-			// File not in git status, check if it exists
-			try {
-				stat(filePath);
-				return 'unchanged';
-			} catch {
-				return 'untracked';
-			}
-		}
-		if (result.startsWith('??')) {
-			return 'untracked';
-		}
-		if (result.startsWith('A')) {
-			return 'added';
-		}
-		return 'modified';
-	} catch {
-		return 'unchanged';
-	}
-}
 
 /**
  * Read version file

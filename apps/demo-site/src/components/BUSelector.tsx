@@ -18,6 +18,7 @@ export function BUSelector({ selectedBU, onChange }: BUSelectorProps) {
 				<Tab label="Core Banking Platform" value="bu-a" />
 				<Tab label="Growth & Payments Experience" value="bu-b" />
 				<Tab label="Wealth Management" value="bu-c" />
+				<Tab label="Developer Platform" value="bu-d" />
 			</Tabs>
 		</Box>
 	);

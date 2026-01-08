@@ -23,6 +23,9 @@ import { extractValue } from '../utils/extractValue';
  *     ...
  *   }
  * }
+ * 
+ * Note: Token references are resolved during token loading, so by the time
+ * tokens reach this mapper, all values are actual color strings (hex/rgba)
  */
 export function mapPalette(colorTokens: any): PaletteOptions {
 	// Extract color values from DTCG format (supports both flattened and nested)
@@ -30,11 +33,23 @@ export function mapPalette(colorTokens: any): PaletteOptions {
 		// Try flattened format first (primary-50)
 		const flattenedKey = `${category}-${shade}`;
 		if (colorTokens[flattenedKey]) {
-			return extractValue(colorTokens[flattenedKey]);
+			const value = extractValue(colorTokens[flattenedKey]);
+			// At this point, values should already be resolved (no references)
+			if (typeof value === 'string' && (value.startsWith('#') || value.startsWith('rgb'))) {
+				return value;
+			}
 		}
 		// Fall back to nested format for backward compatibility (color.primary.50)
 		if (colorTokens[category]?.[shade]) {
-			return extractValue(colorTokens[category][shade]);
+			const value = extractValue(colorTokens[category][shade]);
+			if (typeof value === 'string' && (value.startsWith('#') || value.startsWith('rgb'))) {
+				return value;
+			}
+		}
+		
+		// Development warning for missing tokens
+		if (process.env.NODE_ENV === 'development') {
+			console.warn(`Missing color token: ${category}-${shade}, falling back to #000000`);
 		}
 		return '#000000';
 	};
@@ -57,20 +72,20 @@ export function mapPalette(colorTokens: any): PaletteOptions {
 			main: getColor('primary', '500'),
 			light: getColor('primary', '300'),
 			dark: getColor('primary', '700'),
-			contrastText: '#ffffff',
+			// contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
 		},
 		secondary: {
 			main: getColor('secondary', '500'),
 			light: getColor('secondary', '300'),
 			dark: getColor('secondary', '700'),
-			contrastText: '#ffffff',
+			// contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
 		},
 		error: hasCategory('error')
 			? {
 					main: getColor('error', '500'),
 					light: getColor('error', '300'),
 					dark: getColor('error', '700'),
-					contrastText: '#ffffff',
+					// contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
 				}
 			: undefined,
 		warning: hasCategory('warning')
@@ -78,7 +93,7 @@ export function mapPalette(colorTokens: any): PaletteOptions {
 					main: getColor('warning', '500'),
 					light: getColor('warning', '300'),
 					dark: getColor('warning', '700'),
-					contrastText: '#ffffff',
+					// contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
 				}
 			: undefined,
 		info: hasCategory('info')
@@ -86,7 +101,7 @@ export function mapPalette(colorTokens: any): PaletteOptions {
 					main: getColor('info', '500'),
 					light: getColor('info', '300'),
 					dark: getColor('info', '700'),
-					contrastText: '#ffffff',
+					// contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
 				}
 			: undefined,
 		success: hasCategory('success')
@@ -94,7 +109,7 @@ export function mapPalette(colorTokens: any): PaletteOptions {
 					main: getColor('success', '500'),
 					light: getColor('success', '300'),
 					dark: getColor('success', '700'),
-					contrastText: '#ffffff',
+					// contrastText is automatically calculated by MUI from main color using WCAG contrast algorithms
 				}
 			: undefined,
 		grey: {

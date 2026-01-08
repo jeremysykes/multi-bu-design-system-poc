@@ -6,4 +6,8 @@
  * wrapping in HTTP handlers for microservices.
  */
 
-// Exports will be added as features are implemented
+export { buildTheme } from './buildTheme';
+export { loadTokens } from './loadTokens.browser';
+export { loadTokens as loadTokensNode } from './loadTokens';
+export { validateTokens } from './validators/validateTokens';
+export type { TokenSchema } from './types';

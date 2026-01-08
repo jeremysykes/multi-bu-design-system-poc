@@ -22,10 +22,11 @@ See `docs/enterprise-readiness.md` for comprehensive enterprise considerations.
 
 **Token-first pipeline**: Design Tokens (DTCG JSON) → Schema Validation → Theme Engine → MUI Themes → Component Wrappers → Applications
 
-**Three business units** share component APIs while expressing different brands:
+**Four business units** share component APIs while expressing different brands:
 - **Core Banking Platform (BU A)**: Conservative, dense, professional
 - **Growth & Payments Experience (BU B)**: Expressive, spacious, modern
 - **Wealth Management (BU C)**: Sophisticated, premium, elegant
+- **Developer Platform (BU D)**: Tech-focused, developer-friendly, internal tooling
 
 **MUI is an adapter layer** - The design system is defined at the token and theme engine layers.
 
@@ -46,7 +47,7 @@ pnpm install
 
 **Build & Development:**
 - `pnpm build` - Build all packages
-- `pnpm run storybook` - Start Storybook (theme switcher for all three BUs)
+- `pnpm run storybook` - Start Storybook (theme switcher for all four BUs)
 - `pnpm run demo:dev` - Start demo site with runtime BU switching
 - `pnpm run demo:build` - Build demo site
 
@@ -70,6 +71,7 @@ pnpm install
 │   ├── bu-a/           # Core Banking Platform tokens
 │   ├── bu-b/           # Growth & Payments Experience tokens
 │   ├── bu-c/           # Wealth Management tokens
+│   ├── bu-d/           # Developer Platform tokens
 │   └── version.json    # Core tokens version
 ├── theme-engine/        # Theme compilation engine
 │   ├── src/
@@ -106,7 +108,7 @@ pnpm run storybook    # Component documentation (http://localhost:6006)
 pnpm run demo:dev     # Demo site with runtime BU switching (http://localhost:3000)
 ```
 
-Use theme switcher in Storybook or tabs in demo site to see visual divergence across all three BUs.
+Use theme switcher in Storybook or tabs in demo site to see visual divergence across all four BUs.
 
 ### 3. Use in Your App
 
@@ -144,14 +146,31 @@ See `docs/enterprise-readiness.md` for comprehensive enterprise considerations a
 
 ## Business Units
 
-Three fully realized BUs share component APIs while expressing different brands:
+Four fully realized BUs share component APIs while expressing different brands:
 - **Core Banking Platform (BU A)**: Conservative, dense, professional
 - **Growth & Payments Experience (BU B)**: Expressive, spacious, modern
 - **Wealth Management (BU C)**: Sophisticated, premium, elegant
+- **Developer Platform (BU D)**: Tech-focused, developer-friendly, internal tooling
 
 See `docs/business-units.md` for detailed descriptions.
 
 **Adding a new BU**: Create `tokens/bu-x/tokens.json` (DTCG format) and `version.json`, add theme file, export. Zero component code changes needed. See `docs/adding-a-bu.md` for complete instructions.
+
+## Component Library
+
+The component library is organized using atomic design principles with comprehensive coverage:
+
+**Atoms** (11): Button, Typography, Checkbox, Radio, Switch, IconButton, Link, Chip, Badge, Avatar, Divider
+
+**Molecules** (10): TextField, Alert, Select, Autocomplete, CheckboxGroup, RadioGroup, Slider, Tabs, Breadcrumbs, Progress
+
+**Organisms** (8): Card, Dialog, Drawer, AppBar, Table, List, Accordion, Paper
+
+**Templates** (3): FormLayout, DashboardTemplate, SettingsTemplate
+
+**Pages** (1): LoginPage
+
+All components are token-driven, BU-agnostic, and work seamlessly across all four business units.
 
 ## Governance
 
@@ -180,4 +199,4 @@ See `docs/enterprise-readiness.md` and `docs/consuming-themes.md` for deployment
 
 This is a proof of concept demonstrating enterprise-grade multi-BU design system capabilities. See `PROJECT_PROGRESS.md` for project intent, requirements, and progress tracking.
 
-**Key achievements**: Token-driven architecture, enforced governance (CI blocks violations), three fully realized BUs, zero code changes to add BUs, production-ready patterns (TypeScript, tree-shaking, error handling), comprehensive documentation.
+**Key achievements**: Token-driven architecture, enforced governance (CI blocks violations), four fully realized BUs, comprehensive component library (32+ components), zero code changes to add BUs, production-ready patterns (TypeScript, tree-shaking, error handling), comprehensive documentation.

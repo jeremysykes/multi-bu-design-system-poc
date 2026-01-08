@@ -133,19 +133,23 @@ export function mapComponents(
 				root: {
 					'&.MuiAlert-standardError': {
 						backgroundColor: getSemanticValue('feedback', 'error') || getSemanticValue('action', 'primary'),
-						color: '#ffffff',
+						// Use MUI's automatically calculated contrastText for accessibility
+						color: _theme.palette.error?.contrastText || _theme.palette.error?.main || '#ffffff',
 					},
 					'&.MuiAlert-standardWarning': {
 						backgroundColor: getSemanticValue('feedback', 'warning') || getSemanticValue('action', 'primary'),
-						color: '#ffffff',
+						// Use MUI's automatically calculated contrastText for accessibility
+						color: _theme.palette.warning?.contrastText || _theme.palette.warning?.main || '#ffffff',
 					},
 					'&.MuiAlert-standardInfo': {
 						backgroundColor: getSemanticValue('feedback', 'info') || getSemanticValue('action', 'primary'),
-						color: '#ffffff',
+						// Use MUI's automatically calculated contrastText for accessibility
+						color: _theme.palette.info?.contrastText || _theme.palette.info?.main || '#ffffff',
 					},
 					'&.MuiAlert-standardSuccess': {
 						backgroundColor: getSemanticValue('feedback', 'success') || getSemanticValue('action', 'primary'),
-						color: '#ffffff',
+						// Use MUI's automatically calculated contrastText for accessibility
+						color: _theme.palette.success?.contrastText || _theme.palette.success?.main || '#ffffff',
 					},
 				},
 			},

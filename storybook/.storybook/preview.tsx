@@ -1,9 +1,9 @@
 import React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import { getBuATheme, getBuBTheme, getBuCTheme } from '@multi-bu/themes';
+import { getBuATheme, getBuBTheme, getBuCTheme, getBuDTheme } from '@multi-bu/themes';
 import type { Preview } from '@storybook/react';
 
-type BUTheme = 'Core Banking Platform' | 'Growth & Payments Experience' | 'Wealth Management';
+type BUTheme = 'Core Banking Platform' | 'Growth & Payments Experience' | 'Wealth Management' | 'Developer Platform';
 
 // Theme switcher decorator with toolbar integration
 const themeDecorator = (Story: React.ComponentType, context: any) => {
@@ -24,6 +24,9 @@ const themeDecorator = (Story: React.ComponentType, context: any) => {
 					break;
 				case 'Wealth Management':
 					themeLoader = getBuCTheme;
+					break;
+				case 'Developer Platform':
+					themeLoader = getBuDTheme;
 					break;
 				default:
 					themeLoader = getBuATheme;
@@ -68,6 +71,7 @@ const preview: Preview = {
 				'Core Banking Platform': { theme: 'Core Banking Platform' },
 				'Growth & Payments Experience': { theme: 'Growth & Payments Experience' },
 				'Wealth Management': { theme: 'Wealth Management' },
+				'Developer Platform': { theme: 'Developer Platform' },
 			},
 		},
 	},
@@ -82,6 +86,7 @@ const preview: Preview = {
 					{ value: 'Core Banking Platform', title: 'Core Banking Platform', right: '🏦' },
 					{ value: 'Growth & Payments Experience', title: 'Growth & Payments Experience', right: '🚀' },
 					{ value: 'Wealth Management', title: 'Wealth Management', right: '💎' },
+					{ value: 'Developer Platform', title: 'Developer Platform', right: '💻' },
 				],
 				showName: true,
 				dynamicTitle: true,

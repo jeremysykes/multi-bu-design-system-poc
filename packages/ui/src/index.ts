@@ -25,6 +25,19 @@ export { TextField, type TextFieldProps } from './molecules/TextField/TextField'
 export { Alert, type AlertProps } from './molecules/Alert/Alert';
 export { Card, type CardProps } from './organisms/Card/Card';
 
+// Re-export common MUI layout utilities (these use theme tokens)
+export { Box } from '@mui/material';
+export type { BoxProps } from '@mui/material';
+export { Grid, Stack } from '@mui/material';
+export type { GridProps, StackProps } from '@mui/material';
+
+// New component exports
+export * from './atoms';
+export * from './molecules';
+export * from './organisms';
+export * from './templates';
+export * from './pages';
+
 // Atomic-level exports (new organization)
 export * from './atoms';
 export * from './molecules';

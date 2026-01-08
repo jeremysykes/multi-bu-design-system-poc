@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useSearchParams, Navigate } from 'react-router-dom';
 import { ThemeProvider, CssBaseline, Box, Container } from '@mui/material';
 import type { Theme } from '@mui/material/styles';
-import { getBuATheme, getBuBTheme, getBuCTheme } from '@multi-bu/themes';
+import { getBuATheme, getBuBTheme, getBuCTheme, getBuDTheme } from '@multi-bu/themes';
 import { BUSelector } from './components/BUSelector';
 import { Navigation } from './components/Navigation';
 import { DashboardPage } from './pages/DashboardPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { SettingsPage } from './pages/SettingsPage';
 
-export type BU = 'bu-a' | 'bu-b' | 'bu-c';
+export type BU = 'bu-a' | 'bu-b' | 'bu-c' | 'bu-d';
 
 function App() {
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -32,6 +32,9 @@ function App() {
 					break;
 				case 'bu-c':
 					themeLoader = getBuCTheme;
+					break;
+				case 'bu-d':
+					themeLoader = getBuDTheme;
 					break;
 				default:
 					themeLoader = getBuATheme;

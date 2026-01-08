@@ -2,7 +2,7 @@
 
 ## Overview
 
-The multi-BU design system supports three business units, each with a distinct visual identity while sharing the same component APIs. This document describes each BU, their design direction, and how they complement each other.
+The multi-BU design system supports four business units, each with a distinct visual identity while sharing the same component APIs. This document describes each BU, their design direction, and how they complement each other.
 
 ## BU A: Core Banking Platform
 
@@ -92,19 +92,53 @@ Wealth Management is designed for:
 - Private banking applications
 - Wealth planning platforms
 
+## BU D: Developer Platform
+
+**Visual Identity:** Tech-focused, developer-friendly, internal tooling
+
+**Use Case:** Internal developer tools, API documentation, developer portal
+
+### Design Characteristics
+
+- **Primary Color**: Cyan/teal (#00BCD4 at 500)
+  - Technology and code associations
+  - Developer tooling aesthetic
+  - Modern and technical
+- **Secondary Color**: Blue-gray (#607D8B at 500)
+  - Tech/professional appearance
+  - Complementary to primary
+  - Developer-focused
+- **Typography**: Developer-friendly
+  - Base font size: 1rem (balanced, readable)
+  - Monospace primary font (Roboto Mono, SF Mono, Monaco, etc.)
+  - Developer-oriented font stack
+- **Visual Result**: Clean layout, technical colors, monospace typography, developer-friendly appearance
+
+### When to Use
+
+Developer Platform is designed for:
+- Internal developer tools
+- API documentation interfaces
+- Developer portal applications
+- Code management systems
+- Developer onboarding flows
+- Technical documentation
+
 ## How They Complement Each Other
 
-The three BUs form a comprehensive design system portfolio:
+The four BUs form a comprehensive design system portfolio:
 
 1. **Coverage**: Together they cover the full spectrum of financial services needs
    - Internal operations (Core Banking)
    - Customer acquisition (Growth & Payments)
    - Premium services (Wealth Management)
+   - Developer tooling (Developer Platform)
 
 2. **Visual Range**: Each BU represents a distinct position on the visual spectrum
    - Dense vs. Spacious (Core Banking vs. Growth & Payments)
    - Conservative vs. Modern (Core Banking vs. Growth & Payments)
    - Functional vs. Premium (Core Banking/Growth vs. Wealth Management)
+   - Business-focused vs. Tech-focused (All others vs. Developer Platform)
 
 3. **Shared Foundation**: All BUs share:
    - Same component APIs
@@ -118,30 +152,33 @@ The three BUs form a comprehensive design system portfolio:
 When selecting a BU for a new application:
 
 1. **Consider the audience**
-   - Internal tools → Core Banking Platform
+   - Internal operations → Core Banking Platform
    - Consumer-facing → Growth & Payments Experience
    - Premium/high-value → Wealth Management
+   - Developers/engineers → Developer Platform
 
 2. **Consider the use case**
    - Data-heavy operations → Core Banking Platform
    - Conversion-focused → Growth & Payments Experience
    - Advisory services → Wealth Management
+   - Developer tools/APIs → Developer Platform
 
 3. **Consider visual requirements**
    - Professional/dense → Core Banking Platform
    - Modern/spacious → Growth & Payments Experience
    - Premium/elegant → Wealth Management
+   - Tech-focused/developer-friendly → Developer Platform
 
 ## Token Differences Summary
 
-| Aspect | Core Banking | Growth & Payments | Wealth Management |
-|--------|--------------|-------------------|-------------------|
-| Primary Color | Deep Navy (#3A5B81) | Vibrant Cyan (#00BCD4) | Deep Purple (#673AB7) |
-| Secondary Color | Muted Gray-Blue (#818D9F) | Warm Amber (#FFC107) | Warm Gold (#FFC107) |
-| Base Font Size | 0.875rem (dense) | 1.125rem (spacious) | 1rem (balanced) |
-| Font Family | Sans-serif (Inter) | Sans-serif (Inter) | Serif (Georgia) / Sans-serif |
-| Text Contrast | High (neutral-900) | Soft (neutral-800) | Refined (neutral-900) |
-| Border Definition | Defined (neutral-400) | Soft (neutral-200) | Standard (neutral-300) |
+| Aspect | Core Banking | Growth & Payments | Wealth Management | Developer Platform |
+|--------|--------------|-------------------|-------------------|-------------------|
+| Primary Color | Deep Navy (#3A5B81) | Vibrant Cyan (#00BCD4) | Deep Purple (#673AB7) | Cyan/Teal (#00BCD4) |
+| Secondary Color | Muted Gray-Blue (#818D9F) | Warm Amber (#FFC107) | Warm Gold (#FFC107) | Blue-Gray (#607D8B) |
+| Base Font Size | 0.875rem (dense) | 1.125rem (spacious) | 1rem (balanced) | 1rem (balanced) |
+| Font Family | Sans-serif (Inter) | Sans-serif (Inter) | Serif (Georgia) / Sans-serif | Monospace (Roboto Mono) / Sans-serif |
+| Text Contrast | High (neutral-900) | Soft (neutral-800) | Refined (neutral-900) | High (neutral-900) |
+| Border Definition | Defined (neutral-400) | Soft (neutral-200) | Standard (neutral-300) | Standard (neutral-300) |
 
 ## Visual Differentiation
 

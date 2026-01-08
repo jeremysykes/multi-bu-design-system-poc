@@ -8,8 +8,10 @@
  * - Core Banking Platform (bu-a): Conservative, dense, predictable
  * - Growth & Payments Experience (bu-b): Expressive, spacious, modern
  * - Wealth Management (bu-c): Sophisticated, premium, elegant
+ * - Developer Platform (bu-d): Tech-focused, developer-friendly, internal tooling
  */
 
 export { getBuATheme, buAThemeSync } from './bu-a';
 export { getBuBTheme, buBThemeSync } from './bu-b';
 export { getBuCTheme, buCThemeSync } from './bu-c';
+export { getBuDTheme, buDThemeSync } from './bu-d';
