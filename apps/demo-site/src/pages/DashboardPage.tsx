@@ -1,5 +1,12 @@
 import React from 'react';
-import { Box, Typography, Grid, Paper, Stack, CardContent } from '@mui/material';
+import {
+	Box,
+	Typography,
+	Grid,
+	Paper,
+	Stack,
+	CardContent,
+} from '@mui/material';
 import { Card, Button } from '@multi-bu/ui';
 import type { BU } from '../App';
 
@@ -16,13 +23,13 @@ const pageTitles: Record<BU, string> = {
 export function DashboardPage({ buId }: DashboardPageProps) {
 	return (
 		<Box>
-			<Typography variant="h4" component="h1" gutterBottom>
+			<Typography variant='h4' component='h1' gutterBottom>
 				{pageTitles[buId]}
 			</Typography>
-			<Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-				This dashboard demonstrates the design system at application scale. Switch between
-				business units using the tabs above to see how the same components express different
-				brand identities.
+			<Typography variant='body1' color='text.secondary' sx={{ mb: 3 }}>
+				This dashboard demonstrates the design system at application scale.
+				Switch between business units using the tabs above to see how the same
+				components express different brand identities.
 			</Typography>
 
 			<Grid container spacing={3}>
@@ -30,12 +37,12 @@ export function DashboardPage({ buId }: DashboardPageProps) {
 					<Card>
 						<CardContent>
 							<Stack spacing={2}>
-								<Typography variant="h6">Overview</Typography>
-								<Typography variant="body2" color="text.secondary">
+								<Typography variant='h6'>Overview</Typography>
+								<Typography variant='body2' color='text.secondary'>
 									Total Accounts
 								</Typography>
-								<Typography variant="h3">1,234</Typography>
-								<Button variant="contained" color="primary" size="small">
+								<Typography variant='h3'>1,234</Typography>
+								<Button variant='contained' color='primary' size='small'>
 									View Details
 								</Button>
 							</Stack>
@@ -47,12 +54,12 @@ export function DashboardPage({ buId }: DashboardPageProps) {
 					<Card>
 						<CardContent>
 							<Stack spacing={2}>
-								<Typography variant="h6">Activity</Typography>
-								<Typography variant="body2" color="text.secondary">
+								<Typography variant='h6'>Activity</Typography>
+								<Typography variant='body2' color='text.secondary'>
 									Recent Transactions
 								</Typography>
-								<Typography variant="h3">$12,345</Typography>
-								<Button variant="outlined" color="primary" size="small">
+								<Typography variant='h3'>$12,345</Typography>
+								<Button variant='outlined' color='primary' size='small'>
 									View Activity
 								</Button>
 							</Stack>
@@ -64,12 +71,12 @@ export function DashboardPage({ buId }: DashboardPageProps) {
 					<Card>
 						<CardContent>
 							<Stack spacing={2}>
-								<Typography variant="h6">Performance</Typography>
-								<Typography variant="body2" color="text.secondary">
+								<Typography variant='h6'>Performance</Typography>
+								<Typography variant='body2' color='text.secondary'>
 									This Month
 								</Typography>
-								<Typography variant="h3">+5.2%</Typography>
-								<Button variant="text" color="primary" size="small">
+								<Typography variant='h3'>+5.2%</Typography>
+								<Button variant='text' color='primary' size='small'>
 									View Report
 								</Button>
 							</Stack>
@@ -78,18 +85,18 @@ export function DashboardPage({ buId }: DashboardPageProps) {
 				</Grid>
 
 				<Grid item xs={12}>
-					<Paper sx={{ p: 3 }}>
-						<Typography variant="h6" gutterBottom>
+					<Paper sx={{ p: 3 }} elevation={0}>
+						<Typography variant='h6' gutterBottom>
 							Quick Actions
 						</Typography>
-						<Stack direction="row" spacing={2} flexWrap="wrap">
-							<Button variant="contained" color="primary">
+						<Stack direction='row' spacing={2} flexWrap='wrap'>
+							<Button variant='contained' color='primary'>
 								Primary Action
 							</Button>
-							<Button variant="contained" color="secondary">
+							<Button variant='contained' color='secondary'>
 								Secondary Action
 							</Button>
-							<Button variant="outlined" color="primary">
+							<Button variant='outlined' color='primary'>
 								Tertiary Action
 							</Button>
 						</Stack>
@@ -99,4 +106,3 @@ export function DashboardPage({ buId }: DashboardPageProps) {
 		</Box>
 	);
 }
-

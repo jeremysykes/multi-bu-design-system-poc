@@ -3693,8 +3693,7 @@ function resolveReference(reference, tokenObject, visited = /* @__PURE__ */ new 
   return void 0;
 }
 function deepMerge(core, bu) {
-  const resolvedCore = resolveAllReferences(core, core, core);
-  const merged = { ...resolvedCore };
+  const merged = { ...core };
   for (const key in bu) {
     if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key])) {
       if ("$value" in bu[key]) {
@@ -3719,13 +3718,13 @@ function deepMerge(core, bu) {
         }
         merged[key] = bu[key];
       } else {
-        merged[key] = deepMerge(resolvedCore[key] || {}, bu[key]);
+        merged[key] = deepMerge(core[key] || {}, bu[key]);
       }
     } else {
       merged[key] = bu[key];
     }
   }
-  return resolveAllReferences(merged, merged, resolvedCore);
+  return resolveAllReferences(merged, merged, core);
 }
 function resolveAllReferences(obj, resolveFrom, coreTokens, visited = /* @__PURE__ */ new Set()) {
   if (!obj || typeof obj !== "object") {
@@ -3733,7 +3732,7 @@ function resolveAllReferences(obj, resolveFrom, coreTokens, visited = /* @__PURE
   }
   if ("$value" in obj && typeof obj.$value === "string" && obj.$value.startsWith("{") && obj.$value.endsWith("}")) {
     if (visited.has(obj.$value)) {
-      const resolved2 = resolveReference(obj.$value, coreTokens, visited);
+      const resolved2 = resolveReference(obj.$value, coreTokens, /* @__PURE__ */ new Set());
       if (resolved2 !== void 0 && resolved2 !== obj.$value) {
         return {
           ...obj,
@@ -3745,14 +3744,7 @@ function resolveAllReferences(obj, resolveFrom, coreTokens, visited = /* @__PURE
     visited.add(obj.$value);
     const resolved = resolveReference(obj.$value, resolveFrom, visited, coreTokens);
     if (resolved === void 0) {
-      const coreResolved = resolveReference(obj.$value, coreTokens, /* @__PURE__ */ new Set());
       visited.delete(obj.$value);
-      if (coreResolved !== void 0 && coreResolved !== obj.$value) {
-        return {
-          ...obj,
-          $value: coreResolved
-        };
-      }
       return obj;
     }
     visited.delete(obj.$value);
@@ -3932,8 +3924,7 @@ function resolveReference2(reference, tokenObject, visited = /* @__PURE__ */ new
   return void 0;
 }
 function deepMerge2(core, bu) {
-  const resolvedCore = resolveAllReferences2(core, core, core);
-  const merged = { ...resolvedCore };
+  const merged = { ...core };
   for (const key in bu) {
     if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key])) {
       if ("$value" in bu[key]) {
@@ -3958,13 +3949,13 @@ function deepMerge2(core, bu) {
         }
         merged[key] = bu[key];
       } else {
-        merged[key] = deepMerge2(resolvedCore[key] || {}, bu[key]);
+        merged[key] = deepMerge2(core[key] || {}, bu[key]);
       }
     } else {
       merged[key] = bu[key];
     }
   }
-  return resolveAllReferences2(merged, merged, resolvedCore);
+  return resolveAllReferences2(merged, merged, core);
 }
 function resolveAllReferences2(obj, resolveFrom, coreTokens, visited = /* @__PURE__ */ new Set()) {
   if (!obj || typeof obj !== "object") {
@@ -3972,7 +3963,7 @@ function resolveAllReferences2(obj, resolveFrom, coreTokens, visited = /* @__PUR
   }
   if ("$value" in obj && typeof obj.$value === "string" && obj.$value.startsWith("{") && obj.$value.endsWith("}")) {
     if (visited.has(obj.$value)) {
-      const resolved2 = resolveReference2(obj.$value, coreTokens, visited);
+      const resolved2 = resolveReference2(obj.$value, coreTokens, /* @__PURE__ */ new Set());
       if (resolved2 !== void 0 && resolved2 !== obj.$value) {
         return {
           ...obj,
@@ -3984,14 +3975,7 @@ function resolveAllReferences2(obj, resolveFrom, coreTokens, visited = /* @__PUR
     visited.add(obj.$value);
     const resolved = resolveReference2(obj.$value, resolveFrom, visited, coreTokens);
     if (resolved === void 0) {
-      const coreResolved = resolveReference2(obj.$value, coreTokens, /* @__PURE__ */ new Set());
       visited.delete(obj.$value);
-      if (coreResolved !== void 0 && coreResolved !== obj.$value) {
-        return {
-          ...obj,
-          $value: coreResolved
-        };
-      }
       return obj;
     }
     visited.delete(obj.$value);
