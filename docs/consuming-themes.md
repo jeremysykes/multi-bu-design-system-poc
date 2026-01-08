@@ -310,7 +310,210 @@ const theme: Theme = await getBuATheme();
 
 All theme loaders are properly typed and return `Promise<Theme>`.
 
+## Production Deployment
+
+### Bundle Size Considerations
+
+**Token Files**:
+- Token files are JSON (small footprint)
+- Single BU tokens: ~15KB
+- All three BUs: ~45KB total
+- Tokens are loaded on demand, not bundled
+
+**Theme Compilation**:
+- Themes are compiled at runtime/build time, not bundled
+- Runtime compilation adds ~2-5KB per theme (cached after first load)
+- No impact on bundle size (compiled at runtime)
+
+**Component Library**:
+- `@multi-bu/ui`: Thin wrappers around MUI (minimal overhead)
+- React and MUI are externalized (not bundled)
+- Tree-shaking eliminates unused components
+
+**Total Impact**:
+- Single-BU app: ~15KB tokens + ~2-5KB compiled theme = ~20KB total
+- Multi-BU app: ~45KB tokens + ~6-15KB compiled themes = ~60KB total
+
+### Tree-Shaking Support
+
+**Single-BU Applications** (Most Common):
+```tsx
+import { getBuATheme } from '@multi-bu/themes';
+// Only BU A theme code is included
+```
+
+**Multi-BU Applications**:
+```tsx
+import { getBuATheme, getBuBTheme, getBuCTheme } from '@multi-bu/themes';
+// Only imported theme code is included
+```
+
+**Result**: Import only the BU theme you need. Tree-shaking eliminates unused themes.
+
+### Performance Best Practices
+
+**Pre-Load Themes**:
+- Load themes early in app lifecycle to avoid flash of unstyled content
+- Load themes during app initialization, not on first render
+- Cache themes in app state for faster subsequent loads
+
+**Async Loading**:
+- Themes load asynchronously (don't block app initialization)
+- Show loading indicators while themes are loading
+- Themes are cached after first load (subsequent loads are instant)
+
+**Deterministic Compilation**:
+- Same tokens always produce same theme (no runtime overhead)
+- Themes are compiled once and cached
+- No runtime compilation overhead
+
+**Result**: Optimal performance with minimal bundle size impact.
+
+### Error Handling Patterns
+
+**Theme Loading Errors**:
+```tsx
+const [theme, setTheme] = useState<Theme | null>(null);
+const [error, setError] = useState<Error | null>(null);
+
+useEffect(() => {
+  getBuATheme()
+    .then(setTheme)
+    .catch((err) => {
+      setError(err);
+      // Fallback to default theme or show error UI
+    });
+}, []);
+```
+
+**Fallback Strategies**:
+- Fallback to default theme on error
+- Show error UI if theme cannot load
+- Retry theme loading on failure
+
+**Result**: Graceful error handling prevents broken UI.
+
+### Loading Strategies
+
+**Build-Time Loading** (Single-BU Apps):
+- Theme is determined at build time
+- Theme is loaded during app initialization
+- No runtime theme selection needed
+
+**Runtime Loading** (Multi-BU Apps):
+- Theme is determined at runtime
+- Theme is loaded on demand
+- All required themes are loaded asynchronously
+
+**Hybrid Approach**:
+- Default theme bundled, additional themes loaded on demand
+- Balance between bundle size and flexibility
+
+**Result**: Choose loading strategy based on application needs.
+
+### Monitoring and Observability
+
+**Theme Loading Metrics**:
+- Track theme loading time
+- Monitor theme loading errors
+- Track theme cache hits/misses
+
+**Error Tracking**:
+- Log theme loading errors
+- Track validation failures
+- Monitor compilation errors
+
+**Performance Monitoring**:
+- Monitor theme compilation time
+- Track bundle size impact
+- Measure runtime performance
+
+**Result**: Monitoring provides visibility into theme loading and performance.
+
 ## Best Practices
+
+### Enterprise Considerations
+
+1. **Pre-load themes**: Load themes early in your app lifecycle to avoid flash of unstyled content
+   - Load themes during app initialization
+   - Cache themes in app state for faster subsequent loads
+   - Show loading indicators while themes are loading
+
+2. **Handle loading states**: Show loading indicators while themes are loading
+   - Prevent flash of unstyled content
+   - Improve perceived performance
+   - Provide user feedback during loading
+
+3. **Cache themes**: Themes are cached automatically, but you can also cache them in your app state
+   - Reduce loading time on subsequent loads
+   - Improve performance
+   - Reduce network requests
+
+4. **Error handling**: Always handle potential errors when loading themes
+   - Implement fallback themes on error
+   - Show error UI if theme cannot load
+   - Log errors for monitoring
+
+5. **One theme per app**: For single-BU apps, import only the theme you need (smaller bundle)
+   - Tree-shaking eliminates unused themes
+   - Reduces bundle size
+   - Improves performance
+
+6. **BU selection**: For multi-BU apps, store BU selection in URL or user preferences for shareability
+   - URL-based selection enables shareable links
+   - User preferences enable personalized themes
+   - Storage enables persistent theme selection
+
+### Error Handling and Fallbacks
+
+**Theme Loading Errors**:
+- Implement fallback themes on error
+- Show error UI if theme cannot load
+- Retry theme loading on failure
+
+**Validation Errors**:
+- Handle token validation errors gracefully
+- Show error messages to developers
+- Prevent invalid themes from entering production
+
+**Compilation Errors**:
+- Handle theme compilation errors gracefully
+- Fallback to default theme on error
+- Log errors for monitoring
+
+### Performance Optimization
+
+**Pre-Load Themes**:
+- Load themes during app initialization
+- Cache themes in app state
+- Reduce loading time on subsequent loads
+
+**Async Loading**:
+- Load themes asynchronously (don't block app initialization)
+- Show loading indicators while themes are loading
+- Themes are cached after first load
+
+**Tree-Shaking**:
+- Import only the BU theme you need
+- Tree-shaking eliminates unused themes
+- Reduces bundle size
+
+### Monitoring and Observability
+
+**Theme Loading Metrics**:
+- Track theme loading time
+- Monitor theme loading errors
+- Track theme cache hits/misses
+
+**Error Tracking**:
+- Log theme loading errors
+- Track validation failures
+- Monitor compilation errors
+
+**Performance Monitoring**:
+- Monitor theme compilation time
+- Track bundle size impact
+- Measure runtime performance
 
 1. **Pre-load themes**: Load themes early in your app lifecycle to avoid flash of unstyled content
 2. **Handle loading states**: Show loading indicators while themes are loading

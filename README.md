@@ -12,6 +12,38 @@ MUI provides excellent component APIs and theming, but intentionally leaves out 
 - **Versioning discipline** - MUI doesn't provide versioning strategy for design tokens; this POC includes versioning policies
 - **Deterministic compilation** - MUI themes are manually crafted; this POC compiles themes deterministically from tokens
 
+## Not a Theme Switcher Demo
+
+This is **not** a theme switcher demo. It is a complete design system platform built for enterprise scale. Key differentiators:
+
+### Theme Switcher Demos vs. This Platform
+
+| Theme Switcher Demos | This Platform |
+|----------------------|---------------|
+| Runtime CSS/theme switching | Token-first architecture with deterministic compilation |
+| Optional styling guidelines | Enforced governance (CI fails on violations) |
+| Manual theme creation | Automated theme compilation from tokens |
+| Ad-hoc changes | Versioned token changes with enforcement |
+| Single application focus | Multi-BU platform with shared component APIs |
+| No validation | Schema validation preventing errors |
+| No versioning | Versioning discipline with change tracking |
+
+### What Makes This Different
+
+1. **Token-First Architecture**: Design tokens (DTCG JSON) are the single source of truth. Themes are compiled deterministically from tokens, not manually crafted.
+
+2. **Governance Enforcement**: Automated validation, versioning, and linting enforce design system rules. CI/CD pipelines fail on violations - this is enforcement, not suggestions.
+
+3. **Versioning Discipline**: Token changes are versioned, tracked, and diffed. Breaking changes are prevented through version enforcement.
+
+4. **Deterministic Compilation**: Same tokens always produce the same theme. No runtime magic or manual adjustments required.
+
+5. **Scalable Architecture**: Add new business units without code changes. The system scales through token files, not component modifications.
+
+6. **Production-Ready Patterns**: Type safety, error handling, performance optimization, and deployment strategies are built in, not afterthoughts.
+
+See `docs/enterprise-readiness.md` for comprehensive enterprise considerations and production patterns.
+
 ## Overview
 
 This POC demonstrates:
@@ -85,6 +117,23 @@ pnpm install
 
 ## Quick Start
 
+### 0. Run Governance Checks
+
+Before working with tokens or components, run governance checks:
+
+```bash
+# Validate all tokens against schema
+pnpm run tokens:validate
+
+# Check that token changes are versioned
+pnpm run tokens:check-version
+
+# Lint for hardcoded values
+pnpm run lint:design-system
+```
+
+**These checks run automatically in CI and must pass before merging.**
+
 ### 1. Validate Tokens
 
 ```bash
@@ -152,6 +201,54 @@ Design Tokens (DTCG JSON) → Schema Validation (Zod) → Theme Engine → MUI T
 6. **Semantic consumption** - Components use semantic tokens (meaning), not raw values
 
 See `docs/architecture.md` for detailed architecture documentation.
+
+## Enterprise Readiness
+
+This platform is built for enterprise scale with governance, type safety, and production-ready patterns:
+
+### Governance Enforcement
+
+- **CI fails on violations** - Token validation, versioning, and linting are enforced, not optional
+- **Automated validation** - Schema validation prevents invalid tokens from entering the system
+- **Version enforcement** - Token changes must be versioned; unversioned changes break CI
+- **Code pattern linting** - Hardcoded values are detected and blocked
+- **Change tracking** - Token diffing provides audit trails for all changes
+
+### Type Safety & Developer Experience
+
+- **Full TypeScript support** - All packages are fully typed with proper type declarations
+- **IDE autocomplete** - Token references and theme properties provide IDE support
+- **Error messages** - Validation failures provide clear, actionable error messages
+- **Component API stability** - Components maintain stable APIs across all BUs
+
+### Scalability
+
+- **Zero code changes for new BUs** - Add new business units through token files only
+- **Shared component APIs** - All BUs use the same component code; differentiation is token-driven
+- **Framework-agnostic tokens** - Token layer can be compiled to other frameworks (Vue, Angular)
+- **Extensible architecture** - Add new token categories without breaking existing themes
+
+### Production Deployment
+
+- **Packaged themes** - Themes are bundled as consumable libraries (ESM/CJS)
+- **Tree-shaking support** - Import only the BU theme you need
+- **Performance optimized** - Deterministic compilation ensures fast runtime performance
+- **Error handling patterns** - Graceful fallbacks and error recovery built in
+
+### Versioning Discipline
+
+- **Token versioning** - Each BU has its own version file tracking changes
+- **Change diffing** - Compare token sets to understand differences
+- **Breaking change prevention** - Version enforcement prevents unversioned breaking changes
+- **Migration paths** - Clear upgrade paths for version changes
+
+### Schema Validation
+
+- **DTCG format compliance** - Tokens must follow Design Tokens Community Group format
+- **Type checking** - Colors, dimensions, typography are validated against schemas
+- **Fail-fast validation** - Invalid tokens are caught before compilation
+
+See `docs/enterprise-readiness.md` for detailed enterprise considerations, production patterns, and adoption guidance.
 
 ## Business Units
 
@@ -246,12 +343,13 @@ See `docs/governance.md` for detailed governance rules and CI integration patter
 - **`docs/pipeline.md`** - Step-by-step token flow: tokens → validation → compilation → packaging → consumption
 - **`docs/business-units.md`** - BU descriptions, design directions, how they complement each other
 
-**Governance:**
+**Enterprise Readiness:**
+- **`docs/enterprise-readiness.md`** - Enterprise considerations, production patterns, adoption guidance
 - **`docs/governance.md`** - Validation rules, versioning enforcement, token diffing, CI integration
 - **`docs/versioning.md`** - Versioning strategy, token versioning, breaking change policy
 
 **Consumption:**
-- **`docs/consuming-themes.md`** - How to consume themes in applications, multi-BU patterns
+- **`docs/consuming-themes.md`** - How to consume themes in applications, multi-BU patterns, production deployment
 - **`docs/adding-a-bu.md`** - Step-by-step guide for adding a new business unit
 - **`docs/demo-site.md`** - Demo site structure, runtime BU switching, usage patterns
 
@@ -267,21 +365,87 @@ The three business units express distinct visual identities while sharing the sa
 
 View in Storybook (theme switcher) or demo site (runtime switching) to see visual divergence across all three BUs.
 
+## Production Considerations
+
+### Bundle Size & Performance
+
+- **Tree-shaking supported** - Import only the BU theme you need; unused code is eliminated
+- **No runtime overhead** - Themes are compiled at build/load time, not runtime
+- **Deterministic compilation** - Same tokens always produce the same optimized theme output
+- **Small token footprint** - Token files are JSON, parsed once and cached
+
+### TypeScript Support
+
+- **Full type safety** - All packages include TypeScript definitions
+- **Type inference** - Theme properties are fully typed with autocomplete support
+- **Type checking** - Run `pnpm run type-check` to validate types across all packages
+
+### Error Handling
+
+- **Validation errors** - Schema validation provides clear error messages with file and token path
+- **Theme compilation errors** - Missing or invalid tokens fail fast with specific errors
+- **Runtime fallbacks** - Applications can implement fallback themes for error scenarios
+
+### CI/CD Integration
+
+- **GitHub Actions ready** - Governance checks are designed for CI/CD pipelines
+- **Blocking checks** - Failed checks prevent merges; this is enforcement, not warnings
+- **Fast validation** - Token validation runs in seconds, suitable for PR checks
+- **Visual regression** - Chromatic integration for cross-BU visual regression testing
+
+### Deployment Strategies
+
+- **Single-BU applications** - Most apps use one BU theme; tree-shaking eliminates unused themes
+- **Multi-BU applications** - Apps can switch BUs at runtime; themes are loaded asynchronously
+- **Monorepo integration** - Workspace packages are designed for monorepo consumption
+- **Published packages** - Themes can be published to npm for distributed teams
+
+### Team Workflows
+
+- **Design-to-code handoff** - Tokens bridge design and development with DTCG format
+- **Change review process** - Token diffing enables PR reviews focused on token changes
+- **Release management** - Version files track token changes for release notes
+- **Team training** - Clear documentation and governance make onboarding straightforward
+
+See `docs/enterprise-readiness.md` for comprehensive production deployment patterns and team workflows.
+
 ## Status
 
 This is a proof of concept. See `PROJECT_PROGRESS.md` for project intent, requirements, and progress tracking.
 
 ## Success Criteria Met
 
-- ✅ **Token-driven architecture** - No hardcoded values in components; all styling from tokens
-- ✅ **Token-first pipeline** - Design tokens → validation → compilation → themes → components
-- ✅ **Multi-BU support** - Three fully realized BUs share component APIs with different brand expression
-- ✅ **Three fully realized BUs** - All BUs are structurally consistent, visually distinct, and integrated throughout Storybook and demo site
+### Governance & Enforcement
+
 - ✅ **Governance enforcement** - Validation, versioning, and linting enforced in CI (not suggestions)
-- ✅ **Versioning discipline** - Token versioning system with enforcement
-- ✅ **Token diffing** - Scripts for comparing tokens and tracking changes
-- ✅ **Theme packaging** - Themes packaged as consumable libraries
+- ✅ **Versioning discipline** - Token versioning system with enforcement preventing unversioned changes
+- ✅ **Schema validation** - Token schema validation prevents invalid tokens from entering the system
+- ✅ **Code pattern linting** - Hardcoded values are detected and blocked automatically
+- ✅ **Token diffing** - Scripts for comparing tokens and tracking changes for audit trails
+
+### Scalability
+
+- ✅ **Token-driven architecture** - No hardcoded values in components; all styling from tokens
+- ✅ **Multi-BU support** - Three fully realized BUs share component APIs with different brand expression
+- ✅ **Zero code changes for new BUs** - Add new business units through token files only
+- ✅ **Framework-agnostic tokens** - Token layer can be compiled to other frameworks
+
+### Production Readiness
+
+- ✅ **Token-first pipeline** - Design tokens → validation → compilation → themes → components
+- ✅ **Deterministic compilation** - Same tokens always produce the same theme output
+- ✅ **Theme packaging** - Themes packaged as consumable libraries (ESM/CJS) with type declarations
+- ✅ **Type safety** - Full TypeScript support across all packages
+- ✅ **Error handling** - Clear error messages and validation failures
+
+### Demonstration & Integration
+
+- ✅ **Three fully realized BUs** - All BUs are structurally consistent, visually distinct, and integrated throughout Storybook and demo site
 - ✅ **Storybook theme switching** - Theme switcher for all three BUs (not side-by-side)
 - ✅ **Demo site** - Runtime BU switching at application scale
 - ✅ **MUI as adapter** - MUI adapts our design system; the design system is defined at token/engine layers
+
+### Documentation
+
 - ✅ **Comprehensive documentation** - Architecture, pipeline, governance, consumption guides
+- ✅ **Enterprise readiness** - Production patterns, deployment strategies, team workflows documented

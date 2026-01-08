@@ -192,9 +192,193 @@ MUI does not provide:
 
 **The design system is defined at the token and theme engine layers.** MUI adapts our design system to React/MUI's component model.
 
+## Why This Isn't a Theme Switcher
+
+This platform is fundamentally different from theme switcher demos:
+
+### Token-First vs. Runtime Switching
+
+**Theme Switcher Demos**:
+- Focus on runtime CSS/theme switching
+- Themes are manually crafted and hardcoded
+- Switching happens at runtime through CSS variables or theme objects
+- No single source of truth for design decisions
+
+**This Platform**:
+- Tokens are the single source of truth (DTCG JSON files)
+- Themes are compiled deterministically from tokens (not manually crafted)
+- Token changes flow through validation → compilation → packaging → consumption
+- Visual design is defined at the token level, not the theme level
+
+### Tokens as Source of Truth
+
+**Theme Switcher Approach**:
+```
+Manually Crafted Theme → Runtime Switching → Applications
+```
+
+**Token-First Approach**:
+```
+Design Tokens → Schema Validation → Theme Engine → MUI Themes → Applications
+```
+
+**Key Difference**: Tokens drive themes, not the other way around. Changes happen at the token level, not the theme level.
+
+### Governance Layer
+
+**Theme Switcher Demos**:
+- No governance or validation
+- Changes are ad-hoc and unversioned
+- No enforcement of design system rules
+- Manual review processes
+
+**This Platform**:
+- Automated validation prevents invalid tokens
+- Version enforcement prevents unversioned changes
+- Linting prevents design system violations
+- CI/CD integration enforces governance (blocks merges on violations)
+
+**Key Difference**: Governance is enforced, not optional. Violations break CI/CD, not warnings.
+
+### Deterministic Compilation
+
+**Theme Switcher Demos**:
+- Themes are manually adjusted
+- Same input may produce different output
+- Manual tweaks and overrides are common
+
+**This Platform**:
+- Same tokens always produce the same theme
+- Compilation is deterministic and repeatable
+- No manual tweaks or overrides needed
+- Changes are versioned and tracked
+
+**Key Difference**: Compilation is deterministic and repeatable. Same tokens = same output, always.
+
+### Production Readiness
+
+**Theme Switcher Demos**:
+- Built for demonstration purposes
+- No production deployment patterns
+- No type safety or error handling
+- No scalability considerations
+
+**This Platform**:
+- Built for enterprise production use
+- Production deployment patterns documented
+- Full TypeScript support with type safety
+- Scalable architecture (add BUs without code changes)
+
+**Key Difference**: This is a production-ready platform, not a demo. Enterprise patterns are built in.
+
+## Enterprise Patterns
+
+This architecture implements several enterprise patterns:
+
+### Single Source of Truth (Tokens)
+
+**Pattern**: All visual design decisions come from design tokens (DTCG JSON files).
+
+**Implementation**:
+- Tokens are JSON files (version-controlled)
+- Tokens are the authoritative source for all visual values
+- Components consume tokens via themes, never hardcoded values
+
+**Benefits**:
+- Design changes happen in one place (tokens)
+- Consistency enforced automatically
+- Design-to-code handoff is seamless
+
+### Enforced Governance vs. Suggestions
+
+**Pattern**: Governance is enforced through automated checks, not optional guidelines.
+
+**Implementation**:
+- Schema validation catches invalid tokens (CI blocks merge)
+- Version enforcement prevents unversioned changes (CI blocks merge)
+- Linting prevents hardcoded values (CI blocks merge)
+
+**Benefits**:
+- Design system rules cannot be violated
+- No tribal knowledge required
+- Governance is automatic, not manual
+
+### Versioning Discipline
+
+**Pattern**: Token changes are versioned, tracked, and diffed to prevent breaking changes.
+
+**Implementation**:
+- Each BU has a version file (`tokens/{bu-id}/version.json`)
+- Token changes require version bumps (enforced by CI)
+- Token diffing provides change tracking and audit trails
+
+**Benefits**:
+- Breaking changes are prevented (version enforcement)
+- Change history is maintained (version files)
+- Change review is focused (token diffing)
+
+### Schema Validation Preventing Errors
+
+**Pattern**: Invalid tokens are caught before compilation, preventing runtime errors.
+
+**Implementation**:
+- Zod schema validates token structure
+- DTCG format compliance is enforced
+- Token types are validated (color, dimension, etc.)
+
+**Benefits**:
+- Errors are caught early (before compilation)
+- Invalid tokens cannot enter the system
+- Clear error messages guide fixes
+
+### Scalable Architecture Patterns
+
+**Pattern**: Add new business units without code changes; extend to other frameworks.
+
+**Implementation**:
+- New BUs added through token files only
+- Same component code works for all BUs
+- Framework-agnostic token layer (can compile to Vue, Angular, etc.)
+
+**Benefits**:
+- Scales to any number of BUs
+- Reduces code duplication
+- Supports multiple tech stacks
+
+### Deterministic Compilation
+
+**Pattern**: Same input (tokens) always produces the same output (theme).
+
+**Implementation**:
+- Pure function compilation (`buildTheme(tokens)`)
+- No side effects or random values
+- Cached after first compilation
+
+**Benefits**:
+- Predictable results
+- Testable compilation process
+- No runtime compilation overhead
+
+### Framework-Agnostic Token Layer
+
+**Pattern**: Tokens are framework-agnostic; framework-specific themes are compiled from tokens.
+
+**Implementation**:
+- Tokens are JSON files (framework-agnostic)
+- Theme engine compiles tokens to framework-specific themes
+- Current implementation: MUI themes
+- Can be extended to Vue, Angular, etc.
+
+**Benefits**:
+- Visual consistency across tech stacks
+- Same tokens work with different frameworks
+- Reduced vendor lock-in
+
 ## Extension Points
 
 ### Adding a New Business Unit
+
+**Zero Code Changes Required**:
 
 1. Create `tokens/bu-x/tokens.json` following DTCG format
 2. Create `tokens/bu-x/version.json` with version
@@ -203,7 +387,11 @@ MUI does not provide:
 5. Add to Storybook theme switcher
 6. Components automatically work (no code changes needed)
 
+**Result**: New BU works with all existing components immediately. Same components, different visual expression.
+
 ### Adding a New Token Category
+
+**Extensible Token Schema**:
 
 1. Add to Zod schema in `theme-engine/src/tokenSchema.ts`
 2. Create mapper in `theme-engine/src/mappers/`
@@ -211,12 +399,27 @@ MUI does not provide:
 4. Update token files to include new category
 5. Components can now consume new tokens
 
+**Result**: New token category available across all BUs. Components can consume new tokens via theme.
+
 ### Adding a New Component
+
+**Framework-Agnostic Token Layer**:
 
 1. Create wrapper in `packages/ui/src/`
 2. Follow token paradigm (consume semantic tokens)
 3. Add Storybook stories
 4. Works automatically with all BU themes
+
+**Result**: New component works with all BU themes automatically. No theme-specific code needed.
+
+**Framework Extension**:
+
+1. Create mapper for target framework (e.g., Vue, Angular)
+2. Compile tokens to framework theme format
+3. Create framework component wrappers
+4. Same tokens work across frameworks
+
+**Result**: Visual consistency across tech stacks. Same tokens, different frameworks.
 
 ## Governance Points
 

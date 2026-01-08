@@ -288,7 +288,165 @@ Governance is enforced at multiple points:
 └──────────────┘ └──────────┘ └─────────────┘
 ```
 
+## Enterprise Workflow
+
+The governance hooks function as required gates in the enterprise workflow:
+
+### Governance Hooks as Required Gates
+
+**Gate 1: Validation** (Blocks invalid tokens):
+- Token validation must pass before compilation
+- Schema validation ensures DTCG format compliance
+- Invalid tokens fail CI/CD, preventing merge
+
+**Gate 2: Version Check** (Blocks unversioned changes):
+- Version bump check must pass before compilation
+- Unversioned token changes fail CI/CD, preventing merge
+- Version files provide audit trail
+
+**Gate 3: Linting** (Blocks design system violations):
+- Design system linting must pass before merge
+- Hardcoded values fail CI/CD, preventing merge
+- Components must consume tokens via theme
+
+**Result**: Governance hooks are required gates. Violations block progress, not warnings.
+
+### Blocking vs. Non-Blocking Checks
+
+**Blocking Checks** (Fail CI/CD):
+- Token validation (invalid tokens → CI fails)
+- Version enforcement (unversioned changes → CI fails)
+- Design system linting (hardcoded values → CI fails)
+
+**Non-Blocking Checks** (Report but don't fail):
+- Token diffing (shows differences, doesn't block)
+- Visual regression (reports differences, doesn't block)
+
+**Result**: Governance checks are blocking. Violations prevent merges and deployments.
+
+### Change Approval Process
+
+**Workflow**:
+1. Engineer modifies token file
+2. Updates version file (at least patch bump)
+3. Runs validation checks locally: `pnpm run tokens:validate`, `pnpm run tokens:check-version`
+4. Creates PR with token changes and version bump
+5. CI runs governance checks automatically (blocks merge if fails)
+6. Reviewer uses `pnpm run tokens:diff` to review token changes
+7. Review focuses on visual impact and version bump appropriateness
+8. Merge triggers automatic theme recompilation
+
+**Result**: Change approval process is clear and enforced. Governance prevents violations.
+
+### Deployment Pipeline Integration
+
+**CI/CD Pipeline**:
+```
+Token Change → Validation Gate → Version Check Gate → Linting Gate → Compilation → Packaging → Deployment
+```
+
+**Integration Points**:
+- Validation runs in CI before compilation
+- Version check runs in CI before compilation
+- Linting runs in CI before merge
+- Failed checks prevent deployment
+
+**Result**: Governance is integrated throughout the deployment pipeline. Invalid tokens cannot reach production.
+
 ## Example: Changing Primary Color
+
+Let's trace changing the primary color for BU A with governance enforcement:
+
+### Step-by-Step Process
+
+1. **Token Change**: Modify `tokens/bu-a/tokens.json`
+   ```json
+   "primary-500": {
+     "$value": "#2D4A6F",  // Changed from #3A5B81
+     "$type": "color"
+   }
+   ```
+
+2. **Version Bump** (Required): Update `tokens/bu-a/version.json`
+   ```json
+   {
+     "version": "1.0.1"  // Bumped from 1.0.0 (required)
+   }
+   ```
+
+3. **Validate** (Required): Run `pnpm run tokens:validate`
+   - ✓ Schema valid
+   - ✓ DTCG format correct
+   - ✓ Token type valid (color)
+   - **If fails**: CI fails, cannot merge
+
+4. **Version Check** (Required): Run `pnpm run tokens:check-version`
+   - ✓ Version file exists
+   - ✓ Version bumped correctly (1.0.0 → 1.0.1)
+   - **If fails**: CI fails, cannot merge (must update version file)
+
+5. **Linting** (Required): Run `pnpm run lint:design-system`
+   - ✓ No hardcoded values in components
+   - **If fails**: CI fails, cannot merge (must fix hardcoded values)
+
+6. **CI Runs Governance Checks** (Automatic):
+   - All checks must pass before merge
+   - Failed checks prevent PR merge
+   - Reviewer is notified of failures
+
+7. **Compile**: Theme compiles at runtime/build time
+   - `paletteMapper` reads new color value
+   - MUI theme uses new primary color
+   - Deterministic compilation ensures same output
+
+8. **Consume**: Apps automatically use new color
+   - Storybook: Switch to BU A theme → see new color
+   - Demo Site: Select BU A → see new color
+   - Product Apps: Use BU A theme → see new color
+
+**No component code changes needed.** Color change is driven entirely by tokens.
+
+### CI Failure Scenario
+
+If version file is not updated:
+
+1. Engineer modifies token file
+2. Forgets to update version file
+3. Creates PR
+4. CI runs `pnpm run tokens:check-version`
+5. CI fails: "Token files changed but version not bumped"
+6. PR cannot merge
+7. Engineer updates version file
+8. CI passes, PR can merge
+
+**Result**: Governance prevents unversioned changes from entering the system.
+
+### Fix Workflow
+
+If validation fails:
+
+1. CI fails with specific error message:
+   ```
+   Error: Invalid token format in tokens/bu-a/tokens.json
+   primary-500: Expected hex color format, got "#2D4A6F" (valid)
+   ```
+
+2. Engineer fixes token file:
+   ```json
+   "primary-500": {
+     "$value": "#2D4A6F",  // Fixed format
+     "$type": "color"
+   }
+   ```
+
+3. Runs validation locally: `pnpm run tokens:validate`
+   - ✓ Schema valid
+
+4. Pushes fix
+5. CI passes
+6. PR can merge
+
+**Result**: Clear error messages guide fixes. Governance catches errors before production.
 
 Let's trace changing the primary color for BU A:
 
