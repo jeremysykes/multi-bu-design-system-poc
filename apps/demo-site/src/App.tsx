@@ -86,9 +86,9 @@ function App() {
 			<Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 				<Container maxWidth="xl" sx={{ py: 3 }}>
 					<BUSelector selectedBU={buId} onChange={handleBUChange} />
-					<Box sx={{ display: 'flex', gap: 3, mt: 3 }}>
+					<Box sx={{ display: 'flex', gap: 3, mt: 3, alignItems: 'flex-start' }}>
 						<Navigation />
-						<Box sx={{ flexGrow: 1 }}>
+						<Box sx={{ flexGrow: 1, minWidth: 0 }}>
 							<Routes>
 								<Route path="/" element={<DashboardPage buId={buId} />} />
 								<Route path="/onboarding" element={<OnboardingPage buId={buId} />} />

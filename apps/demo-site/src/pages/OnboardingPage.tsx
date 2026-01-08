@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Stack, Paper } from '@mui/material';
+import { Box, Typography, Stack, Paper, useTheme } from '@mui/material';
 import { Card, Button, TextField, Alert } from '@multi-bu/ui';
 import type { BU } from '../App';
 
@@ -14,9 +14,10 @@ const pageTitles: Record<BU, string> = {
 };
 
 export function OnboardingPage({ buId }: OnboardingPageProps) {
+	const theme = useTheme();
 	return (
-		<Box sx={{ maxWidth: 600, mx: 'auto' }}>
-			<Typography variant="h4" gutterBottom>
+		<Box sx={{ maxWidth: theme.breakpoints.values.sm, mx: 'auto' }}>
+			<Typography variant="h4" component="h1" gutterBottom>
 				{pageTitles[buId]}
 			</Typography>
 			<Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>

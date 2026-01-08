@@ -352,7 +352,9 @@ function isBlueOrPurple(color) {
 function getContrastText2(background) {
   if (!background || typeof background !== "string" || !background.startsWith("#")) {
     if (process.env.NODE_ENV === "development") {
-      console.warn(`Invalid background color for contrast calculation: ${background}, defaulting to white text`);
+      console.warn(
+        `Invalid background color for contrast calculation: ${background}, defaulting to white text`
+      );
     }
     return "#ffffff";
   }
@@ -1218,43 +1220,43 @@ var tokens_default2 = {
       $type: "color"
     },
     "secondary-50": {
-      $value: "#E8F5EA",
+      $value: "#FAF6F0",
       $type: "color"
     },
     "secondary-100": {
-      $value: "#C8E6D1",
+      $value: "#F5EBDC",
       $type: "color"
     },
     "secondary-200": {
-      $value: "#A5D6B3",
+      $value: "#EDDCC2",
       $type: "color"
     },
     "secondary-300": {
-      $value: "#7EC695",
+      $value: "#E5CDA8",
       $type: "color"
     },
     "secondary-400": {
-      $value: "#61BA7A",
+      $value: "#DCBE8E",
       $type: "color"
     },
     "secondary-500": {
-      $value: "#45AE60",
+      $value: "#D4A574",
       $type: "color"
     },
     "secondary-600": {
-      $value: "#3D9F55",
+      $value: "#C9955A",
       $type: "color"
     },
     "secondary-700": {
-      $value: "#348F49",
+      $value: "#B88540",
       $type: "color"
     },
     "secondary-800": {
-      $value: "#2C7F3E",
+      $value: "#A77526",
       $type: "color"
     },
     "secondary-900": {
-      $value: "#1F622C",
+      $value: "#8F650C",
       $type: "color"
     },
     "neutral-50": {
@@ -1807,43 +1809,43 @@ var tokens_default3 = {
       $type: "color"
     },
     "secondary-50": {
-      $value: "#FFE5E5",
+      $value: "#F5F4FF",
       $type: "color"
     },
     "secondary-100": {
-      $value: "#FFCCCC",
+      $value: "#EBE9FF",
       $type: "color"
     },
     "secondary-200": {
-      $value: "#FFAAAA",
+      $value: "#D7D3FF",
       $type: "color"
     },
     "secondary-300": {
-      $value: "#FF8888",
+      $value: "#C3BDFF",
       $type: "color"
     },
     "secondary-400": {
-      $value: "#FF7272",
+      $value: "#AFA7FF",
       $type: "color"
     },
     "secondary-500": {
-      $value: "#FF5C5C",
+      $value: "#7B68EE",
       $type: "color"
     },
     "secondary-600": {
-      $value: "#E85050",
+      $value: "#6B5DE6",
       $type: "color"
     },
     "secondary-700": {
-      $value: "#D04444",
+      $value: "#5B52DE",
       $type: "color"
     },
     "secondary-800": {
-      $value: "#B83838",
+      $value: "#4B47D6",
       $type: "color"
     },
     "secondary-900": {
-      $value: "#9F2C2C",
+      $value: "#3B3CCE",
       $type: "color"
     },
     "neutral-50": {
@@ -3546,10 +3548,14 @@ var tokens_default5 = {
 };
 
 // src/loadTokens.browser.ts
-function resolveReference(reference, tokenObject) {
+function resolveReference(reference, tokenObject, visited = /* @__PURE__ */ new Set()) {
   if (!reference.startsWith("{") || !reference.endsWith("}")) {
     return reference;
   }
+  if (visited.has(reference)) {
+    return void 0;
+  }
+  visited.add(reference);
   const path = reference.slice(1, -1);
   const parts = path.split(".");
   if (parts.length === 2 && parts[0] === "color" && parts[1].includes("-")) {
@@ -3557,53 +3563,140 @@ function resolveReference(reference, tokenObject) {
     const token = tokenObject.color?.[colorKey];
     if (token && typeof token === "object" && "$value" in token) {
       const value = token.$value;
-      if (typeof value === "string" && value.startsWith("{") && value !== reference) {
-        return resolveReference(value, tokenObject);
+      if (typeof value === "string" && value.startsWith("{")) {
+        if (value === reference) {
+          visited.delete(reference);
+          return void 0;
+        }
+        const resolved = resolveReference(value, tokenObject, visited);
+        visited.delete(reference);
+        return resolved;
       }
+      visited.delete(reference);
       return value;
     }
+    visited.delete(reference);
     return void 0;
+  }
+  if (parts.length === 3 && parts[0] === "color") {
+    const category = parts[1];
+    const shade = parts[2];
+    const flattenedKey = `${category}-${shade}`;
+    const flattenedToken = tokenObject.color?.[flattenedKey];
+    if (flattenedToken && typeof flattenedToken === "object" && "$value" in flattenedToken) {
+      const value = flattenedToken.$value;
+      if (typeof value === "string" && value.startsWith("{")) {
+        if (value === reference) {
+          visited.delete(reference);
+          return void 0;
+        }
+        const resolved = resolveReference(value, tokenObject, visited);
+        visited.delete(reference);
+        return resolved;
+      }
+      visited.delete(reference);
+      return value;
+    }
   }
   let current = tokenObject;
   for (const part of parts) {
     if (current && typeof current === "object" && part in current) {
       current = current[part];
     } else {
+      visited.delete(reference);
       return void 0;
     }
   }
   if (current && typeof current === "object" && "$value" in current) {
     const value = current.$value;
     if (typeof value === "string" && value.startsWith("{") && value !== reference) {
-      return resolveReference(value, tokenObject);
+      const resolved = resolveReference(value, tokenObject, visited);
+      visited.delete(reference);
+      return resolved;
     }
+    visited.delete(reference);
     return value;
   }
+  visited.delete(reference);
   return void 0;
 }
-function deepMerge(core, bu, resolveFrom = core) {
-  const result = { ...core };
+function deepMerge(core, bu) {
+  const merged = { ...core };
   for (const key in bu) {
-    if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key]) && "$value" in bu[key]) {
-      const value = bu[key].$value;
-      if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) {
-        const resolved = resolveReference(value, resolveFrom);
-        if (resolved !== void 0) {
-          result[key] = {
-            ...bu[key],
-            $value: resolved
-          };
-        } else {
-          result[key] = bu[key];
+    if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key])) {
+      if ("$value" in bu[key]) {
+        const buValue = bu[key].$value;
+        if (typeof buValue === "string" && buValue.startsWith("{") && buValue.endsWith("}")) {
+          const path = buValue.slice(1, -1);
+          const parts = path.split(".");
+          if (parts.length === 2 && parts[0] === "color" && parts[1].includes("-")) {
+            const referencedKey = parts[1];
+            if (referencedKey === key) {
+              continue;
+            }
+          }
+          if (parts.length === 3 && parts[0] === "color") {
+            const category = parts[1];
+            const shade = parts[2];
+            const flattenedKey = `${category}-${shade}`;
+            if (flattenedKey === key) {
+              continue;
+            }
+          }
         }
+        merged[key] = bu[key];
       } else {
-        result[key] = bu[key];
+        merged[key] = deepMerge(core[key] || {}, bu[key]);
       }
-    } else if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key])) {
-      result[key] = deepMerge(core[key] || {}, bu[key], resolveFrom);
     } else {
-      result[key] = bu[key];
+      merged[key] = bu[key];
     }
+  }
+  return resolveAllReferences(merged, merged, core);
+}
+function resolveAllReferences(obj, resolveFrom, coreTokens, visited = /* @__PURE__ */ new Set()) {
+  if (!obj || typeof obj !== "object") {
+    return obj;
+  }
+  if ("$value" in obj && typeof obj.$value === "string" && obj.$value.startsWith("{") && obj.$value.endsWith("}")) {
+    if (visited.has(obj.$value)) {
+      const resolved2 = resolveReference(obj.$value, coreTokens, visited);
+      if (resolved2 !== void 0 && resolved2 !== obj.$value) {
+        return {
+          ...obj,
+          $value: resolved2
+        };
+      }
+      return obj;
+    }
+    visited.add(obj.$value);
+    const resolved = resolveReference(obj.$value, resolveFrom, visited);
+    if (resolved === void 0) {
+      const coreResolved = resolveReference(obj.$value, coreTokens, visited);
+      visited.delete(obj.$value);
+      if (coreResolved !== void 0 && coreResolved !== obj.$value) {
+        return {
+          ...obj,
+          $value: coreResolved
+        };
+      }
+      return obj;
+    }
+    visited.delete(obj.$value);
+    if (resolved !== obj.$value) {
+      return {
+        ...obj,
+        $value: resolved
+      };
+    }
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map((item) => resolveAllReferences(item, resolveFrom, coreTokens, visited));
+  }
+  const result = {};
+  for (const key in obj) {
+    result[key] = resolveAllReferences(obj[key], resolveFrom, coreTokens, visited);
   }
   return result;
 }
@@ -3637,10 +3730,14 @@ async function fileExists(filePath) {
     return false;
   }
 }
-function resolveReference2(reference, tokenObject) {
+function resolveReference2(reference, tokenObject, visited = /* @__PURE__ */ new Set()) {
   if (!reference.startsWith("{") || !reference.endsWith("}")) {
     return reference;
   }
+  if (visited.has(reference)) {
+    return void 0;
+  }
+  visited.add(reference);
   const path = reference.slice(1, -1);
   const parts = path.split(".");
   if (parts.length === 2 && parts[0] === "color" && parts[1].includes("-")) {
@@ -3648,53 +3745,140 @@ function resolveReference2(reference, tokenObject) {
     const token = tokenObject.color?.[colorKey];
     if (token && typeof token === "object" && "$value" in token) {
       const value = token.$value;
-      if (typeof value === "string" && value.startsWith("{") && value !== reference) {
-        return resolveReference2(value, tokenObject);
+      if (typeof value === "string" && value.startsWith("{")) {
+        if (value === reference) {
+          visited.delete(reference);
+          return void 0;
+        }
+        const resolved = resolveReference2(value, tokenObject, visited);
+        visited.delete(reference);
+        return resolved;
       }
+      visited.delete(reference);
       return value;
     }
+    visited.delete(reference);
     return void 0;
+  }
+  if (parts.length === 3 && parts[0] === "color") {
+    const category = parts[1];
+    const shade = parts[2];
+    const flattenedKey = `${category}-${shade}`;
+    const flattenedToken = tokenObject.color?.[flattenedKey];
+    if (flattenedToken && typeof flattenedToken === "object" && "$value" in flattenedToken) {
+      const value = flattenedToken.$value;
+      if (typeof value === "string" && value.startsWith("{")) {
+        if (value === reference) {
+          visited.delete(reference);
+          return void 0;
+        }
+        const resolved = resolveReference2(value, tokenObject, visited);
+        visited.delete(reference);
+        return resolved;
+      }
+      visited.delete(reference);
+      return value;
+    }
   }
   let current = tokenObject;
   for (const part of parts) {
     if (current && typeof current === "object" && part in current) {
       current = current[part];
     } else {
+      visited.delete(reference);
       return void 0;
     }
   }
   if (current && typeof current === "object" && "$value" in current) {
     const value = current.$value;
     if (typeof value === "string" && value.startsWith("{") && value !== reference) {
-      return resolveReference2(value, tokenObject);
+      const resolved = resolveReference2(value, tokenObject, visited);
+      visited.delete(reference);
+      return resolved;
     }
+    visited.delete(reference);
     return value;
   }
+  visited.delete(reference);
   return void 0;
 }
-function deepMerge2(core, bu, resolveFrom = core) {
-  const result = { ...core };
+function deepMerge2(core, bu) {
+  const merged = { ...core };
   for (const key in bu) {
-    if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key]) && "$value" in bu[key]) {
-      const value = bu[key].$value;
-      if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) {
-        const resolved = resolveReference2(value, resolveFrom);
-        if (resolved !== void 0) {
-          result[key] = {
-            ...bu[key],
-            $value: resolved
-          };
-        } else {
-          result[key] = bu[key];
+    if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key])) {
+      if ("$value" in bu[key]) {
+        const buValue = bu[key].$value;
+        if (typeof buValue === "string" && buValue.startsWith("{") && buValue.endsWith("}")) {
+          const path = buValue.slice(1, -1);
+          const parts = path.split(".");
+          if (parts.length === 2 && parts[0] === "color" && parts[1].includes("-")) {
+            const referencedKey = parts[1];
+            if (referencedKey === key) {
+              continue;
+            }
+          }
+          if (parts.length === 3 && parts[0] === "color") {
+            const category = parts[1];
+            const shade = parts[2];
+            const flattenedKey = `${category}-${shade}`;
+            if (flattenedKey === key) {
+              continue;
+            }
+          }
         }
+        merged[key] = bu[key];
       } else {
-        result[key] = bu[key];
+        merged[key] = deepMerge2(core[key] || {}, bu[key]);
       }
-    } else if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key])) {
-      result[key] = deepMerge2(core[key] || {}, bu[key], resolveFrom);
     } else {
-      result[key] = bu[key];
+      merged[key] = bu[key];
     }
+  }
+  return resolveAllReferences2(merged, merged, core);
+}
+function resolveAllReferences2(obj, resolveFrom, coreTokens, visited = /* @__PURE__ */ new Set()) {
+  if (!obj || typeof obj !== "object") {
+    return obj;
+  }
+  if ("$value" in obj && typeof obj.$value === "string" && obj.$value.startsWith("{") && obj.$value.endsWith("}")) {
+    if (visited.has(obj.$value)) {
+      const resolved2 = resolveReference2(obj.$value, coreTokens, visited);
+      if (resolved2 !== void 0 && resolved2 !== obj.$value) {
+        return {
+          ...obj,
+          $value: resolved2
+        };
+      }
+      return obj;
+    }
+    visited.add(obj.$value);
+    const resolved = resolveReference2(obj.$value, resolveFrom, visited);
+    if (resolved === void 0) {
+      const coreResolved = resolveReference2(obj.$value, coreTokens, visited);
+      visited.delete(obj.$value);
+      if (coreResolved !== void 0 && coreResolved !== obj.$value) {
+        return {
+          ...obj,
+          $value: coreResolved
+        };
+      }
+      return obj;
+    }
+    visited.delete(obj.$value);
+    if (resolved !== obj.$value) {
+      return {
+        ...obj,
+        $value: resolved
+      };
+    }
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map((item) => resolveAllReferences2(item, resolveFrom, coreTokens, visited));
+  }
+  const result = {};
+  for (const key in obj) {
+    result[key] = resolveAllReferences2(obj[key], resolveFrom, coreTokens, visited);
   }
   return result;
 }

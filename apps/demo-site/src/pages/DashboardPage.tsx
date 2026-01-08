@@ -16,7 +16,7 @@ const pageTitles: Record<BU, string> = {
 export function DashboardPage({ buId }: DashboardPageProps) {
 	return (
 		<Box>
-			<Typography variant="h4" gutterBottom>
+			<Typography variant="h4" component="h1" gutterBottom>
 				{pageTitles[buId]}
 			</Typography>
 			<Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
@@ -33,7 +33,7 @@ export function DashboardPage({ buId }: DashboardPageProps) {
 							<Typography variant="body2" color="text.secondary">
 								Total Accounts
 							</Typography>
-							<Typography variant="h4">1,234</Typography>
+							<Typography variant="h3">1,234</Typography>
 							<Button variant="contained" color="primary" size="small">
 								View Details
 							</Button>
@@ -48,7 +48,7 @@ export function DashboardPage({ buId }: DashboardPageProps) {
 							<Typography variant="body2" color="text.secondary">
 								Recent Transactions
 							</Typography>
-							<Typography variant="h4">$12,345</Typography>
+							<Typography variant="h3">$12,345</Typography>
 							<Button variant="outlined" color="primary" size="small">
 								View Activity
 							</Button>
@@ -63,7 +63,7 @@ export function DashboardPage({ buId }: DashboardPageProps) {
 							<Typography variant="body2" color="text.secondary">
 								This Month
 							</Typography>
-							<Typography variant="h4">+5.2%</Typography>
+							<Typography variant="h3">+5.2%</Typography>
 							<Button variant="text" color="primary" size="small">
 								View Report
 							</Button>
