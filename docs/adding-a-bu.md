@@ -20,76 +20,98 @@ mkdir -p tokens/bu-c
 
 Replace `bu-c` with your BU identifier (e.g., `bu-retail`, `bu-enterprise`).
 
-### Step 2: Create Palette Tokens
+### Step 2: Create Unified Token File
 
-Create `tokens/bu-c/palette.json` with your BU's brand colors:
+Create `tokens/bu-c/tokens.json` with your BU's complete token set in DTCG format:
 
 ```json
 {
-	"primary": {
-		"50": "#...",
-		"100": "#...",
-		...
-		"900": "#..."
-	},
-	"secondary": {
-		...
-	}
+  "$schema": "https://schemas.figma.com/tokens/v1",
+  "color": {
+    "primary-50": {
+      "$value": "#...",
+      "$type": "color"
+    },
+    ...
+    "primary-900": {
+      "$value": "#...",
+      "$type": "color"
+    },
+    "secondary-50": {
+      "$value": "#...",
+      "$type": "color"
+    },
+    ...
+    "neutral-50": {
+      "$value": "#FAFAFA",
+      "$type": "color"
+    },
+    ...
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": {
+        "$value": "\"Your Font\", sans-serif",
+        "$type": "fontFamily"
+      }
+    },
+    "fontSize": {
+      "xs": {
+        "$value": "0.75rem",
+        "$type": "dimension"
+      },
+      ...
+    }
+  },
+  "spacing": { ... },
+  "shape": { ... },
+  "semantic": {
+    "surface": {
+      "default": {
+        "$value": "{color.neutral-50}",
+        "$type": "color"
+      }
+    },
+    "text": {
+      "primary": {
+        "$value": "{color.neutral-900}",
+        "$type": "color"
+      }
+    },
+    "action": {
+      "primary": {
+        "$value": "{color.primary-500}",
+        "$type": "color"
+      }
+    }
+  }
 }
 ```
 
 **Requirements:**
-- Must include `primary` and `secondary` color ramps
-- Each ramp must have shades 50-900
-- Colors must be valid hex format: `#RRGGBB`
+- Must use DTCG format (same structure as BU A and BU B)
+- Must include complete color palette (primary, secondary, neutral, error, warning, info, success) with 50-900 ramps
+- Must include typography (fontFamily, fontSize, fontWeight, lineHeight)
+- Must include spacing and shape tokens
+- Must include semantic mappings (surface, text, border, action, feedback)
+- Reference colors using `{color.primary-500}` format
 - Should be visually distinct from other BUs
 
-### Step 3: Create Typography Tokens
+**Reference:** Look at `tokens/bu-a/tokens.json` or `tokens/bu-b/tokens.json` for complete examples.
 
-Create `tokens/bu-c/typography.json`:
+### Step 3: Create Version File
 
-```json
-{
-	"fontFamily": {
-		"primary": "\"Your Font\", sans-serif"
-	},
-	"fontSize": {
-		"xs": "0.75rem",
-		...
-	}
-}
-```
-
-**Requirements:**
-- Must include `fontFamily.primary`
-- Must include `fontSize` with at least `xs`, `sm`, `base`, `lg`, `xl`, `2xl`
-- Can override core typography values
-
-### Step 4: Create Semantic Mappings
-
-Create `tokens/bu-c/semantic.json`:
+Create `tokens/bu-c/version.json`:
 
 ```json
 {
-	"surface": {
-		"default": "palette.neutral.50"
-	},
-	"text": {
-		"primary": "palette.neutral.900"
-	},
-	"action": {
-		"primary": "palette.primary.500"
-	}
+  "version": "1.0.0"
 }
 ```
 
-**Requirements:**
-- Must include `surface.default`
-- Must include `text.primary`
-- Must include `action.primary`
-- Can reference palette tokens using dot notation
+This version file is required for governance. See `docs/versioning.md` for versioning policies.
 
-### Step 5: Validate Tokens
+### Step 4: Validate Tokens
 
 Run token validation:
 
@@ -99,7 +121,7 @@ pnpm run validate:tokens
 
 Fix any errors before proceeding.
 
-### Step 6: Create Theme File
+### Step 5: Create Theme File
 
 Create `packages/themes/src/bu-c.ts`:
 
@@ -119,7 +141,7 @@ export async function getBuCTheme(): Promise<Theme> {
 }
 ```
 
-### Step 7: Export Theme
+### Step 6: Export Theme
 
 Update `packages/themes/src/index.ts`:
 
@@ -127,11 +149,11 @@ Update `packages/themes/src/index.ts`:
 export { getBuCTheme } from './bu-c';
 ```
 
-### Step 8: Add to Storybook (Optional)
+### Step 7: Add to Storybook
 
-Update `.storybook/preview.tsx` to include your BU theme in the side-by-side decorator.
+Update Storybook to include your BU theme. See Phase 3 documentation for theme switching setup.
 
-### Step 9: Verify
+### Step 8: Verify
 
 1. Run validation: `pnpm run validate:tokens`
 2. Run linting: `pnpm run lint:design-system`
@@ -148,15 +170,14 @@ Update `.storybook/preview.tsx` to include your BU theme in the side-by-side dec
 - [ ] Components render correctly under new theme
 - [ ] All governance checks pass
 
-## Token Inheritance
+## Token Structure
 
-BU tokens extend core tokens:
+BU tokens are self-contained DTCG format files:
 
-- **Palette**: BU tokens override/extend core palette
-- **Typography**: BU tokens override/extend core typography
-- **Spacing**: Inherits from core (typically doesn't vary by BU)
-- **Shape**: Inherits from core (typically doesn't vary by BU)
-- **Semantic**: BU tokens override/extend core semantic mappings
+- Each BU has a complete `tokens.json` file with all token categories
+- Tokens reference each other using `{color.primary-500}` format
+- All BUs follow the same structure for consistency
+- The theme engine compiles tokens directly without merging with core
 
 ## Common Issues
 

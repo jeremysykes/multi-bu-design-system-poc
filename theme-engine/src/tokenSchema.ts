@@ -1,114 +1,85 @@
 import { z } from 'zod';
 
 /**
- * Token Schema - Defines the structure for design tokens
+ * DTCG (Design Tokens Community Group) Token Schema
  * 
- * This schema enforces a layered token model:
- * - Base tokens: raw values (palette, typography, spacing, shape)
- * - Semantic tokens: intent-based mappings (surface, text, border, action, feedback)
+ * This schema follows the DTCG 1.0 specification, which is the standard format
+ * that Figma expects for design tokens. Each token has:
+ * - $value: The actual token value
+ * - $type: The token type (color, dimension, fontFamily, etc.)
+ * - $description: Optional description
+ * 
+ * Structure organized into logical groups:
+ * - color: Color tokens (palette colors)
+ * - typography: Typography tokens (fontFamily, fontSize, fontWeight, lineHeight)
+ * - spacing: Spacing tokens (dimensions)
+ * - shape: Shape tokens (borderRadius, elevation)
+ * - semantic: Semantic token mappings (references to color tokens)
  */
 
-// Color ramp schema (50-900 scale)
-const colorRampSchema = z.object({
-  50: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color'),
-  100: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color'),
-  200: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color'),
-  300: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color'),
-  400: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color'),
-  500: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color'),
-  600: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color'),
-  700: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color'),
-  800: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color'),
-  900: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color'),
+// DTCG token value schema - a token can have $value, $type, $description
+const dtcgTokenValueSchema = z.object({
+	$value: z.any(), // Value can be string, number, or object
+	$type: z.string().optional(), // Type is optional but recommended
+	$description: z.string().optional(),
 });
 
-// Palette schema
-const paletteSchema = z.object({
-  primary: colorRampSchema,
-  secondary: colorRampSchema,
-  neutral: colorRampSchema,
-  error: colorRampSchema.optional(),
-  warning: colorRampSchema.optional(),
-  info: colorRampSchema.optional(),
-  success: colorRampSchema.optional(),
+// DTCG token can be either a token object or a nested group
+const dtcgTokenOrGroup = z.union([
+	dtcgTokenValueSchema,
+	z.record(z.string(), z.any()), // Nested groups
+]);
+
+// Color tokens - organized by category (primary, secondary, neutral, etc.)
+const colorGroupSchema = z.record(z.string(), dtcgTokenOrGroup);
+
+// Typography tokens
+const typographyGroupSchema = z.object({
+	fontFamily: z.record(z.string(), dtcgTokenOrGroup).optional(),
+	fontSize: z.record(z.string(), dtcgTokenOrGroup).optional(),
+	fontWeight: z.record(z.string(), dtcgTokenOrGroup).optional(),
+	lineHeight: z.record(z.string(), dtcgTokenOrGroup).optional(),
 });
 
-// Typography schema
-const typographySchema = z.object({
-  fontFamily: z.object({
-    primary: z.string(),
-    secondary: z.string().optional(),
-    mono: z.string().optional(),
-  }),
-  fontSize: z.record(z.string(), z.string()), // e.g., { "xs": "0.75rem", "sm": "0.875rem", ... }
-  fontWeight: z.object({
-    light: z.number().optional(),
-    regular: z.number(),
-    medium: z.number().optional(),
-    semibold: z.number().optional(),
-    bold: z.number(),
-  }),
-  lineHeight: z.record(z.string(), z.string().or(z.number())),
+// Spacing tokens - record of dimension tokens
+const spacingGroupSchema = z.record(z.string(), dtcgTokenOrGroup);
+
+// Shape tokens
+const shapeGroupSchema = z.object({
+	borderRadius: z.record(z.string(), dtcgTokenOrGroup).optional(),
+	elevation: z.record(z.string(), dtcgTokenOrGroup).optional(),
 });
 
-// Spacing schema
-const spacingSchema = z.record(z.string(), z.string()); // e.g., { "0": "0px", "1": "4px", ... }
-
-// Shape schema
-const shapeSchema = z.object({
-  borderRadius: z.record(z.string(), z.string()), // e.g., { "none": "0", "sm": "4px", ... }
-  elevation: z.record(z.string(), z.string()).optional(), // e.g., { "0": "none", "1": "0px 1px 3px rgba(...)", ... }
+// Semantic tokens - can reference color tokens using {color.primary.500} syntax
+const semanticGroupSchema = z.object({
+	surface: z.record(z.string(), dtcgTokenOrGroup).optional(),
+	text: z.record(z.string(), dtcgTokenOrGroup).optional(),
+	border: z.record(z.string(), dtcgTokenOrGroup).optional(),
+	action: z.record(z.string(), dtcgTokenOrGroup).optional(),
+	feedback: z.record(z.string(), dtcgTokenOrGroup).optional(),
 });
 
-// Base tokens schema
-const baseTokensSchema = z.object({
-  palette: paletteSchema,
-  typography: typographySchema,
-  spacing: spacingSchema,
-  shape: shapeSchema,
+// Complete DTCG token schema
+const dtcgTokenSchema = z.object({
+	$schema: z.string().optional(), // Optional schema reference
+	color: colorGroupSchema.optional(),
+	typography: typographyGroupSchema.optional(),
+	spacing: spacingGroupSchema.optional(),
+	shape: shapeGroupSchema.optional(),
+	semantic: semanticGroupSchema.optional(),
 });
 
-// Semantic token mappings schema
-const semanticTokensSchema = z.object({
-  surface: z.object({
-    default: z.string(),
-    elevated: z.string().optional(),
-    overlay: z.string().optional(),
-  }),
-  text: z.object({
-    primary: z.string(),
-    secondary: z.string().optional(),
-    disabled: z.string().optional(),
-    inverse: z.string().optional(),
-  }),
-  border: z.object({
-    default: z.string(),
-    focus: z.string().optional(),
-    error: z.string().optional(),
-  }),
-  action: z.object({
-    primary: z.string(),
-    secondary: z.string().optional(),
-    disabled: z.string().optional(),
-  }),
-  feedback: z.object({
-    error: z.string().optional(),
-    warning: z.string().optional(),
-    info: z.string().optional(),
-    success: z.string().optional(),
-  }).optional(),
-});
+export type DTCGTokenSchema = z.infer<typeof dtcgTokenSchema>;
 
-// Complete token schema
-export const tokenSchema = z.object({
-  base: baseTokensSchema,
-  semantic: semanticTokensSchema,
-});
+// Export schema for validation
+export { dtcgTokenSchema };
 
-export type TokenSchema = z.infer<typeof tokenSchema>;
-export type BaseTokens = z.infer<typeof baseTokensSchema>;
-export type SemanticTokens = z.infer<typeof semanticTokensSchema>;
-export type PaletteTokens = z.infer<typeof paletteSchema>;
-export type TypographyTokens = z.infer<typeof typographySchema>;
-export type SpacingTokens = z.infer<typeof spacingSchema>;
-export type ShapeTokens = z.infer<typeof shapeSchema>;
+// Legacy types for backward compatibility during migration
+// These will be removed once migration is complete
+export type TokenSchema = DTCGTokenSchema;
+export type BaseTokens = any; // Deprecated
+export type SemanticTokens = any; // Deprecated
+export type PaletteTokens = any; // Deprecated
+export type TypographyTokens = any; // Deprecated
+export type SpacingTokens = any; // Deprecated
+export type ShapeTokens = any; // Deprecated

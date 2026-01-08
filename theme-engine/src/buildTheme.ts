@@ -8,23 +8,25 @@ import { mapComponents } from './mappers/componentMapper';
 import type { Theme } from '@mui/material/styles';
 
 /**
- * Builds a MUI theme from token data
+ * Builds a MUI theme from DTCG token data
  * Pure function - no side effects, stateless, deterministic
  *
- * @param tokens - Complete token schema data
+ * @param tokens - DTCG token schema data
  * @returns Compiled MUI theme
  */
 export function buildTheme(tokens: TokenSchema): Theme {
 	// Create base theme with palette, typography, spacing, shape
+	// DTCG format has tokens.color, tokens.typography, tokens.spacing, tokens.shape
 	const theme = createTheme({
-		palette: mapPalette(tokens.base.palette),
-		typography: mapTypography(tokens.base.typography),
-		spacing: mapSpacing(tokens.base.spacing),
-		shape: mapShape(tokens.base.shape),
+		palette: mapPalette(tokens.color || {}),
+		typography: mapTypography(tokens.typography || {}),
+		spacing: mapSpacing(tokens.spacing || {}),
+		shape: mapShape(tokens.shape || {}),
 	});
 
 	// Add component overrides based on semantic tokens
-	const components = mapComponents(tokens.semantic, tokens.base, theme);
+	// DTCG format has tokens.semantic
+	const components = mapComponents(tokens.semantic || {}, tokens, theme);
 
 	return createTheme({
 		...theme,

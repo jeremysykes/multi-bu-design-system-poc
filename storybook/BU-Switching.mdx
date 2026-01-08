@@ -1,0 +1,77 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Multi-BU/Theming" />
+
+# Business Unit Theme Switcher
+
+This Storybook uses a toolbar control to switch between business unit themes. You can preview the same component under different BU themes to review cross-BU consistency and visual divergence.
+
+## How to Use the Theme Switcher
+
+1. **Find the Theme Toolbar Control**: Look for the "Business Unit Theme" selector in the Storybook toolbar (top right)
+2. **Select a Theme**: Click the dropdown to choose from:
+   - **Core Banking Platform** 🏦 - Conservative, dense, professional
+   - **Growth & Payments Experience** 🚀 - Expressive, spacious, modern
+   - **Wealth Management** 💎 - Sophisticated, premium, elegant
+3. **Preview Components**: All stories automatically re-render with the selected theme
+
+## Business Units Overview
+
+### Core Banking Platform
+- **Visual Identity**: Conservative, dense, professional
+- **Primary Color**: Deep navy blue (#3A5B81)
+- **Typography**: Dense (0.875rem base), information-focused
+- **Use Case**: Internal, regulated, operational tooling
+
+### Growth & Payments Experience
+- **Visual Identity**: Expressive, spacious, modern
+- **Primary Color**: Vibrant cyan (#00BCD4)
+- **Typography**: Spacious (1.125rem base), comfortable reading
+- **Use Case**: External-facing, revenue and conversion focused
+
+### Wealth Management
+- **Visual Identity**: Sophisticated, premium, elegant
+- **Primary Color**: Rich deep purple/indigo (#673AB7)
+- **Typography**: Balanced (1rem base), elegant serif option
+- **Use Case**: High-value advisory services, premium client experiences
+
+## Reviewing Cross-BU Consistency
+
+When reviewing components across BUs, focus on:
+
+1. **Component Functionality**: Does the component work the same way across all BUs?
+2. **Visual Hierarchy**: Is the visual hierarchy maintained despite color/typography changes?
+3. **Accessibility**: Do all BUs maintain sufficient contrast ratios?
+4. **Brand Expression**: Does each BU express its unique visual identity?
+5. **Token Usage**: Are components correctly consuming semantic tokens?
+
+## Chromatic Visual Regression
+
+Chromatic visual regression testing captures snapshots for all three BU themes:
+
+- Each story is tested under all three themes
+- Changes in component rendering are detected across themes
+- Visual divergence between BUs is documented automatically
+
+## Token-Driven Theming
+
+All visual differences between BUs are driven by design tokens:
+
+- **No hardcoded values** in component code
+- **Semantic tokens** map intent to values
+- **Theme engine** compiles tokens to MUI themes deterministically
+- **Same components** render differently based on selected theme
+
+This ensures:
+- Components remain BU-agnostic
+- Visual changes are made at the token level
+- Governance is enforced through token validation
+- Design system scales across many BUs
+
+## Best Practices
+
+1. **Always test in multiple BUs**: Use the theme switcher to verify component behavior across all BUs
+2. **Check visual divergence**: Ensure BUs look distinct while maintaining functionality
+3. **Verify token consumption**: Components should consume semantic tokens, not raw values
+4. **Document BU-specific requirements**: If a component needs BU-specific behavior, document it clearly
+

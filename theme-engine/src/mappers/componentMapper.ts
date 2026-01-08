@@ -1,44 +1,79 @@
-import type { SemanticTokens, BaseTokens } from '../types';
 import type { Components, Theme } from '@mui/material/styles';
+import { extractValue } from '../utils/extractValue';
 
 /**
- * Maps semantic tokens to MUI component overrides
- * Pure function - no side effects, stateless
+ * Maps DTCG semantic tokens to MUI component overrides
+ * 
+ * Expected DTCG format:
+ * {
+ *   semantic: {
+ *     surface: { default: { $value: "{color.neutral.50}", $type: "color" }, ... },
+ *     text: { primary: { $value: "{color.neutral.900}", $type: "color" }, ... },
+ *     ...
+ *   },
+ *   color: { ... } // For resolving references
+ * }
  */
 export function mapComponents(
-	tokens: SemanticTokens,
-	baseTokens: BaseTokens,
+	semanticTokens: any,
+	allTokens: any, // Full token object for resolving references
 	_theme: Theme
 ): Components<Theme> {
-	// Helper to resolve token references like "palette.primary.500" to actual color values
-	const resolveToken = (tokenRef: string): string => {
+	// Helper to resolve token references like "{color.primary.500}" to actual color values
+	const resolveToken = (tokenValue: string): string => {
+		// Extract value from DTCG token if it's an object
+		let tokenRef = typeof tokenValue === 'object' ? extractValue(tokenValue) : tokenValue;
+		
 		// Handle direct color values (hex codes)
-		if (tokenRef.startsWith('#')) {
+		if (typeof tokenRef === 'string' && tokenRef.startsWith('#')) {
 			return tokenRef;
 		}
 
 		// Handle rgba values
-		if (tokenRef.startsWith('rgba')) {
+		if (typeof tokenRef === 'string' && tokenRef.startsWith('rgba')) {
 			return tokenRef;
 		}
 
-		// Handle token references like "palette.primary.500"
-		const parts = tokenRef.split('.');
-		if (parts.length >= 3 && parts[0] === 'palette') {
-			const category = parts[1];
-			const shade = parts[2];
-			const paletteCategory =
-				baseTokens.palette[category as keyof typeof baseTokens.palette];
-			if (paletteCategory && typeof paletteCategory === 'object') {
-				const colorRamp = paletteCategory as Record<string, string>;
-				if (colorRamp[shade]) {
-					return colorRamp[shade];
+		// Handle DTCG token references like "{color.primary-500}" (flattened) or "{color.primary.500}" (legacy)
+		if (typeof tokenRef === 'string' && tokenRef.startsWith('{') && tokenRef.endsWith('}')) {
+			const path = tokenRef.slice(1, -1); // Remove { }
+			const parts = path.split('.');
+			
+			// Check if this is a flattened format (color.primary-500)
+			if (parts.length === 2 && parts[0] === 'color' && parts[1].includes('-')) {
+				// Flattened format: color.primary-500
+				const colorKey = parts[1];
+				if (allTokens.color && allTokens.color[colorKey]) {
+					return extractValue(allTokens.color[colorKey]);
 				}
 			}
+			
+			// Legacy nested format: color.primary.500
+			// Navigate through token structure
+			let value: any = allTokens;
+			for (const part of parts) {
+				if (value && typeof value === 'object' && part in value) {
+					value = value[part];
+				} else {
+					// Reference not found, return as-is
+					return tokenRef;
+				}
+			}
+			
+			// Extract value from DTCG token if needed
+			return extractValue(value);
 		}
 
 		// Fallback: return as-is (will be handled by theme)
-		return tokenRef;
+		return typeof tokenRef === 'string' ? tokenRef : String(tokenRef);
+	};
+
+	// Extract values from semantic tokens
+	const getSemanticValue = (category: string, key: string): string => {
+		const token = semanticTokens[category]?.[key];
+		if (!token) return '#000000';
+		const value = extractValue(token);
+		return resolveToken(value);
 	};
 
 	return {
@@ -48,13 +83,11 @@ export function mapComponents(
 					textTransform: 'none',
 				},
 				containedPrimary: {
-					backgroundColor: resolveToken(tokens.action.primary),
+					backgroundColor: getSemanticValue('action', 'primary'),
 					color: _theme.palette.primary.contrastText,
 				},
 				containedSecondary: {
-					backgroundColor: resolveToken(
-						tokens.action.secondary || tokens.action.primary
-					),
+					backgroundColor: getSemanticValue('action', 'secondary') || getSemanticValue('action', 'primary'),
 					color: _theme.palette.secondary.contrastText,
 				},
 				containedError: {
@@ -76,15 +109,13 @@ export function mapComponents(
 				root: {
 					'& .MuiOutlinedInput-root': {
 						'& fieldset': {
-							borderColor: resolveToken(tokens.border.default),
+							borderColor: getSemanticValue('border', 'default'),
 						},
 						'&:hover fieldset': {
-							borderColor: resolveToken(tokens.border.default),
+							borderColor: getSemanticValue('border', 'default'),
 						},
 						'&.Mui-focused fieldset': {
-							borderColor: resolveToken(
-								tokens.border.focus || tokens.action.primary
-							),
+							borderColor: getSemanticValue('border', 'focus') || getSemanticValue('action', 'primary'),
 						},
 					},
 				},
@@ -93,51 +124,28 @@ export function mapComponents(
 		MuiCard: {
 			styleOverrides: {
 				root: {
-					backgroundColor: resolveToken(tokens.surface.default),
+					backgroundColor: getSemanticValue('surface', 'default'),
 				},
 			},
 		},
 		MuiAlert: {
 			styleOverrides: {
 				root: {
-					backgroundColor: resolveToken(
-						tokens.surface.elevated || tokens.surface.default
-					),
-				},
-				standardError: {
-					backgroundColor: tokens.feedback?.error
-						? resolveToken(tokens.feedback.error)
-						: undefined,
-					color: _theme.palette.error?.contrastText || '#ffffff',
-					'& .MuiAlert-icon': {
-						color: _theme.palette.error?.contrastText || '#ffffff',
+					'&.MuiAlert-standardError': {
+						backgroundColor: getSemanticValue('feedback', 'error') || getSemanticValue('action', 'primary'),
+						color: '#ffffff',
 					},
-				},
-				standardWarning: {
-					backgroundColor: tokens.feedback?.warning
-						? resolveToken(tokens.feedback.warning)
-						: undefined,
-					color: _theme.palette.warning?.contrastText || '#ffffff',
-					'& .MuiAlert-icon': {
-						color: _theme.palette.warning?.contrastText || '#ffffff',
+					'&.MuiAlert-standardWarning': {
+						backgroundColor: getSemanticValue('feedback', 'warning') || getSemanticValue('action', 'primary'),
+						color: '#ffffff',
 					},
-				},
-				standardInfo: {
-					backgroundColor: tokens.feedback?.info
-						? resolveToken(tokens.feedback.info)
-						: undefined,
-					color: _theme.palette.info?.contrastText || '#ffffff',
-					'& .MuiAlert-icon': {
-						color: _theme.palette.info?.contrastText || '#ffffff',
+					'&.MuiAlert-standardInfo': {
+						backgroundColor: getSemanticValue('feedback', 'info') || getSemanticValue('action', 'primary'),
+						color: '#ffffff',
 					},
-				},
-				standardSuccess: {
-					backgroundColor: tokens.feedback?.success
-						? resolveToken(tokens.feedback.success)
-						: undefined,
-					color: _theme.palette.success?.contrastText || '#ffffff',
-					'& .MuiAlert-icon': {
-						color: _theme.palette.success?.contrastText || '#ffffff',
+					'&.MuiAlert-standardSuccess': {
+						backgroundColor: getSemanticValue('feedback', 'success') || getSemanticValue('action', 'primary'),
+						color: '#ffffff',
 					},
 				},
 			},

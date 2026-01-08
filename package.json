@@ -12,7 +12,20 @@
     "test:visual": "pnpm --filter storybook run test:visual",
     "storybook": "pnpm --filter storybook run storybook",
     "lint": "pnpm --filter \"*\" run lint",
-    "type-check": "pnpm exec tsc --noEmit"
+    "type-check": "pnpm exec tsc --noEmit",
+    "generate:tokens-json": "tsx scripts/generate-tokens-json.ts",
+    "migrate-to-dtcg": "tsx scripts/migrate-to-dtcg.ts",
+    "figma:import": "tsx scripts/figmaBuToTokens.ts import",
+    "figma:import:bu-a": "pnpm figma:import bu-a",
+    "figma:import:bu-b": "pnpm figma:import bu-b",
+    "figma:export": "tsx scripts/figmaBuToTokens.ts export",
+    "figma:export:bu-a": "pnpm figma:export bu-a",
+    "figma:export:bu-b": "pnpm figma:export bu-b",
+    "tokens:validate": "pnpm validate:tokens",
+    "tokens:diff": "tsx scripts/diff-tokens.ts",
+    "tokens:check-version": "tsx scripts/check-version-bumps.ts",
+    "demo:dev": "pnpm --filter @multi-bu/demo-site run dev",
+    "demo:build": "pnpm --filter @multi-bu/demo-site run build"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

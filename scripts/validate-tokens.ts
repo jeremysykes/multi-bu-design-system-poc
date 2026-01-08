@@ -15,9 +15,9 @@ async function validateAllTokens() {
 	const tokensDir = join(process.cwd(), 'tokens');
 	const errors: Array<{ bu: string; errors: Array<{ path: string; message: string }> }> = [];
 
-	// Get all BU directories
+	// Get all BU directories (exclude 'figma' directory)
 	const entries = await readdir(tokensDir, { withFileTypes: true });
-	const buDirs = entries.filter((e) => e.isDirectory());
+	const buDirs = entries.filter((e) => e.isDirectory() && e.name !== 'figma');
 
 	for (const buDir of buDirs) {
 		const buId = buDir.name;

@@ -1,67 +1,113 @@
-import type { PaletteTokens } from '../types';
 import type { PaletteOptions } from '@mui/material/styles';
+import { extractValue } from '../utils/extractValue';
 
 /**
- * Maps token palette to MUI palette
- * Pure function - no side effects, stateless
+ * Maps DTCG color tokens to MUI palette
+ * 
+ * Expected DTCG format (flattened for Figma compatibility):
+ * {
+ *   color: {
+ *     "primary-50": { $value: "#...", $type: "color" },
+ *     "primary-100": { $value: "#...", $type: "color" },
+ *     "primary-500": { $value: "#...", $type: "color" },
+ *     "secondary-50": { ... },
+ *     "neutral-50": { ... },
+ *     ...
+ *   }
+ * }
+ * 
+ * Also supports legacy nested format for backward compatibility:
+ * {
+ *   color: {
+ *     primary: { "50": { $value: "#...", $type: "color" }, ... },
+ *     ...
+ *   }
+ * }
  */
-export function mapPalette(tokens: PaletteTokens): PaletteOptions {
+export function mapPalette(colorTokens: any): PaletteOptions {
+	// Extract color values from DTCG format (supports both flattened and nested)
+	const getColor = (category: string, shade: string | number): string => {
+		// Try flattened format first (primary-50)
+		const flattenedKey = `${category}-${shade}`;
+		if (colorTokens[flattenedKey]) {
+			return extractValue(colorTokens[flattenedKey]);
+		}
+		// Fall back to nested format for backward compatibility (color.primary.50)
+		if (colorTokens[category]?.[shade]) {
+			return extractValue(colorTokens[category][shade]);
+		}
+		return '#000000';
+	};
+
+	// Helper to check if a category exists (supports both flattened and nested formats)
+	const hasCategory = (category: string): boolean => {
+		// Check flattened format (category-50, category-100, etc.)
+		if (colorTokens[`${category}-50`] || colorTokens[`${category}-100`] || colorTokens[`${category}-500`]) {
+			return true;
+		}
+		// Check nested format
+		if (colorTokens[category] && typeof colorTokens[category] === 'object') {
+			return true;
+		}
+		return false;
+	};
+
 	return {
 		primary: {
-			main: tokens.primary[500],
-			light: tokens.primary[300],
-			dark: tokens.primary[700],
+			main: getColor('primary', '500'),
+			light: getColor('primary', '300'),
+			dark: getColor('primary', '700'),
 			contrastText: '#ffffff',
 		},
 		secondary: {
-			main: tokens.secondary[500],
-			light: tokens.secondary[300],
-			dark: tokens.secondary[700],
+			main: getColor('secondary', '500'),
+			light: getColor('secondary', '300'),
+			dark: getColor('secondary', '700'),
 			contrastText: '#ffffff',
 		},
-		error: tokens.error
+		error: hasCategory('error')
 			? {
-					main: tokens.error[500],
-					light: tokens.error[300],
-					dark: tokens.error[700],
+					main: getColor('error', '500'),
+					light: getColor('error', '300'),
+					dark: getColor('error', '700'),
 					contrastText: '#ffffff',
 				}
 			: undefined,
-		warning: tokens.warning
+		warning: hasCategory('warning')
 			? {
-					main: tokens.warning[500],
-					light: tokens.warning[300],
-					dark: tokens.warning[700],
+					main: getColor('warning', '500'),
+					light: getColor('warning', '300'),
+					dark: getColor('warning', '700'),
 					contrastText: '#ffffff',
 				}
 			: undefined,
-		info: tokens.info
+		info: hasCategory('info')
 			? {
-					main: tokens.info[500],
-					light: tokens.info[300],
-					dark: tokens.info[700],
+					main: getColor('info', '500'),
+					light: getColor('info', '300'),
+					dark: getColor('info', '700'),
 					contrastText: '#ffffff',
 				}
 			: undefined,
-		success: tokens.success
+		success: hasCategory('success')
 			? {
-					main: tokens.success[500],
-					light: tokens.success[300],
-					dark: tokens.success[700],
+					main: getColor('success', '500'),
+					light: getColor('success', '300'),
+					dark: getColor('success', '700'),
 					contrastText: '#ffffff',
 				}
 			: undefined,
 		grey: {
-			50: tokens.neutral[50],
-			100: tokens.neutral[100],
-			200: tokens.neutral[200],
-			300: tokens.neutral[300],
-			400: tokens.neutral[400],
-			500: tokens.neutral[500],
-			600: tokens.neutral[600],
-			700: tokens.neutral[700],
-			800: tokens.neutral[800],
-			900: tokens.neutral[900],
+			50: getColor('neutral', '50'),
+			100: getColor('neutral', '100'),
+			200: getColor('neutral', '200'),
+			300: getColor('neutral', '300'),
+			400: getColor('neutral', '400'),
+			500: getColor('neutral', '500'),
+			600: getColor('neutral', '600'),
+			700: getColor('neutral', '700'),
+			800: getColor('neutral', '800'),
+			900: getColor('neutral', '900'),
 		},
 	};
 }

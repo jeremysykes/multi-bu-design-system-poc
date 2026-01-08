@@ -1,63 +1,60 @@
 import React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import { getBuATheme, getBuBTheme } from '@multi-bu/themes';
+import { getBuATheme, getBuBTheme, getBuCTheme } from '@multi-bu/themes';
 import type { Preview } from '@storybook/react';
 
-const sideBySideDecorator = (Story: React.ComponentType) => {
-	const [buATheme, setBuATheme] = React.useState<any>(null);
-	const [buBTheme, setBuBTheme] = React.useState<any>(null);
+type BUTheme = 'Core Banking Platform' | 'Growth & Payments Experience' | 'Wealth Management';
+
+// Theme switcher decorator with toolbar integration
+const themeDecorator = (Story: React.ComponentType, context: any) => {
+	const selectedTheme = (context.globals.theme || 'Core Banking Platform') as BUTheme;
+	const [theme, setTheme] = React.useState<any>(null);
 
 	React.useEffect(() => {
-		getBuATheme().then(setBuATheme);
-		getBuBTheme().then(setBuBTheme);
-	}, []);
+		let cancelled = false;
 
-	if (!buATheme || !buBTheme) {
-		return <div>Loading themes...</div>;
+		const loadTheme = async () => {
+			let themeLoader;
+			switch (selectedTheme) {
+				case 'Core Banking Platform':
+					themeLoader = getBuATheme;
+					break;
+				case 'Growth & Payments Experience':
+					themeLoader = getBuBTheme;
+					break;
+				case 'Wealth Management':
+					themeLoader = getBuCTheme;
+					break;
+				default:
+					themeLoader = getBuATheme;
+			}
+
+			const loadedTheme = await themeLoader();
+			if (!cancelled) {
+				setTheme(loadedTheme);
+			}
+		};
+
+		loadTheme();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [selectedTheme]);
+
+	if (!theme) {
+		return <div>Loading theme...</div>;
 	}
 
 	return (
-		<div style={{ display: 'flex', gap: '24px', padding: '24px' }}>
-			<div
-				style={{
-					flex: 1,
-					border: '1px solid #e0e0e0',
-					padding: '16px',
-					borderRadius: '8px',
-				}}
-			>
-				<div
-					style={{ marginBottom: '16px', fontWeight: 'bold', color: '#666' }}
-				>
-					Core Banking Platform
-				</div>
-				<ThemeProvider theme={buATheme}>
-					<Story />
-				</ThemeProvider>
-			</div>
-			<div
-				style={{
-					flex: 1,
-					border: '1px solid #e0e0e0',
-					padding: '16px',
-					borderRadius: '8px',
-				}}
-			>
-				<div
-					style={{ marginBottom: '16px', fontWeight: 'bold', color: '#666' }}
-				>
-					Growth & Payments Experience
-				</div>
-				<ThemeProvider theme={buBTheme}>
-					<Story />
-				</ThemeProvider>
-			</div>
-		</div>
+		<ThemeProvider theme={theme}>
+			<Story />
+		</ThemeProvider>
 	);
 };
 
 const preview: Preview = {
-	decorators: [sideBySideDecorator],
+	decorators: [themeDecorator],
 	parameters: {
 		actions: { argTypesRegex: '^on[A-Z].*' },
 		controls: {
@@ -68,8 +65,26 @@ const preview: Preview = {
 		},
 		chromatic: {
 			modes: {
-				'Core Banking Platform': {},
-				'Growth & Payments Experience': {},
+				'Core Banking Platform': { theme: 'Core Banking Platform' },
+				'Growth & Payments Experience': { theme: 'Growth & Payments Experience' },
+				'Wealth Management': { theme: 'Wealth Management' },
+			},
+		},
+	},
+	globalTypes: {
+		theme: {
+			name: 'Business Unit Theme',
+			description: 'Select a business unit theme to preview',
+			defaultValue: 'Core Banking Platform',
+			toolbar: {
+				icon: 'paintbrush',
+				items: [
+					{ value: 'Core Banking Platform', title: 'Core Banking Platform', right: '🏦' },
+					{ value: 'Growth & Payments Experience', title: 'Growth & Payments Experience', right: '🚀' },
+					{ value: 'Wealth Management', title: 'Wealth Management', right: '💎' },
+				],
+				showName: true,
+				dynamicTitle: true,
 			},
 		},
 	},

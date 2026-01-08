@@ -7,6 +7,7 @@
  * Business Units:
  * - Core Banking Platform (bu-a): Conservative, dense, predictable
  * - Growth & Payments Experience (bu-b): Expressive, spacious, modern
+ * - Wealth Management (bu-c): Sophisticated, premium, elegant
  */
 
 export { getBuATheme, buAThemeSync } from './bu-a';

@@ -16,12 +16,15 @@ The design system follows [Semantic Versioning](https://semver.org/):
 
 ### Token Versioning
 
-Tokens are versioned independently from component APIs:
+Tokens are versioned independently from component APIs using semver format:
 
 - **Token Schema Changes**: MAJOR version bump
 - **New Token Categories**: MINOR version bump
 - **New Token Values**: MINOR version bump
 - **Token Value Changes**: MAJOR version bump (breaking)
+- **Any Token Change**: Requires at least a PATCH version bump
+
+Each BU has its own version file: `tokens/{bu-id}/version.json`. Core tokens have a version file at `tokens/version.json`.
 
 ### Component API Versioning
 
@@ -63,14 +66,49 @@ When breaking changes are necessary:
 
 ### Token File Structure
 
-Token files don't include version numbers. Versioning is managed at the package level:
+Token versioning is managed via version files:
 
 ```
 tokens/
-  core/          # Core tokens (versioned with theme-engine)
-  bu-a/          # BU A tokens (versioned with theme-engine)
-  bu-b/          # BU B tokens (versioned with theme-engine)
+  version.json         # Core tokens version
+  core/
+    tokens.json
+  bu-a/
+    tokens.json
+    version.json       # BU A tokens version
+  bu-b/
+    tokens.json
+    version.json       # BU B tokens version
+  bu-c/
+    tokens.json
+    version.json       # BU C tokens version
 ```
+
+Each version file uses semver format: `{ "version": "1.0.0" }`
+
+### Running Token Version Checks
+
+Check if token files have changed without version bumps:
+
+```bash
+pnpm run tokens:check-version
+```
+
+This script:
+- Compares token files with git to detect changes
+- Verifies that version files exist and have been bumped
+- Fails if tokens changed without at least a patch version bump
+
+### CI Integration
+
+Add version checks to your CI pipeline:
+
+```yaml
+- name: Check token versions
+  run: pnpm run tokens:check-version
+```
+
+This ensures that token changes are always accompanied by version updates.
 
 ### Token Compatibility
 
@@ -114,12 +152,41 @@ Major version upgrades require:
 - **Breaking Changes Document**: List of all breaking changes
 - **Deprecation Warnings**: Advance notice of breaking changes
 
+## Token Diff
+
+Compare token files or directories to see what changed:
+
+```bash
+pnpm run tokens:diff <old-file-or-dir> <new-file-or-dir>
+```
+
+Examples:
+```bash
+# Compare two BUs
+pnpm run tokens:diff tokens/bu-a tokens/bu-b
+
+# Compare a file with a backup
+pnpm run tokens:diff tokens/bu-a/tokens.json tokens/bu-a/tokens.json.backup
+```
+
+The diff script outputs a markdown report showing:
+- Added tokens (path and value)
+- Removed tokens (path)
+- Changed tokens (path, old value → new value)
+
+This is useful for:
+- Reviewing token changes in PRs
+- Understanding differences between BUs
+- Tracking token changes over time
+
 ## Versioning Best Practices
 
 1. **Incremental Changes**: Prefer many small changes over large breaking changes
 2. **Documentation**: Always document version changes
 3. **Testing**: Test backward compatibility before releasing
 4. **Communication**: Announce major version changes in advance
+5. **Version Enforcement**: Use `tokens:check-version` in CI to enforce version bumps
+6. **Token Diffing**: Use `tokens:diff` to review changes before committing
 
 ## Example Versioning Scenarios
 

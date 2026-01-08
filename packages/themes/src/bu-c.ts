@@ -3,11 +3,23 @@ import { loadTokens } from '@theme-engine/loadTokens.browser';
 import type { Theme } from '@mui/material/styles';
 
 /**
- * BU C Theme
- * Compiled from tokens/bu-c/*.json
+ * BU C Theme - Wealth Management
+ * 
+ * Compiled from tokens/bu-c/tokens.json (DTCG format)
  *
- * This theme was added following the guide in docs/adding-a-bu.md
- * to validate the documentation process.
+ * Design Direction: Sophisticated, premium, elegant
+ * 
+ * Visual Characteristics:
+ * - Primary: Rich deep purple/indigo (#673AB7) - sophisticated, refined, premium
+ * - Secondary: Warm gold/amber (#FFC107) - luxury feel, wealth associations
+ * - Typography: Balanced sizing (1rem base), elegant serif option (Georgia)
+ * - Contrast: Refined and sophisticated
+ * 
+ * Use Case: High-value advisory services, premium client experiences
+ * 
+ * This theme complements BU A (Core Banking Platform - conservative, dense) and
+ * BU B (Growth & Payments Experience - expressive, spacious) by providing a
+ * premium, sophisticated option for wealth management applications.
  */
 
 let buCTheme: Theme | null = null;

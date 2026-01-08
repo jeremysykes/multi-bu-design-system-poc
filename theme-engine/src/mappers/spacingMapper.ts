@@ -1,14 +1,23 @@
-import type { SpacingTokens } from '../types';
+import { extractValue } from '../utils/extractValue';
 
 /**
- * Maps token spacing to MUI spacing function
- * Pure function - no side effects, stateless
+ * Maps DTCG spacing tokens to MUI spacing function
+ * 
+ * Expected DTCG format:
+ * {
+ *   spacing: {
+ *     "0": { $value: "0px", $type: "dimension" },
+ *     "1": { $value: "4px", $type: "dimension" },
+ *     ...
+ *   }
+ * }
  * 
  * Returns a function that MUI expects for spacing
  */
-export function mapSpacing(tokens: SpacingTokens): (factor: number) => string {
-	// Convert spacing tokens to numeric values (removing 'px')
-	const spacingValues = Object.entries(tokens).reduce((acc, [key, value]) => {
+export function mapSpacing(spacingTokens: Record<string, any>): (factor: number) => string {
+	// Convert spacing tokens to numeric values (extracting $value and removing 'px')
+	const spacingValues = Object.entries(spacingTokens).reduce((acc, [key, token]) => {
+		const value = extractValue(token);
 		const numValue = parseFloat(value);
 		if (!isNaN(numValue)) {
 			acc[parseInt(key, 10)] = numValue;

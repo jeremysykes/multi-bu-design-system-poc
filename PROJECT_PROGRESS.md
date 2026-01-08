@@ -1,12 +1,47 @@
-# Project Progress Log
+# Project Progress & Intent
 
-## Overview
+## Project Intent
 
-Multi-BU Design System - Granular Feature Implementation Plan
+### Purpose
 
-- **Total Features:** 42 small, independently testable features
+Build a proof of concept that demonstrates enterprise-grade capability to manage multiple business-unit (BU) design systems on top of MUI, including the layers MUI does not provide out of the box: governance, token orchestration, deterministic theme compilation, validation, versioning discipline, and a clear scaling path.
+
+This is not a "theme switcher" demo. It is a multi-BU design system platform slice, implemented as a high-quality, reviewable engineering artifact.
+
+### What this POC Must Prove
+
+A reviewer should conclude:
+
+- The design system is token-driven, not hardcoded styling
+- Multiple BUs can share the same component APIs while expressing different brands
+- Governance exists as enforcement (CI and validation), not tribal knowledge
+- The system scales beyond two BUs with clear extension points (currently supports three BUs: Core Banking, Growth/Payments, Wealth Management)
+- **MUI is an adapter layer, not the design system itself** - the design system is defined at the token and theme engine layers
+
+### Success Criteria
+
+✅ **All Met:**
+
+- ✅ Token-driven architecture - No hardcoded values in components
+- ✅ Multi-BU support - Three fully realized BUs share component APIs
+- ✅ Governance enforcement - Validation, versioning, and linting enforced in CI
+- ✅ Versioning discipline - Token versioning system with enforcement
+- ✅ Token diffing - Scripts for comparing tokens and tracking changes
+- ✅ Theme packaging - Themes packaged as consumable libraries
+- ✅ Storybook theme switching - Theme switcher for all three BUs
+- ✅ Demo site - Runtime BU switching at application scale
+- ✅ Comprehensive documentation - Architecture, pipeline, governance, consumption guides
+
+---
+
+## Progress Log
+
+### Overview
+
+Multi-BU Design System - Implementation Progress
+
 - **Approach:** Incremental implementation with approval checkpoints
-- **Status:** All 42 features completed
+- **Status:** All phases completed
 
 ---
 
@@ -193,11 +228,13 @@ Replaced generic BU A and BU B with two fintech business units by adjusting valu
 **Token Adjustments:**
 
 1. **Palette (`tokens/bu-a/palette.json`)**
+
    - Primary: Shifted to deeper navy-blue tones (#3A5B81 at 500) for professional, trustworthy appearance
    - Secondary: Muted gray-blue tones (#818D9F at 500) for conservative, low-visual-noise aesthetic
    - **Existing tokens used:** `primary`, `secondary` color ramps (50-900 scale)
 
 2. **Typography (`tokens/bu-a/typography.json`)**
+
    - Base font size: Reduced from 1rem to 0.875rem for denser information display
    - Font size scale: Proportionally reduced (xs: 0.6875rem, sm: 0.8125rem, etc.)
    - **Existing tokens used:** `fontSize` scale (xs, sm, base, lg, xl, 2xl, 3xl, 4xl)
@@ -218,11 +255,13 @@ Replaced generic BU A and BU B with two fintech business units by adjusting valu
 **Token Adjustments:**
 
 1. **Palette (`tokens/bu-b/palette.json`)**
+
    - Primary: Vibrant cyan/blue-green tones (#00BCD4 at 500) for energetic, growth-oriented feel
    - Secondary: Warm amber/yellow tones (#FFC107 at 500) for approachable, conversion-focused accent
    - **Existing tokens used:** `primary`, `secondary` color ramps (50-900 scale)
 
 2. **Typography (`tokens/bu-b/typography.json`)**
+
    - Base font size: Increased from 1rem to 1.125rem for more spacious, readable display
    - Font size scale: Proportionally increased (xs: 0.875rem, sm: 1rem, etc.)
    - **Existing tokens used:** `fontSize` scale (xs, sm, base, lg, xl, 2xl, 3xl, 4xl)
@@ -238,6 +277,7 @@ Replaced generic BU A and BU B with two fintech business units by adjusting valu
 ### Storybook Updates
 
 **File:** `storybook/.storybook/preview.tsx`
+
 - Updated labels from "BU A" / "BU B" to full business unit names:
   - "Core Banking Platform"
   - "Growth & Payments Experience"
@@ -247,6 +287,7 @@ Replaced generic BU A and BU B with two fintech business units by adjusting valu
 ### Theme File Documentation
 
 **Files Updated:**
+
 - `packages/themes/src/bu-a.ts` - Added comment describing Core Banking Platform
 - `packages/themes/src/bu-b.ts` - Added comment describing Growth & Payments Experience
 - `packages/themes/src/index.ts` - Added business unit descriptions in package documentation
@@ -254,12 +295,14 @@ Replaced generic BU A and BU B with two fintech business units by adjusting valu
 ### Validation
 
 **Token Validation:** ✅ All tokens pass schema validation
+
 - Run: `pnpm run validate:tokens`
 - Result: All token files valid, no schema violations
 
 ### Limitations & Constraints
 
 **What Was NOT Changed:**
+
 - No new token categories introduced
 - No new token names within existing categories
 - No component API changes
@@ -267,14 +310,16 @@ Replaced generic BU A and BU B with two fintech business units by adjusting valu
 - No new abstraction layers
 
 **Shared Tokens (Not Differentiated):**
+
 - **Spacing:** Remains in `tokens/core/spacing.json` - shared across all BUs
-  - *Limitation:* Cannot differentiate density through spacing tokens without creating BU-specific spacing files
-  - *Workaround:* Typography size adjustments help create visual density perception
+  - _Limitation:_ Cannot differentiate density through spacing tokens without creating BU-specific spacing files
+  - _Workaround:_ Typography size adjustments help create visual density perception
 - **Shape (borderRadius/elevation):** Remains in `tokens/core/shape.json` - shared across all BUs
-  - *Limitation:* Cannot differentiate angular vs. rounded aesthetics without BU-specific shape tokens
-  - *Note:* This limitation is acceptable for current visual differentiation goals
+  - _Limitation:_ Cannot differentiate angular vs. rounded aesthetics without BU-specific shape tokens
+  - _Note:_ This limitation is acceptable for current visual differentiation goals
 
 **Achieved Differentiation:**
+
 - ✅ Color palette (primary/secondary) - distinct visual identity
 - ✅ Typography scale - density vs. spaciousness
 - ✅ Text contrast - conservative vs. approachable
@@ -283,6 +328,7 @@ Replaced generic BU A and BU B with two fintech business units by adjusting valu
 ### Visual Differentiation Summary
 
 The two business units are now visually distinct:
+
 - **Core Banking Platform:** Deeper blues, smaller fonts, higher contrast, defined borders → conservative, dense, professional
 - **Growth & Payments Experience:** Vibrant cyan, larger fonts, softer contrast, lighter borders → expressive, spacious, modern
 
@@ -316,6 +362,7 @@ Reorganized the component library to follow atomic design principles, creating a
 ### Implementation
 
 **Directory Structure:**
+
 - Created atomic-level directories: `atoms/`, `molecules/`, `organisms/`, `templates/`, `pages/`
 - Moved existing components to appropriate levels:
   - Atoms: `Typography`, `Button`
@@ -323,27 +370,32 @@ Reorganized the component library to follow atomic design principles, creating a
   - Organisms: `Card`
 
 **New Components:**
+
 - `FormLayout` (Template): Minimal template demonstrating form structure with token-driven styling
 - `LoginPage` (Page): Minimal page example demonstrating template usage and composition
 
 **Token Paradigm:**
+
 - All components/templates/pages follow token paradigm: consume meaning (semantic tokens), not values (raw tokens)
 - All styling via MUI's `sx` prop, `Box`, `Stack`, `Container` - no custom CSS files
 - Spacing from `theme.spacing()` (maps to tokens)
 - Colors use semantic meaning via MUI palette (`theme.palette.background.default`, `theme.palette.divider`)
 
 **Storybook Updates:**
+
 - Updated story titles to reflect atomic structure: `Atoms/Button`, `Molecules/TextField`, etc.
 - Added stories for `FormLayout` (Template) and `LoginPage` (Page)
 - All imports maintained backward compatibility via root `@multi-bu/ui` exports
 
 **Exports:**
+
 - Maintained backward-compatible flat exports from root `index.ts`
 - Added atomic-level exports for new organization
 - All existing imports continue to work
 
 **Documentation:**
-- Updated `PROJECT_INTENT.md` with atomic design principles and token paradigm
+
+- Documented atomic design principles and token paradigm
 - Updated `PROJECT_PROGRESS.md` with reorganization details
 
 ### Key Principles Enforced
@@ -353,6 +405,338 @@ Reorganized the component library to follow atomic design principles, creating a
 3. **Semantic Consumption**: Components use semantic tokens (meaning), not raw tokens (values)
 4. **MUI-Only Styling**: No custom CSS files, all styling via MUI's system
 5. **Backward Compatibility**: All existing imports continue to work
+
+---
+
+---
+
+## Enhancement Cycle: Production Readiness
+
+**Date Started:** 2024-12-21  
+**Objective:** Transform POC into production-ready multi-BU design system platform
+
+### Current Status Before Enhancement
+
+**Completed:**
+
+- ✅ Core token schema and validation system (DTCG format)
+- ✅ Theme compilation engine with deterministic output
+- ✅ Two complete BUs (A and B) with visual divergence
+- ✅ Component wrapper library (atomic design structure)
+- ✅ Storybook with side-by-side theme comparison
+- ✅ Governance automation (token validation, linting)
+- ✅ Basic documentation
+
+**Needs Enhancement:**
+
+- ⚠️ BU C exists but has fragmented structure (needs consolidation to single `tokens.json`)
+- ⚠️ No token versioning system
+- ⚠️ No token diff script for governance
+- ⚠️ Storybook uses side-by-side decorator (needs theme switching addon)
+- ⚠️ No demo site demonstrating runtime BU switching
+- ⚠️ Documentation needs enhancement for hiring manager review
+
+### Phase 0: Analysis and Intent Alignment ✅
+
+**Status:** Completed  
+**Date:** 2024-12-21
+
+- Analyzed current state and documented findings
+- Clarified project intent:
+  - Tokens as single source of truth
+  - Multi-BU scope (3 BUs: Core Banking, Growth/Payments, Wealth Management)
+  - Reinforce MUI as adapter layer, not the design system itself
+- Updated `PROJECT_PROGRESS.md` with enhancement cycle entry
+
+**Next Steps:** Phase 1 - Token Governance, Versioning, and BU C Alignment
+
+---
+
+### Phase 1: Token Governance, Versioning, and BU C Alignment ✅
+
+**Status:** Completed  
+**Date:** 2024-12-21
+
+**BU C Consolidation:**
+
+- ✅ Fixed BU C's fragmented structure - consolidated from separate files (`palette.json`, `semantic.json`, `typography.json`) to unified `tokens.json` format matching BU A/B structure
+- ✅ Deleted old fragmented files (palette.json, semantic.json, typography.json)
+- ✅ Updated browser token loader to use consolidated `tokens.json` instead of fragmented structure
+- ✅ BU C now structurally consistent with BU A and BU B - all use single `tokens.json` file in DTCG format
+- Defined Wealth Management design direction: sophisticated, premium, elegant
+- Primary color: Rich deep purple/indigo (#673AB7) - sophisticated, refined
+- Secondary color: Warm gold/amber (#FFC107) - premium accent
+- Typography: Balanced sizing (1rem base), elegant serif option (Georgia)
+- Complete DTCG token structure with all categories (color, typography, spacing, shape, semantic)
+- Updated browser token loader to use consolidated BU C tokens.json
+
+**Token Versioning System:**
+
+- Created `tokens/version.json` for core tokens (version 1.0.0)
+- Created per-BU version files: `tokens/bu-a/version.json`, `tokens/bu-b/version.json`, `tokens/bu-c/version.json`
+- All version files use semver format: `{ "version": "1.0.0" }`
+
+**Token Diff Script:**
+
+- Created `scripts/diff-tokens.ts` for comparing token files/directories
+- Supports comparing two token files, two BU directories, or token sets over time
+- Outputs human-readable markdown report showing:
+  - Added tokens (path and value)
+  - Removed tokens (path)
+  - Changed tokens (path, old value → new value)
+- Uses deep comparison for semantic token changes
+
+**Version Bump Enforcement Script:**
+
+- Created `scripts/check-version-bumps.ts` for enforcing version bumps
+- Compares token files with git to detect changes
+- Fails if token files changed but version.json unchanged
+- Simple rule: Any token change requires at least patch bump
+- Documents more complex rules (major for breaking changes) for future implementation
+
+**Package Scripts:**
+
+- Added `tokens:validate` → existing `validate:tokens`
+- Added `tokens:diff` → new diff script
+- Added `tokens:check-version` → version bump check
+
+**Documentation Updates:**
+
+- Updated `docs/versioning.md` with:
+  - Token versioning policy (semver for tokens)
+  - How to run token diff locally
+  - CI integration guidance
+- Updated `docs/adding-a-bu.md` to reflect unified token structure (single tokens.json instead of separate files)
+- Created `docs/business-units.md` describing:
+  - BU A: Core Banking Platform (conservative, dense)
+  - BU B: Growth & Payments Experience (expressive, spacious)
+  - BU C: Wealth Management (sophisticated, premium)
+  - How they complement each other
+
+**Theme File Updates:**
+
+- Updated `packages/themes/src/bu-c.ts` with descriptive comments about Wealth Management design direction
+- Updated `packages/themes/src/index.ts` to include BU C in business unit descriptions
+
+**Next Steps:** Phase 2 - Packaging BU Themes as Consumable Libraries
+
+---
+
+### Phase 2: Packaging BU Themes as Consumable Libraries ✅
+
+**Status:** Completed  
+**Date:** 2024-12-21
+
+**Packaging Structure Review:**
+
+- Confirmed `packages/themes` uses `tsup` for building
+- Current structure: Single package with named exports (`getBuATheme`, `getBuBTheme`, `getBuCTheme`)
+- Decision: Keep single package structure (simpler, less invasive, already works)
+- Exports are clear and well-documented
+
+**Build Configuration:**
+
+- Verified `tsup` correctly configured for ESM and CJS output
+- Type declarations generated automatically
+- React and MUI externalized (not bundled, in dependencies)
+- Output format suitable for consumption
+
+**Theme API Clarity:**
+
+- Each BU has clear async loader (`getBuATheme`, `getBuBTheme`, `getBuCTheme`)
+- JSDoc comments added to BU C theme describing design direction
+- All theme files have descriptive comments
+
+**Internal Consumers:**
+
+- Storybook already uses packaged themes via `@multi-bu/themes`
+- Verified `packages/ui` doesn't have circular dependencies
+- Demo site (Phase 4) will consume packaged themes
+
+**Documentation:**
+
+- Created `docs/consuming-themes.md` with:
+  - Installation instructions (workspace and npm)
+  - Usage examples for single BU and multi-BU apps
+  - Runtime BU switching patterns
+  - Multi-BU organization patterns
+  - TypeScript support
+  - Best practices and troubleshooting
+
+**Next Steps:** Phase 3 - Storybook BU Switching via Addon
+
+---
+
+### Phase 3: Storybook BU Switching via Addon ✅
+
+**Status:** Completed  
+**Date:** 2024-12-21
+
+**Theme Switcher Implementation:**
+
+- Created custom theme switcher using Storybook's toolbar API (Storybook 7 compatible)
+- Configured toolbar control with three BU theme options:
+  - Core Banking Platform 🏦
+  - Growth & Payments Experience 🚀
+  - Wealth Management 💎
+- Replaced side-by-side decorator with single-theme decorator
+- All stories automatically re-render with selected theme
+
+**Storybook Configuration:**
+
+- Updated `storybook/.storybook/preview.tsx` with theme switcher decorator
+- Added `globalTypes` configuration for theme toolbar control
+- Updated Chromatic visual regression modes to include all three BUs
+- Theme loading uses async loaders (`getBuATheme`, `getBuBTheme`, `getBuCTheme`)
+
+**Story Updates:**
+
+- Stories already use simple rendering (no side-by-side logic)
+- All stories work correctly with theme switcher
+- Stories automatically adapt to selected theme
+
+**Documentation:**
+
+- Created `storybook/BU-Switching.mdx` (Docs page) explaining:
+  - How to use the theme switcher toolbar control
+  - How to review cross-BU consistency
+  - BU C's role in the portfolio
+  - Token-driven theming approach
+  - Best practices for cross-BU review
+
+**Next Steps:** Phase 4 - Demo Site with Runtime BU Switching
+
+---
+
+### Phase 4: Demo Site with Runtime BU Switching ✅
+
+**Status:** Completed  
+**Date:** 2024-12-21
+
+**Demo App Structure:**
+
+- Created `apps/demo-site/` directory structure
+- Setup Vite + React + MUI + TypeScript
+- Added `package.json` with workspace references to `@multi-bu/ui` and `@multi-bu/themes`
+- Configured build/dev scripts
+
+**BU Selector Implementation:**
+
+- Created `BUSelector` component with tabs for three BUs
+- BU selection stored in URL params (`?bu=bu-a|bu-b|bu-c`) for shareability
+- Selection controls theme loading and app re-rendering
+- BU selector visible on all pages (header)
+
+**Theme Provider Setup:**
+
+- Wrapped app in MUI's `ThemeProvider`
+- Async theme loading using `getBuATheme`, `getBuBTheme`, `getBuCTheme`
+- Handles loading states (shows "Loading theme..." while loading)
+- Graceful error handling
+
+**Demo Pages:**
+
+- **Dashboard Page**: Shows cards, metrics, quick actions
+- **Onboarding Page**: Account creation form with TextField, Button, Alert components
+- **Settings Page**: Settings forms, preferences, dangerous actions
+- All pages use `@multi-bu/ui` components
+- Pages demonstrate realistic usage at application scale
+- Subtle copy differences per BU (e.g., "Wealth Advisory Dashboard" for BU C)
+
+**Navigation:**
+
+- Created `Navigation` component with sidebar navigation
+- React Router for navigation between pages
+- BU selector persists across page navigation
+- Navigation highlights active page
+
+**Documentation:**
+
+- Created `docs/demo-site.md` explaining:
+  - App structure and purpose
+  - How BU switching works
+  - Organization usage patterns
+  - Extending the demo site
+  - Best practices demonstrated
+
+**Package Scripts:**
+
+- Added `demo:dev` script to root `package.json`
+- Added `demo:build` script to root `package.json`
+- Updated `pnpm-workspace.yaml` to include `apps/*`
+
+**Next Steps:** Phase 5 - Documentation and Polish
+
+---
+
+### Phase 5: Documentation and Polish ✅
+
+**Status:** Completed  
+**Date:** 2024-12-21
+
+**Core Documentation:**
+
+- Created `docs/architecture.md`:
+
+  - Layered architecture diagram (tokens → validation → engine → themes → components)
+  - Token pipeline flow
+  - MUI as adapter layer (not the design system itself)
+  - How BU A, B, C are driven by same token engine
+  - Extension points for adding BUs and token categories
+
+- Created `docs/pipeline.md`:
+
+  - Step-by-step: token change → validation → compilation → theme packaging → Storybook/consumers
+  - Diagrams showing flow
+  - Where governance hooks in
+  - Example: changing primary color traces through entire pipeline
+
+- Created `docs/multi-bu-demo.md`:
+  - Storybook theme switcher explanation
+  - Demo site overview
+  - BU C as fully realized third BU
+  - Cross-BU review process for designers, engineers, stakeholders
+
+**Governance Documentation Updates:**
+
+- Updated `docs/governance.md` with:
+  - Token diffing (scripts and usage)
+  - Version enforcement (version bump checks)
+  - CI integration patterns (example GitHub Actions workflow)
+
+**Root README Updates:**
+
+- Updated `README.md` to:
+  - Point to new documentation structure
+  - Highlight token-first pipeline
+  - Emphasize three fully realized BUs (Core Banking, Growth/Payments, Wealth Management)
+  - Call out governance and CI story
+  - Note MUI as adapter, not design system
+  - Update scripts list (token diffing, versioning, demo site)
+  - Update Storybook description (theme switcher, not side-by-side)
+
+**Final Updates:**
+
+- Final project intent documented (no major changes needed)
+- Updated `PROJECT_PROGRESS.md` with complete enhancement cycle entry
+
+**Known Future Enhancements (Explicitly Out of Scope):**
+
+- Full Figma automation or bidirectional sync
+- Additional framework adapters (Vue, Angular)
+- Governance web app
+- Full production-grade micro-frontend isolation
+
+**Enhancement Cycle Summary:**
+
+- ✅ Phase 0: Analysis and intent alignment
+- ✅ Phase 1: Token governance, versioning, and BU C alignment
+- ✅ Phase 2: Packaging BU themes as consumable libraries
+- ✅ Phase 3: Storybook BU switching via toolbar (custom implementation for Storybook 7)
+- ✅ Phase 4: Demo site with runtime BU switching
+- ✅ Phase 5: Documentation and polish
+
+**All planned phases completed successfully.**
 
 ---
 

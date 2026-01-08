@@ -1,8 +1,7 @@
-import { tokenSchema } from '../tokenSchema';
-import type { TokenSchema } from '../types';
+import { dtcgTokenSchema } from '../tokenSchema';
 
 /**
- * Validates token data against the schema
+ * Validates tokens against the DTCG schema
  * @param tokens - Token data to validate
  * @returns Validation result with errors if any
  */
@@ -10,28 +9,18 @@ export function validateTokens(tokens: unknown): {
 	valid: boolean;
 	errors: Array<{ path: string; message: string }>;
 } {
-	const errors: Array<{ path: string; message: string }> = [];
-
-	try {
-		tokenSchema.parse(tokens);
+	const result = dtcgTokenSchema.safeParse(tokens);
+	
+	if (result.success) {
 		return { valid: true, errors: [] };
-	} catch (error) {
-		if (error instanceof Error && 'issues' in error) {
-			const zodError = error as { issues: Array<{ path: (string | number)[]; message: string }> };
-			errors.push(
-				...zodError.issues.map((issue) => ({
-					path: issue.path.join('.'),
-					message: issue.message,
-				}))
-			);
-		} else {
-			errors.push({
-				path: 'root',
-				message: error instanceof Error ? error.message : 'Unknown validation error',
-			});
-		}
-		return { valid: false, errors };
 	}
+
+	const errors = result.error.errors.map((err) => ({
+		path: err.path.join('.'),
+		message: err.message,
+	}));
+
+	return { valid: false, errors };
 }
 
 /**
@@ -39,7 +28,7 @@ export function validateTokens(tokens: unknown): {
  * @param filePath - Path to token JSON file
  * @returns Validated token data or throws error
  */
-export async function loadAndValidateTokens(filePath: string): Promise<TokenSchema> {
+export async function loadAndValidateTokens(filePath: string): Promise<any> {
 	const fs = await import('fs/promises');
 	const content = await fs.readFile(filePath, 'utf-8');
 	const tokens = JSON.parse(content);
@@ -51,5 +40,5 @@ export async function loadAndValidateTokens(filePath: string): Promise<TokenSche
 		);
 	}
 
-	return tokens as TokenSchema;
+	return tokens;
 }
