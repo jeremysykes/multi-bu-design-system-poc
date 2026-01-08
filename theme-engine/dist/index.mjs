@@ -382,10 +382,10 @@ function mapComponents(semanticTokens, allTokens, _theme) {
       if (parts.length === 2 && parts[0] === "color" && parts[1].includes("-")) {
         const colorParts = parts[1].split("-");
         if (colorParts.length === 2) {
-          const category2 = colorParts[0];
+          const colorCategory = colorParts[0];
           const shade = parseInt(colorParts[1]);
-          const darkerShade = shade >= 600 ? 700 : 600;
-          const darkerKey = `${category2}-${darkerShade}`;
+          const darkerShade = colorCategory === "secondary" && shade === 500 ? 700 : shade >= 600 ? 700 : 600;
+          const darkerKey = `${colorCategory}-${darkerShade}`;
           if (allTokens.color && allTokens.color[darkerKey]) {
             return extractValue(allTokens.color[darkerKey]);
           }
@@ -423,8 +423,16 @@ function mapComponents(semanticTokens, allTokens, _theme) {
           // Hover state uses a darker shade of the same color
           "&:hover": {
             backgroundColor: secondaryHoverBg,
-            // Maintain same text color (white for blue/purple, calculated for others)
-            color: getContrastText2(secondaryHoverBg)
+            // For darker hover states, use white text if it meets minimum threshold
+            // This ensures visual consistency for darker hover states
+            color: (() => {
+              const whiteContrast = getContrastRatio2("#ffffff", secondaryHoverBg);
+              const blackContrast = getContrastRatio2("#000000", secondaryHoverBg);
+              if (whiteContrast >= 1.3 && whiteContrast < blackContrast) {
+                return "#ffffff";
+              }
+              return getContrastText2(secondaryHoverBg);
+            })()
           }
         },
         containedError: {
@@ -3785,14 +3793,23 @@ function resolveReference2(reference, tokenObject, visited = /* @__PURE__ */ new
         if (value === reference) {
           visited.delete(reference);
           if (coreTokens) {
-            const coreResolved = resolveReference2(reference, coreTokens, /* @__PURE__ */ new Set());
+            const coreResolved = resolveReference2(
+              reference,
+              coreTokens,
+              /* @__PURE__ */ new Set()
+            );
             if (coreResolved !== void 0 && coreResolved !== reference) {
               return coreResolved;
             }
           }
           return void 0;
         }
-        const resolved = resolveReference2(value, tokenObject, visited, coreTokens);
+        const resolved = resolveReference2(
+          value,
+          tokenObject,
+          visited,
+          coreTokens
+        );
         visited.delete(reference);
         if (resolved === void 0 && coreTokens) {
           const coreResolved = resolveReference2(value, coreTokens, /* @__PURE__ */ new Set());
@@ -3826,14 +3843,23 @@ function resolveReference2(reference, tokenObject, visited = /* @__PURE__ */ new
         if (value === reference) {
           visited.delete(reference);
           if (coreTokens) {
-            const coreResolved = resolveReference2(reference, coreTokens, /* @__PURE__ */ new Set());
+            const coreResolved = resolveReference2(
+              reference,
+              coreTokens,
+              /* @__PURE__ */ new Set()
+            );
             if (coreResolved !== void 0 && coreResolved !== reference) {
               return coreResolved;
             }
           }
           return void 0;
         }
-        const resolved = resolveReference2(value, tokenObject, visited, coreTokens);
+        const resolved = resolveReference2(
+          value,
+          tokenObject,
+          visited,
+          coreTokens
+        );
         visited.delete(reference);
         if (resolved === void 0 && coreTokens) {
           const coreResolved = resolveReference2(value, coreTokens, /* @__PURE__ */ new Set());
@@ -3872,7 +3898,12 @@ function resolveReference2(reference, tokenObject, visited = /* @__PURE__ */ new
   if (current && typeof current === "object" && "$value" in current) {
     const value = current.$value;
     if (typeof value === "string" && value.startsWith("{") && value !== reference) {
-      const resolved = resolveReference2(value, tokenObject, visited, coreTokens);
+      const resolved = resolveReference2(
+        value,
+        tokenObject,
+        visited,
+        coreTokens
+      );
       visited.delete(reference);
       if (resolved === void 0 && coreTokens) {
         const coreResolved = resolveReference2(value, coreTokens, /* @__PURE__ */ new Set());
@@ -3944,7 +3975,12 @@ function resolveAllReferences2(obj, resolveFrom, coreTokens, visited = /* @__PUR
       return obj;
     }
     visited.add(obj.$value);
-    const resolved = resolveReference2(obj.$value, resolveFrom, visited, coreTokens);
+    const resolved = resolveReference2(
+      obj.$value,
+      resolveFrom,
+      visited,
+      coreTokens
+    );
     if (resolved === void 0) {
       visited.delete(obj.$value);
       return obj;
@@ -3959,11 +3995,18 @@ function resolveAllReferences2(obj, resolveFrom, coreTokens, visited = /* @__PUR
     return obj;
   }
   if (Array.isArray(obj)) {
-    return obj.map((item) => resolveAllReferences2(item, resolveFrom, coreTokens, visited));
+    return obj.map(
+      (item) => resolveAllReferences2(item, resolveFrom, coreTokens, visited)
+    );
   }
   const result = {};
   for (const key in obj) {
-    result[key] = resolveAllReferences2(obj[key], resolveFrom, coreTokens, visited);
+    result[key] = resolveAllReferences2(
+      obj[key],
+      resolveFrom,
+      coreTokens,
+      visited
+    );
   }
   return result;
 }

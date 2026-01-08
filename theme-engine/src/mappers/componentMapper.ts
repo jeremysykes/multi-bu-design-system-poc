@@ -218,12 +218,18 @@ export function mapComponents(
 			) {
 				const colorParts = parts[1].split('-');
 				if (colorParts.length === 2) {
-					const category = colorParts[0]; // primary, secondary, etc.
+					const colorCategory = colorParts[0]; // primary, secondary, etc.
 					const shade = parseInt(colorParts[1]); // 500, 600, etc.
 
-					// Use next darker shade (600 instead of 500, or 700 if already 600)
-					const darkerShade = shade >= 600 ? 700 : 600;
-					const darkerKey = `${category}-${darkerShade}`;
+					// For secondary buttons, use 700 instead of 600 for better contrast with white text
+					// For other colors, use 600 instead of 500, or 700 if already 600
+					const darkerShade =
+						colorCategory === 'secondary' && shade === 500
+							? 700 // Use secondary-700 for secondary button hover
+							: shade >= 600
+							  ? 700
+							  : 600;
+					const darkerKey = `${colorCategory}-${darkerShade}`;
 
 					// Get the darker shade from tokens
 					if (allTokens.color && allTokens.color[darkerKey]) {
@@ -270,8 +276,18 @@ export function mapComponents(
 					// Hover state uses a darker shade of the same color
 					'&:hover': {
 						backgroundColor: secondaryHoverBg,
-						// Maintain same text color (white for blue/purple, calculated for others)
-						color: getContrastText(secondaryHoverBg),
+						// For darker hover states, use white text if it meets minimum threshold
+						// This ensures visual consistency for darker hover states
+						color: (() => {
+							const whiteContrast = getContrastRatio('#ffffff', secondaryHoverBg);
+							const blackContrast = getContrastRatio('#000000', secondaryHoverBg);
+							// If white text meets minimum threshold (1.3:1 for large text) and hover is darker, prefer white
+							// Otherwise use whichever has better contrast
+							if (whiteContrast >= 1.3 && whiteContrast < blackContrast) {
+								return '#ffffff';
+							}
+							return getContrastText(secondaryHoverBg);
+						})(),
 					},
 				},
 				containedError: {
