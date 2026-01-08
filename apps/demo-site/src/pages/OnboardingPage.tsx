@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Stack, Paper, useTheme } from '@mui/material';
+import { Box, Typography, Stack, Paper, useTheme, CardContent } from '@mui/material';
 import { Card, Button, TextField, Alert } from '@multi-bu/ui';
 import type { BU } from '../App';
 
@@ -25,52 +25,54 @@ export function OnboardingPage({ buId }: OnboardingPageProps) {
 			</Typography>
 
 			<Card>
-				<Stack spacing={3}>
-					<Alert severity="info">
-						This form demonstrates how components adapt to different business unit themes.
-						The same form structure looks distinct under each BU theme.
-					</Alert>
+				<CardContent>
+					<Stack spacing={3}>
+						<Alert severity="info">
+							This form demonstrates how components adapt to different business unit themes.
+							The same form structure looks distinct under each BU theme.
+						</Alert>
 
-					<TextField
-						label="Full Name"
-						placeholder="Enter your full name"
-						fullWidth
-						required
-					/>
+						<TextField
+							label="Full Name"
+							placeholder="Enter your full name"
+							fullWidth
+							required
+						/>
 
-					<TextField
-						label="Email Address"
-						type="email"
-						placeholder="Enter your email"
-						fullWidth
-						required
-					/>
+						<TextField
+							label="Email Address"
+							type="email"
+							placeholder="Enter your email"
+							fullWidth
+							required
+						/>
 
-					<TextField
-						label="Phone Number"
-						type="tel"
-						placeholder="Enter your phone number"
-						fullWidth
-						required
-					/>
+						<TextField
+							label="Phone Number"
+							type="tel"
+							placeholder="Enter your phone number"
+							fullWidth
+							required
+						/>
 
-					<TextField
-						label="Password"
-						type="password"
-						placeholder="Create a password"
-						fullWidth
-						required
-					/>
+						<TextField
+							label="Password"
+							type="password"
+							placeholder="Create a password"
+							fullWidth
+							required
+						/>
 
-					<Stack direction="row" spacing={2}>
-						<Button variant="contained" color="primary" fullWidth>
-							Create Account
-						</Button>
-						<Button variant="outlined" color="secondary" fullWidth>
-							Cancel
-						</Button>
+						<Stack direction="row" spacing={2}>
+							<Button variant="contained" color="primary" fullWidth>
+								Create Account
+							</Button>
+							<Button variant="outlined" color="secondary" fullWidth>
+								Cancel
+							</Button>
+						</Stack>
 					</Stack>
-				</Stack>
+				</CardContent>
 			</Card>
 		</Box>
 	);

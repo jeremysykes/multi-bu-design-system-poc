@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Stack, Divider, Paper, useTheme } from '@mui/material';
+import { Box, Typography, Stack, Divider, Paper, useTheme, CardContent } from '@mui/material';
 import { Card, Button, TextField, Alert } from '@multi-bu/ui';
 import type { BU } from '../App';
 
@@ -26,36 +26,40 @@ export function SettingsPage({ buId }: SettingsPageProps) {
 
 			<Stack spacing={3}>
 				<Card>
-					<Stack spacing={3}>
-						<Typography variant="h6">Profile Information</Typography>
-						<Divider />
-						<TextField label="Display Name" defaultValue="John Doe" fullWidth />
-						<TextField label="Email Address" type="email" defaultValue="john@example.com" fullWidth />
-						<TextField label="Phone Number" type="tel" defaultValue="+1 (555) 123-4567" fullWidth />
-						<Button variant="contained" color="primary">
-							Save Changes
-						</Button>
-					</Stack>
+					<CardContent>
+						<Stack spacing={3}>
+							<Typography variant="h6">Profile Information</Typography>
+							<Divider />
+							<TextField label="Display Name" defaultValue="John Doe" fullWidth />
+							<TextField label="Email Address" type="email" defaultValue="john@example.com" fullWidth />
+							<TextField label="Phone Number" type="tel" defaultValue="+1 (555) 123-4567" fullWidth />
+							<Button variant="contained" color="primary">
+								Save Changes
+							</Button>
+						</Stack>
+					</CardContent>
 				</Card>
 
 				<Card>
-					<Stack spacing={3}>
-						<Typography variant="h6">Preferences</Typography>
-						<Divider />
-						<Alert severity="info">
-							Preferences are saved automatically when you switch business unit themes.
-						</Alert>
-						<TextField label="Language" defaultValue="English" fullWidth select SelectProps={{ native: true }}>
-							<option>English</option>
-							<option>Spanish</option>
-							<option>French</option>
-						</TextField>
-						<TextField label="Timezone" defaultValue="UTC" fullWidth select SelectProps={{ native: true }}>
-							<option>UTC</option>
-							<option>EST</option>
-							<option>PST</option>
-						</TextField>
-					</Stack>
+					<CardContent>
+						<Stack spacing={3}>
+							<Typography variant="h6">Preferences</Typography>
+							<Divider />
+							<Alert severity="info">
+								Preferences are saved automatically when you switch business unit themes.
+							</Alert>
+							<TextField label="Language" defaultValue="English" fullWidth select SelectProps={{ native: true }}>
+								<option>English</option>
+								<option>Spanish</option>
+								<option>French</option>
+							</TextField>
+							<TextField label="Timezone" defaultValue="UTC" fullWidth select SelectProps={{ native: true }}>
+								<option>UTC</option>
+								<option>EST</option>
+								<option>PST</option>
+							</TextField>
+						</Stack>
+					</CardContent>
 				</Card>
 
 				<Paper sx={{ p: 3 }}>

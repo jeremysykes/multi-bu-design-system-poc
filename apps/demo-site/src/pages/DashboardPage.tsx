@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Grid, Paper, Stack } from '@mui/material';
+import { Box, Typography, Grid, Paper, Stack, CardContent } from '@mui/material';
 import { Card, Button } from '@multi-bu/ui';
 import type { BU } from '../App';
 
@@ -28,46 +28,52 @@ export function DashboardPage({ buId }: DashboardPageProps) {
 			<Grid container spacing={3}>
 				<Grid item xs={12} md={4}>
 					<Card>
-						<Stack spacing={2}>
-							<Typography variant="h6">Overview</Typography>
-							<Typography variant="body2" color="text.secondary">
-								Total Accounts
-							</Typography>
-							<Typography variant="h3">1,234</Typography>
-							<Button variant="contained" color="primary" size="small">
-								View Details
-							</Button>
-						</Stack>
+						<CardContent>
+							<Stack spacing={2}>
+								<Typography variant="h6">Overview</Typography>
+								<Typography variant="body2" color="text.secondary">
+									Total Accounts
+								</Typography>
+								<Typography variant="h3">1,234</Typography>
+								<Button variant="contained" color="primary" size="small">
+									View Details
+								</Button>
+							</Stack>
+						</CardContent>
 					</Card>
 				</Grid>
 
 				<Grid item xs={12} md={4}>
 					<Card>
-						<Stack spacing={2}>
-							<Typography variant="h6">Activity</Typography>
-							<Typography variant="body2" color="text.secondary">
-								Recent Transactions
-							</Typography>
-							<Typography variant="h3">$12,345</Typography>
-							<Button variant="outlined" color="primary" size="small">
-								View Activity
-							</Button>
-						</Stack>
+						<CardContent>
+							<Stack spacing={2}>
+								<Typography variant="h6">Activity</Typography>
+								<Typography variant="body2" color="text.secondary">
+									Recent Transactions
+								</Typography>
+								<Typography variant="h3">$12,345</Typography>
+								<Button variant="outlined" color="primary" size="small">
+									View Activity
+								</Button>
+							</Stack>
+						</CardContent>
 					</Card>
 				</Grid>
 
 				<Grid item xs={12} md={4}>
 					<Card>
-						<Stack spacing={2}>
-							<Typography variant="h6">Performance</Typography>
-							<Typography variant="body2" color="text.secondary">
-								This Month
-							</Typography>
-							<Typography variant="h3">+5.2%</Typography>
-							<Button variant="text" color="primary" size="small">
-								View Report
-							</Button>
-						</Stack>
+						<CardContent>
+							<Stack spacing={2}>
+								<Typography variant="h6">Performance</Typography>
+								<Typography variant="body2" color="text.secondary">
+									This Month
+								</Typography>
+								<Typography variant="h3">+5.2%</Typography>
+								<Button variant="text" color="primary" size="small">
+									View Report
+								</Button>
+							</Stack>
+						</CardContent>
 					</Card>
 				</Grid>
 

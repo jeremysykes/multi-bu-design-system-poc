@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Box, Stack, useTheme } from '@mui/material';
+import { Container, Box, Stack, useTheme, CardContent } from '@mui/material';
 import { Card } from '../../organisms/Card/Card';
 import { TextField } from '../../molecules/TextField/TextField';
 import { Button } from '../../atoms/Button/Button';
@@ -34,17 +34,18 @@ export const LoginPage: React.FC = () => {
 				}}
 			>
 				<Card sx={{ width: '100%' }}>
-					{/* All spacing from tokens: spacing.4 = 16px */}
-					<Stack spacing={4} sx={{ p: 4 }}>
-						<Typography variant="h5" component="h1">
-							Login
-						</Typography>
-						<TextField label="Email" type="email" fullWidth />
-						<TextField label="Password" type="password" fullWidth />
-						<Button variant="contained" color="primary" fullWidth>
-							Sign In
-						</Button>
-					</Stack>
+					<CardContent>
+						<Stack spacing={4}>
+							<Typography variant="h5" component="h1">
+								Login
+							</Typography>
+							<TextField label="Email" type="email" fullWidth />
+							<TextField label="Password" type="password" fullWidth />
+							<Button variant="contained" color="primary" fullWidth>
+								Sign In
+							</Button>
+						</Stack>
+					</CardContent>
 				</Card>
 			</Box>
 		</Container>
