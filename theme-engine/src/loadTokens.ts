@@ -19,9 +19,10 @@ async function fileExists(filePath: string): Promise<boolean> {
  * @param reference - The reference string, e.g. "{color.error-500}"
  * @param tokenObject - The token object to resolve from
  * @param visited - Set to track visited references to prevent circular resolution
+ * @param coreTokens - Optional core tokens to use as fallback when resolution fails
  * @returns The resolved value, or undefined if not found
  */
-function resolveReference(reference: string, tokenObject: any, visited: Set<string> = new Set()): any {
+function resolveReference(reference: string, tokenObject: any, visited: Set<string> = new Set(), coreTokens?: any): any {
 	if (!reference.startsWith('{') || !reference.endsWith('}')) {
 		return reference;
 	}
@@ -41,21 +42,43 @@ function resolveReference(reference: string, tokenObject: any, visited: Set<stri
 		const token = tokenObject.color?.[colorKey];
 		if (token && typeof token === 'object' && '$value' in token) {
 			const value = token.$value;
-			// If the value is a reference to itself (circular), return undefined
+			// If the value is a reference to itself (circular), try resolving from core tokens
 			if (typeof value === 'string' && value.startsWith('{')) {
+				// Check if this reference points to itself (circular)
 				if (value === reference) {
 					visited.delete(reference);
-					return undefined; // Circular reference
+					// Circular reference detected - try resolving from core tokens if available
+					if (coreTokens) {
+						const coreResolved = resolveReference(reference, coreTokens, new Set());
+						if (coreResolved !== undefined && coreResolved !== reference) {
+							return coreResolved;
+						}
+					}
+					return undefined;
 				}
 				// If it's a different reference, resolve it recursively
-				const resolved = resolveReference(value, tokenObject, visited);
+				const resolved = resolveReference(value, tokenObject, visited, coreTokens);
 				visited.delete(reference);
+				// If resolution failed, try core tokens
+				if (resolved === undefined && coreTokens) {
+					const coreResolved = resolveReference(value, coreTokens, new Set());
+					if (coreResolved !== undefined && coreResolved !== value) {
+						return coreResolved;
+					}
+				}
 				return resolved;
 			}
 			visited.delete(reference);
 			return value;
 		}
-		// If not found, return undefined so we can fall back to core
+		// If not found and core tokens are available, try resolving from core
+		if (coreTokens) {
+			const coreResolved = resolveReference(reference, coreTokens, new Set());
+			if (coreResolved !== undefined && coreResolved !== reference) {
+				visited.delete(reference);
+				return coreResolved;
+			}
+		}
 		visited.delete(reference);
 		return undefined;
 	}
@@ -74,14 +97,36 @@ function resolveReference(reference: string, tokenObject: any, visited: Set<stri
 			if (typeof value === 'string' && value.startsWith('{')) {
 				if (value === reference) {
 					visited.delete(reference);
-					return undefined; // Circular reference
+					// Circular reference detected - try resolving from core tokens if available
+					if (coreTokens) {
+						const coreResolved = resolveReference(reference, coreTokens, new Set());
+						if (coreResolved !== undefined && coreResolved !== reference) {
+							return coreResolved;
+						}
+					}
+					return undefined;
 				}
-				const resolved = resolveReference(value, tokenObject, visited);
+				const resolved = resolveReference(value, tokenObject, visited, coreTokens);
 				visited.delete(reference);
+				// If resolution failed, try core tokens
+				if (resolved === undefined && coreTokens) {
+					const coreResolved = resolveReference(value, coreTokens, new Set());
+					if (coreResolved !== undefined && coreResolved !== value) {
+						return coreResolved;
+					}
+				}
 				return resolved;
 			}
 			visited.delete(reference);
 			return value;
+		}
+		// If not found and core tokens are available, try resolving from core
+		if (coreTokens) {
+			const coreResolved = resolveReference(reference, coreTokens, new Set());
+			if (coreResolved !== undefined && coreResolved !== reference) {
+				visited.delete(reference);
+				return coreResolved;
+			}
 		}
 	}
 
@@ -92,6 +137,13 @@ function resolveReference(reference: string, tokenObject: any, visited: Set<stri
 			current = current[part];
 		} else {
 			visited.delete(reference);
+			// If not found and core tokens are available, try resolving from core
+			if (coreTokens) {
+				const coreResolved = resolveReference(reference, coreTokens, new Set());
+				if (coreResolved !== undefined && coreResolved !== reference) {
+					return coreResolved;
+				}
+			}
 			return undefined;
 		}
 	}
@@ -100,8 +152,15 @@ function resolveReference(reference: string, tokenObject: any, visited: Set<stri
 		const value = current.$value;
 		// If the value is another reference, resolve it recursively
 		if (typeof value === 'string' && value.startsWith('{') && value !== reference) {
-			const resolved = resolveReference(value, tokenObject, visited);
+			const resolved = resolveReference(value, tokenObject, visited, coreTokens);
 			visited.delete(reference);
+			// If resolution failed, try core tokens
+			if (resolved === undefined && coreTokens) {
+				const coreResolved = resolveReference(value, coreTokens, new Set());
+				if (coreResolved !== undefined && coreResolved !== value) {
+					return coreResolved;
+				}
+			}
 			return resolved;
 		}
 		visited.delete(reference);
@@ -109,6 +168,13 @@ function resolveReference(reference: string, tokenObject: any, visited: Set<stri
 	}
 
 	visited.delete(reference);
+	// Final fallback to core tokens if available
+	if (coreTokens) {
+		const coreResolved = resolveReference(reference, coreTokens, new Set());
+		if (coreResolved !== undefined && coreResolved !== reference) {
+			return coreResolved;
+		}
+	}
 	return undefined;
 }
 
@@ -116,18 +182,22 @@ function resolveReference(reference: string, tokenObject: any, visited: Set<stri
  * Deep merge function to merge core tokens with BU tokens
  * BU tokens override core tokens, and references are resolved from the merged result
  * This ensures BU-specific colors are used when resolving references like {color.primary-500}
- * Handles circular references by resolving from core when BU tokens reference themselves
+ * Handles circular references by explicitly using resolved core values when BU tokens reference themselves
  */
 function deepMerge(core: any, bu: any): any {
-	// First pass: Merge BU tokens into core (without resolving references)
-	// This allows BU overrides to take effect
-	const merged = { ...core };
+	// Pre-resolve core token values to ensure they're actual hex values (deterministic behavior)
+	// This ensures circular references in BU tokens can fall back to resolved core values
+	const resolvedCore = resolveAllReferences(core, core, core);
+	
+	// First pass: Merge BU tokens into resolved core
+	// This allows BU overrides to take effect, but circular references will use resolved core values
+	const merged = { ...resolvedCore };
 	for (const key in bu) {
 		if (bu[key] && typeof bu[key] === 'object' && !Array.isArray(bu[key])) {
 			if ('$value' in bu[key]) {
 				// DTCG token object - check if it's a self-referential reference
 				// If BU token references itself (e.g., neutral-50: {color.neutral-50}),
-				// skip the override and keep the core value to avoid circular references
+				// explicitly use the resolved core value to avoid circular references
 				const buValue = bu[key].$value;
 				if (typeof buValue === 'string' && buValue.startsWith('{') && buValue.endsWith('}')) {
 					const path = buValue.slice(1, -1);
@@ -136,9 +206,9 @@ function deepMerge(core: any, bu: any): any {
 					if (parts.length === 2 && parts[0] === 'color' && parts[1].includes('-')) {
 						const referencedKey = parts[1];
 						// If the key being referenced is the same as the current key, it's circular
-						// Skip this override and keep the core value
+						// Explicitly use the resolved core value
 						if (referencedKey === key) {
-							// Don't override - keep core value to avoid circular reference
+							// Keep resolved core value - don't override with circular reference
 							continue;
 						}
 					}
@@ -148,7 +218,7 @@ function deepMerge(core: any, bu: any): any {
 						const shade = parts[2];
 						const flattenedKey = `${category}-${shade}`;
 						if (flattenedKey === key) {
-							// Don't override - keep core value to avoid circular reference
+							// Keep resolved core value - don't override with circular reference
 							continue;
 						}
 					}
@@ -157,7 +227,7 @@ function deepMerge(core: any, bu: any): any {
 				merged[key] = bu[key];
 			} else {
 				// Nested object - merge recursively
-				merged[key] = deepMerge(core[key] || {}, bu[key]);
+				merged[key] = deepMerge(resolvedCore[key] || {}, bu[key]);
 			}
 		} else {
 			// Primitive or array - replace
@@ -167,8 +237,8 @@ function deepMerge(core: any, bu: any): any {
 
 	// Second pass: Resolve all references from the merged result
 	// This ensures references like {color.primary-500} resolve to BU-specific colors
-	// Pass core tokens as a fallback for circular references or unresolved references
-	return resolveAllReferences(merged, merged, core);
+	// Pass resolved core tokens as a fallback for circular references or unresolved references
+	return resolveAllReferences(merged, merged, resolvedCore);
 }
 
 /**
@@ -200,11 +270,13 @@ function resolveAllReferences(obj: any, resolveFrom: any, coreTokens: any, visit
 		}
 		
 		visited.add(obj.$value);
-		const resolved = resolveReference(obj.$value, resolveFrom, visited);
+		// Pass coreTokens to resolveReference for immediate fallback
+		const resolved = resolveReference(obj.$value, resolveFrom, visited, coreTokens);
 		
-		// If resolution failed or returned undefined, try resolving from core tokens
+		// If resolution failed or returned undefined, try resolving from core tokens directly
 		if (resolved === undefined) {
-			const coreResolved = resolveReference(obj.$value, coreTokens, visited);
+			// Create a fresh visited set for core resolution to avoid false circular detection
+			const coreResolved = resolveReference(obj.$value, coreTokens, new Set());
 			visited.delete(obj.$value);
 			if (coreResolved !== undefined && coreResolved !== obj.$value) {
 				return {

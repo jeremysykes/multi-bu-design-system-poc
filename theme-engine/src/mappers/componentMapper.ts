@@ -333,46 +333,58 @@ export function mapComponents(
 		MuiAlert: {
 			styleOverrides: {
 				root: {
-					'&.MuiAlert-standardError': {
-						backgroundColor:
-							getSemanticValue('feedback', 'error') ||
-							getSemanticValue('action', 'primary'),
-						// Use MUI's automatically calculated contrastText for accessibility
-						color:
-							_theme.palette.error?.contrastText ||
-							_theme.palette.error?.main ||
-							'#ffffff',
-					},
-					'&.MuiAlert-standardWarning': {
-						backgroundColor:
-							getSemanticValue('feedback', 'warning') ||
-							getSemanticValue('action', 'primary'),
-						// Use MUI's automatically calculated contrastText for accessibility
-						color:
-							_theme.palette.warning?.contrastText ||
-							_theme.palette.warning?.main ||
-							'#ffffff',
-					},
-					'&.MuiAlert-standardInfo': {
-						backgroundColor:
-							getSemanticValue('feedback', 'info') ||
-							getSemanticValue('action', 'primary'),
-						// Use MUI's automatically calculated contrastText for accessibility
-						color:
-							_theme.palette.info?.contrastText ||
-							_theme.palette.info?.main ||
-							'#ffffff',
-					},
-					'&.MuiAlert-standardSuccess': {
-						backgroundColor:
-							getSemanticValue('feedback', 'success') ||
-							getSemanticValue('action', 'primary'),
-						// Use MUI's automatically calculated contrastText for accessibility
-						color:
-							_theme.palette.success?.contrastText ||
-							_theme.palette.success?.main ||
-							'#ffffff',
-					},
+					'&.MuiAlert-standardError': (() => {
+						// Use light background shade (error-50) for better visual appeal and readability
+						const errorToken = allTokens.color?.['error-50'];
+						const errorBg = errorToken
+							? resolveToken(extractValue(errorToken))
+							: getSemanticValue('feedback', 'error') || '#FFEBEE';
+						// Calculate text color based on actual background for WCAG AA compliance (4.5:1)
+						const errorText = getContrastText(errorBg);
+						return {
+							backgroundColor: errorBg,
+							color: errorText,
+						};
+					})(),
+					'&.MuiAlert-standardWarning': (() => {
+						// Use light background shade (warning-50) for better visual appeal and readability
+						const warningToken = allTokens.color?.['warning-50'];
+						const warningBg = warningToken
+							? resolveToken(extractValue(warningToken))
+							: getSemanticValue('feedback', 'warning') || '#FFF3E0';
+						// Calculate text color based on actual background for WCAG AA compliance (4.5:1)
+						const warningText = getContrastText(warningBg);
+						return {
+							backgroundColor: warningBg,
+							color: warningText,
+						};
+					})(),
+					'&.MuiAlert-standardInfo': (() => {
+						// Use light background shade (info-50) for better visual appeal and readability
+						const infoToken = allTokens.color?.['info-50'];
+						const infoBg = infoToken
+							? resolveToken(extractValue(infoToken))
+							: getSemanticValue('feedback', 'info') || '#E0F2F1';
+						// Calculate text color based on actual background for WCAG AA compliance (4.5:1)
+						const infoText = getContrastText(infoBg);
+						return {
+							backgroundColor: infoBg,
+							color: infoText,
+						};
+					})(),
+					'&.MuiAlert-standardSuccess': (() => {
+						// Use light background shade (success-50) for better visual appeal and readability
+						const successToken = allTokens.color?.['success-50'];
+						const successBg = successToken
+							? resolveToken(extractValue(successToken))
+							: getSemanticValue('feedback', 'success') || '#E8F5E9';
+						// Calculate text color based on actual background for WCAG AA compliance (4.5:1)
+						const successText = getContrastText(successBg);
+						return {
+							backgroundColor: successBg,
+							color: successText,
+						};
+					})(),
 				},
 			},
 		},

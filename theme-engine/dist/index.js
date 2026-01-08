@@ -513,26 +513,42 @@ function mapComponents(semanticTokens, allTokens, _theme) {
     MuiAlert: {
       styleOverrides: {
         root: {
-          "&.MuiAlert-standardError": {
-            backgroundColor: getSemanticValue("feedback", "error") || getSemanticValue("action", "primary"),
-            // Use MUI's automatically calculated contrastText for accessibility
-            color: _theme.palette.error?.contrastText || _theme.palette.error?.main || "#ffffff"
-          },
-          "&.MuiAlert-standardWarning": {
-            backgroundColor: getSemanticValue("feedback", "warning") || getSemanticValue("action", "primary"),
-            // Use MUI's automatically calculated contrastText for accessibility
-            color: _theme.palette.warning?.contrastText || _theme.palette.warning?.main || "#ffffff"
-          },
-          "&.MuiAlert-standardInfo": {
-            backgroundColor: getSemanticValue("feedback", "info") || getSemanticValue("action", "primary"),
-            // Use MUI's automatically calculated contrastText for accessibility
-            color: _theme.palette.info?.contrastText || _theme.palette.info?.main || "#ffffff"
-          },
-          "&.MuiAlert-standardSuccess": {
-            backgroundColor: getSemanticValue("feedback", "success") || getSemanticValue("action", "primary"),
-            // Use MUI's automatically calculated contrastText for accessibility
-            color: _theme.palette.success?.contrastText || _theme.palette.success?.main || "#ffffff"
-          }
+          "&.MuiAlert-standardError": (() => {
+            const errorToken = allTokens.color?.["error-50"];
+            const errorBg = errorToken ? resolveToken(extractValue(errorToken)) : getSemanticValue("feedback", "error") || "#FFEBEE";
+            const errorText = getContrastText2(errorBg);
+            return {
+              backgroundColor: errorBg,
+              color: errorText
+            };
+          })(),
+          "&.MuiAlert-standardWarning": (() => {
+            const warningToken = allTokens.color?.["warning-50"];
+            const warningBg = warningToken ? resolveToken(extractValue(warningToken)) : getSemanticValue("feedback", "warning") || "#FFF3E0";
+            const warningText = getContrastText2(warningBg);
+            return {
+              backgroundColor: warningBg,
+              color: warningText
+            };
+          })(),
+          "&.MuiAlert-standardInfo": (() => {
+            const infoToken = allTokens.color?.["info-50"];
+            const infoBg = infoToken ? resolveToken(extractValue(infoToken)) : getSemanticValue("feedback", "info") || "#E0F2F1";
+            const infoText = getContrastText2(infoBg);
+            return {
+              backgroundColor: infoBg,
+              color: infoText
+            };
+          })(),
+          "&.MuiAlert-standardSuccess": (() => {
+            const successToken = allTokens.color?.["success-50"];
+            const successBg = successToken ? resolveToken(extractValue(successToken)) : getSemanticValue("feedback", "success") || "#E8F5E9";
+            const successText = getContrastText2(successBg);
+            return {
+              backgroundColor: successBg,
+              color: successText
+            };
+          })()
         }
       }
     }
@@ -3548,7 +3564,7 @@ var tokens_default5 = {
 };
 
 // src/loadTokens.browser.ts
-function resolveReference(reference, tokenObject, visited = /* @__PURE__ */ new Set()) {
+function resolveReference(reference, tokenObject, visited = /* @__PURE__ */ new Set(), coreTokens) {
   if (!reference.startsWith("{") || !reference.endsWith("}")) {
     return reference;
   }
@@ -3566,14 +3582,33 @@ function resolveReference(reference, tokenObject, visited = /* @__PURE__ */ new 
       if (typeof value === "string" && value.startsWith("{")) {
         if (value === reference) {
           visited.delete(reference);
+          if (coreTokens) {
+            const coreResolved = resolveReference(reference, coreTokens, /* @__PURE__ */ new Set());
+            if (coreResolved !== void 0 && coreResolved !== reference) {
+              return coreResolved;
+            }
+          }
           return void 0;
         }
-        const resolved = resolveReference(value, tokenObject, visited);
+        const resolved = resolveReference(value, tokenObject, visited, coreTokens);
         visited.delete(reference);
+        if (resolved === void 0 && coreTokens) {
+          const coreResolved = resolveReference(value, coreTokens, /* @__PURE__ */ new Set());
+          if (coreResolved !== void 0 && coreResolved !== value) {
+            return coreResolved;
+          }
+        }
         return resolved;
       }
       visited.delete(reference);
       return value;
+    }
+    if (coreTokens) {
+      const coreResolved = resolveReference(reference, coreTokens, /* @__PURE__ */ new Set());
+      if (coreResolved !== void 0 && coreResolved !== reference) {
+        visited.delete(reference);
+        return coreResolved;
+      }
     }
     visited.delete(reference);
     return void 0;
@@ -3588,14 +3623,33 @@ function resolveReference(reference, tokenObject, visited = /* @__PURE__ */ new 
       if (typeof value === "string" && value.startsWith("{")) {
         if (value === reference) {
           visited.delete(reference);
+          if (coreTokens) {
+            const coreResolved = resolveReference(reference, coreTokens, /* @__PURE__ */ new Set());
+            if (coreResolved !== void 0 && coreResolved !== reference) {
+              return coreResolved;
+            }
+          }
           return void 0;
         }
-        const resolved = resolveReference(value, tokenObject, visited);
+        const resolved = resolveReference(value, tokenObject, visited, coreTokens);
         visited.delete(reference);
+        if (resolved === void 0 && coreTokens) {
+          const coreResolved = resolveReference(value, coreTokens, /* @__PURE__ */ new Set());
+          if (coreResolved !== void 0 && coreResolved !== value) {
+            return coreResolved;
+          }
+        }
         return resolved;
       }
       visited.delete(reference);
       return value;
+    }
+    if (coreTokens) {
+      const coreResolved = resolveReference(reference, coreTokens, /* @__PURE__ */ new Set());
+      if (coreResolved !== void 0 && coreResolved !== reference) {
+        visited.delete(reference);
+        return coreResolved;
+      }
     }
   }
   let current = tokenObject;
@@ -3604,24 +3658,43 @@ function resolveReference(reference, tokenObject, visited = /* @__PURE__ */ new 
       current = current[part];
     } else {
       visited.delete(reference);
+      if (coreTokens) {
+        const coreResolved = resolveReference(reference, coreTokens, /* @__PURE__ */ new Set());
+        if (coreResolved !== void 0 && coreResolved !== reference) {
+          return coreResolved;
+        }
+      }
       return void 0;
     }
   }
   if (current && typeof current === "object" && "$value" in current) {
     const value = current.$value;
     if (typeof value === "string" && value.startsWith("{") && value !== reference) {
-      const resolved = resolveReference(value, tokenObject, visited);
+      const resolved = resolveReference(value, tokenObject, visited, coreTokens);
       visited.delete(reference);
+      if (resolved === void 0 && coreTokens) {
+        const coreResolved = resolveReference(value, coreTokens, /* @__PURE__ */ new Set());
+        if (coreResolved !== void 0 && coreResolved !== value) {
+          return coreResolved;
+        }
+      }
       return resolved;
     }
     visited.delete(reference);
     return value;
   }
   visited.delete(reference);
+  if (coreTokens) {
+    const coreResolved = resolveReference(reference, coreTokens, /* @__PURE__ */ new Set());
+    if (coreResolved !== void 0 && coreResolved !== reference) {
+      return coreResolved;
+    }
+  }
   return void 0;
 }
 function deepMerge(core, bu) {
-  const merged = { ...core };
+  const resolvedCore = resolveAllReferences(core, core, core);
+  const merged = { ...resolvedCore };
   for (const key in bu) {
     if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key])) {
       if ("$value" in bu[key]) {
@@ -3646,13 +3719,13 @@ function deepMerge(core, bu) {
         }
         merged[key] = bu[key];
       } else {
-        merged[key] = deepMerge(core[key] || {}, bu[key]);
+        merged[key] = deepMerge(resolvedCore[key] || {}, bu[key]);
       }
     } else {
       merged[key] = bu[key];
     }
   }
-  return resolveAllReferences(merged, merged, core);
+  return resolveAllReferences(merged, merged, resolvedCore);
 }
 function resolveAllReferences(obj, resolveFrom, coreTokens, visited = /* @__PURE__ */ new Set()) {
   if (!obj || typeof obj !== "object") {
@@ -3670,9 +3743,9 @@ function resolveAllReferences(obj, resolveFrom, coreTokens, visited = /* @__PURE
       return obj;
     }
     visited.add(obj.$value);
-    const resolved = resolveReference(obj.$value, resolveFrom, visited);
+    const resolved = resolveReference(obj.$value, resolveFrom, visited, coreTokens);
     if (resolved === void 0) {
-      const coreResolved = resolveReference(obj.$value, coreTokens, visited);
+      const coreResolved = resolveReference(obj.$value, coreTokens, /* @__PURE__ */ new Set());
       visited.delete(obj.$value);
       if (coreResolved !== void 0 && coreResolved !== obj.$value) {
         return {
@@ -3730,7 +3803,7 @@ async function fileExists(filePath) {
     return false;
   }
 }
-function resolveReference2(reference, tokenObject, visited = /* @__PURE__ */ new Set()) {
+function resolveReference2(reference, tokenObject, visited = /* @__PURE__ */ new Set(), coreTokens) {
   if (!reference.startsWith("{") || !reference.endsWith("}")) {
     return reference;
   }
@@ -3748,14 +3821,33 @@ function resolveReference2(reference, tokenObject, visited = /* @__PURE__ */ new
       if (typeof value === "string" && value.startsWith("{")) {
         if (value === reference) {
           visited.delete(reference);
+          if (coreTokens) {
+            const coreResolved = resolveReference2(reference, coreTokens, /* @__PURE__ */ new Set());
+            if (coreResolved !== void 0 && coreResolved !== reference) {
+              return coreResolved;
+            }
+          }
           return void 0;
         }
-        const resolved = resolveReference2(value, tokenObject, visited);
+        const resolved = resolveReference2(value, tokenObject, visited, coreTokens);
         visited.delete(reference);
+        if (resolved === void 0 && coreTokens) {
+          const coreResolved = resolveReference2(value, coreTokens, /* @__PURE__ */ new Set());
+          if (coreResolved !== void 0 && coreResolved !== value) {
+            return coreResolved;
+          }
+        }
         return resolved;
       }
       visited.delete(reference);
       return value;
+    }
+    if (coreTokens) {
+      const coreResolved = resolveReference2(reference, coreTokens, /* @__PURE__ */ new Set());
+      if (coreResolved !== void 0 && coreResolved !== reference) {
+        visited.delete(reference);
+        return coreResolved;
+      }
     }
     visited.delete(reference);
     return void 0;
@@ -3770,14 +3862,33 @@ function resolveReference2(reference, tokenObject, visited = /* @__PURE__ */ new
       if (typeof value === "string" && value.startsWith("{")) {
         if (value === reference) {
           visited.delete(reference);
+          if (coreTokens) {
+            const coreResolved = resolveReference2(reference, coreTokens, /* @__PURE__ */ new Set());
+            if (coreResolved !== void 0 && coreResolved !== reference) {
+              return coreResolved;
+            }
+          }
           return void 0;
         }
-        const resolved = resolveReference2(value, tokenObject, visited);
+        const resolved = resolveReference2(value, tokenObject, visited, coreTokens);
         visited.delete(reference);
+        if (resolved === void 0 && coreTokens) {
+          const coreResolved = resolveReference2(value, coreTokens, /* @__PURE__ */ new Set());
+          if (coreResolved !== void 0 && coreResolved !== value) {
+            return coreResolved;
+          }
+        }
         return resolved;
       }
       visited.delete(reference);
       return value;
+    }
+    if (coreTokens) {
+      const coreResolved = resolveReference2(reference, coreTokens, /* @__PURE__ */ new Set());
+      if (coreResolved !== void 0 && coreResolved !== reference) {
+        visited.delete(reference);
+        return coreResolved;
+      }
     }
   }
   let current = tokenObject;
@@ -3786,24 +3897,43 @@ function resolveReference2(reference, tokenObject, visited = /* @__PURE__ */ new
       current = current[part];
     } else {
       visited.delete(reference);
+      if (coreTokens) {
+        const coreResolved = resolveReference2(reference, coreTokens, /* @__PURE__ */ new Set());
+        if (coreResolved !== void 0 && coreResolved !== reference) {
+          return coreResolved;
+        }
+      }
       return void 0;
     }
   }
   if (current && typeof current === "object" && "$value" in current) {
     const value = current.$value;
     if (typeof value === "string" && value.startsWith("{") && value !== reference) {
-      const resolved = resolveReference2(value, tokenObject, visited);
+      const resolved = resolveReference2(value, tokenObject, visited, coreTokens);
       visited.delete(reference);
+      if (resolved === void 0 && coreTokens) {
+        const coreResolved = resolveReference2(value, coreTokens, /* @__PURE__ */ new Set());
+        if (coreResolved !== void 0 && coreResolved !== value) {
+          return coreResolved;
+        }
+      }
       return resolved;
     }
     visited.delete(reference);
     return value;
   }
   visited.delete(reference);
+  if (coreTokens) {
+    const coreResolved = resolveReference2(reference, coreTokens, /* @__PURE__ */ new Set());
+    if (coreResolved !== void 0 && coreResolved !== reference) {
+      return coreResolved;
+    }
+  }
   return void 0;
 }
 function deepMerge2(core, bu) {
-  const merged = { ...core };
+  const resolvedCore = resolveAllReferences2(core, core, core);
+  const merged = { ...resolvedCore };
   for (const key in bu) {
     if (bu[key] && typeof bu[key] === "object" && !Array.isArray(bu[key])) {
       if ("$value" in bu[key]) {
@@ -3828,13 +3958,13 @@ function deepMerge2(core, bu) {
         }
         merged[key] = bu[key];
       } else {
-        merged[key] = deepMerge2(core[key] || {}, bu[key]);
+        merged[key] = deepMerge2(resolvedCore[key] || {}, bu[key]);
       }
     } else {
       merged[key] = bu[key];
     }
   }
-  return resolveAllReferences2(merged, merged, core);
+  return resolveAllReferences2(merged, merged, resolvedCore);
 }
 function resolveAllReferences2(obj, resolveFrom, coreTokens, visited = /* @__PURE__ */ new Set()) {
   if (!obj || typeof obj !== "object") {
@@ -3852,9 +3982,9 @@ function resolveAllReferences2(obj, resolveFrom, coreTokens, visited = /* @__PUR
       return obj;
     }
     visited.add(obj.$value);
-    const resolved = resolveReference2(obj.$value, resolveFrom, visited);
+    const resolved = resolveReference2(obj.$value, resolveFrom, visited, coreTokens);
     if (resolved === void 0) {
-      const coreResolved = resolveReference2(obj.$value, coreTokens, visited);
+      const coreResolved = resolveReference2(obj.$value, coreTokens, /* @__PURE__ */ new Set());
       visited.delete(obj.$value);
       if (coreResolved !== void 0 && coreResolved !== obj.$value) {
         return {
