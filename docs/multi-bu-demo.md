@@ -21,7 +21,7 @@ The multi-BU design system demonstrates how multiple business units share compon
 
 **Usage**:
 
-1. Open Storybook: `pnpm run storybook`
+1. Open Storybook: `npm run storybook`
 2. Select BU theme via toolbar (top right)
 3. Navigate through stories
 4. Compare component appearance across BUs
@@ -43,7 +43,7 @@ The multi-BU design system demonstrates how multiple business units share compon
 
 **Usage**:
 
-1. Start demo site: `pnpm run demo:dev`
+1. Start demo site: `npm run demo:dev`
 2. Select BU theme via tabs (top of page)
 3. Navigate between pages
 4. See how entire app adapts to selected theme
@@ -73,7 +73,7 @@ The three business units share component APIs while expressing different visual 
 1. **Review Component Code**: Ensure components consume semantic tokens
 2. **Check Token Usage**: Verify no hardcoded values
 3. **Test Theme Switching**: Ensure smooth transitions between themes
-4. **Validate Token Structure**: Run `pnpm run tokens:validate`
+4. **Validate Token Structure**: Run `npm run tokens:validate`
 5. **Check Versioning**: Ensure token changes are versioned
 
 ### For Stakeholders

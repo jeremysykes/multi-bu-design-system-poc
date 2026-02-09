@@ -363,7 +363,7 @@ async function main() {
 	}
 	
 	if (buIdArg !== 'bu-a' && buIdArg !== 'bu-b' && buIdArg !== 'bu-c') {
-		console.error('Usage: pnpm migrate-to-dtcg <core|bu-a|bu-b|bu-c>');
+		console.error('Usage: npm run migrate-to-dtcg -- <core|bu-a|bu-b|bu-c>');
 		console.error('');
 		console.error('This script converts TokenSchema format to DTCG format.');
 		console.error('The output file will be tokens/{bu}/tokens.json in DTCG format.');

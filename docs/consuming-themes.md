@@ -21,8 +21,6 @@ If you're working within the monorepo:
 If the package is published to npm:
 
 ```bash
-pnpm add @multi-bu/themes
-# or
 npm install @multi-bu/themes
 ```
 
@@ -432,7 +430,7 @@ useEffect(() => {
 
 ## Best Practices
 
-### Enterprise Considerations
+### Considerations
 
 1. **Pre-load themes**: Load themes early in your app lifecycle to avoid flash of unstyled content
    - Load themes during app initialization
@@ -532,7 +530,7 @@ useEffect(() => {
 
 ### Theme compiles but looks wrong
 
-- Run `pnpm run tokens:validate` to check token structure
+- Run `npm run tokens:validate` to check token structure
 - Compare with other BUs to verify token format
 - Check semantic token mappings
 

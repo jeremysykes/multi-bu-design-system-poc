@@ -5,7 +5,7 @@ This guide walks you through adding a new business unit (BU) to the design syste
 ## Prerequisites
 
 - All core tokens exist in `tokens/core/`
-- Token validation passes: `pnpm run validate:tokens`
+- Token validation passes: `npm run validate:tokens`
 - Understanding of token structure (see `docs/tokens.md`)
 
 ## Step-by-Step Instructions
@@ -116,7 +116,7 @@ This version file is required for governance. See `docs/versioning.md` for versi
 Run token validation:
 
 ```bash
-pnpm run validate:tokens
+npm run validate:tokens
 ```
 
 Fix any errors before proceeding.
@@ -155,10 +155,10 @@ Update Storybook to include your BU theme. See Phase 3 documentation for theme s
 
 ### Step 8: Verify
 
-1. Run validation: `pnpm run validate:tokens`
-2. Run linting: `pnpm run lint:design-system`
-3. Type check: `pnpm run type-check`
-4. Test in Storybook: `pnpm run storybook`
+1. Run validation: `npm run validate:tokens`
+2. Run linting: `npm run lint:design-system`
+3. Type check: `npm run type-check`
+4. Test in Storybook: `npm run storybook`
 
 ## Testing Checklist
 

@@ -1,13 +1,11 @@
 /**
- * @multi-bu/theme-engine - Theme compilation engine
+ * @multi-bu/theme-engine - Theme compilation engine (browser-safe entry)
  *
- * This package provides token schema validation and theme compilation
- * functionality. All functions are pure and stateless, enabling easy
- * wrapping in HTTP handlers for microservices.
+ * Token schema validation and theme compilation. This entry only exports
+ * browser-safe code (no Node fs usage). For Node-only APIs use '@multi-bu/theme-engine/node'.
  */
 
 export { buildTheme } from './buildTheme';
 export { loadTokens } from './loadTokens.browser';
-export { loadTokens as loadTokensNode } from './loadTokens';
 export { validateTokens } from './validators/validateTokens';
 export type { TokenSchema } from './types';

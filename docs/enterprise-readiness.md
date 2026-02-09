@@ -1,23 +1,23 @@
-# Enterprise Readiness
+# Platform Overview
 
 ## Overview
 
-This design system platform is built for enterprise scale, with governance, type safety, and production-ready patterns. This document explains what makes this enterprise-ready versus a simple theme switcher demo, and how to adopt it in large organizations.
+This design system platform provides governance, type safety, and structured patterns. This document explains how it differs from a simple theme switcher demo and how to adopt it.
 
-### What Makes This Enterprise-Ready
+### What This Platform Provides
 
 Unlike theme switcher demos that focus on runtime styling, this platform provides:
 
 1. **Token-First Architecture** - Design tokens (DTCG JSON) are the single source of truth, not themes
 2. **Governance Enforcement** - Automated validation, versioning, and linting enforce design system rules (CI fails on violations)
 3. **Versioning Discipline** - Token changes are versioned, tracked, and diffed to prevent breaking changes
-4. **Production-Ready Patterns** - Type safety, error handling, performance optimization, and deployment strategies are built in
+4. **Structured Patterns** - Type safety, error handling, performance optimization, and deployment strategies
 5. **Scalable Architecture** - Add new business units without code changes; extend to other frameworks without rewriting components
-6. **Deterministic Compilation** - Same tokens always produce the same theme output; no runtime magic
+6. **Deterministic Compilation** - Same tokens always produce the same theme output
 
 ### Key Differentiators from Theme Switcher Implementations
 
-| Theme Switcher Demos | Enterprise Platform |
+| Theme Switcher Demos | This Platform |
 |---------------------|---------------------|
 | Runtime CSS/theme switching | Token-first architecture with deterministic compilation |
 | Optional styling guidelines | Enforced governance (CI fails on violations) |
@@ -37,13 +37,13 @@ All governance checks run automatically in CI/CD pipelines:
 ```yaml
 # Example GitHub Actions workflow
 - name: Validate tokens
-  run: pnpm run tokens:validate
+  run: npm run tokens:validate
 
 - name: Check token versions
-  run: pnpm run tokens:check-version
+  run: npm run tokens:check-version
 
 - name: Lint design system
-  run: pnpm run lint:design-system
+  run: npm run lint:design-system
 ```
 
 **Enforcement**: Failed checks prevent PR merges. This is blocking, not warnings.
@@ -85,11 +85,11 @@ All governance checks run automatically in CI/CD pipelines:
 
 **Result**: Clear audit trail of all token changes with before/after comparisons.
 
-## Production Patterns
+## Patterns
 
 ### Single-BU Application Pattern (Most Common)
 
-Most enterprise applications use a single BU theme:
+Most applications use a single BU theme:
 
 ```tsx
 import { getBuATheme } from '@multi-bu/themes';
@@ -336,8 +336,8 @@ theme.spacing(4)            // Autocomplete works
 **Process**:
 1. Designer/engineer modifies token file
 2. Updates version file (at least patch bump)
-3. Runs validation: `pnpm run tokens:validate`
-4. Runs version check: `pnpm run tokens:check-version`
+3. Runs validation: `npm run tokens:validate`
+4. Runs version check: `npm run tokens:check-version`
 5. Creates PR with token changes and version bump
 6. CI runs validation checks (blocks merge if fails)
 7. PR review focuses on token changes (use `tokens:diff`)
@@ -348,7 +348,7 @@ theme.spacing(4)            // Autocomplete works
 ### Code Review Process
 
 **Token Changes**:
-- Use `pnpm run tokens:diff` to review token changes
+- Use `npm run tokens:diff` to review token changes
 - Focus on visual impact (color, typography changes)
 - Ensure version bump is appropriate (patch vs. minor vs. major)
 - Check semantic token coverage
@@ -464,14 +464,14 @@ theme.spacing(4)            // Autocomplete works
 
 ## Summary
 
-This design system platform is enterprise-ready with:
+This design system platform provides:
 
 1. **Governance Enforcement** - Automated validation, versioning, and linting enforce design system rules
-2. **Production-Ready Patterns** - Type safety, error handling, performance optimization built in
+2. **Structured Patterns** - Type safety, error handling, performance optimization built in
 3. **Scalable Architecture** - Add new BUs without code changes; extend to other frameworks
 4. **Developer Experience** - Full TypeScript support, IDE autocomplete, clear error messages
 5. **Team Workflows** - Clear processes for design-to-code handoff, change management, and releases
-6. **Adoption Support** - Migration paths, CI/CD integration, team training, and long-term sustainability
+6. **Adoption Support** - Migration paths, CI/CD integration, and documentation
 
 See related documentation:
 - `docs/architecture.md` - Detailed architecture explanation

@@ -1,5 +1,4 @@
-import { buildTheme } from '@theme-engine/buildTheme';
-import { loadTokens } from '@theme-engine/loadTokens.browser';
+import { buildTheme, loadTokens } from '@multi-bu/theme-engine';
 import type { Theme } from '@mui/material/styles';
 
 /**

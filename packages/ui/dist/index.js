@@ -28,6 +28,7 @@ __export(index_exports, {
   Autocomplete: () => Autocomplete,
   Avatar: () => Avatar,
   Badge: () => Badge,
+  Box: () => import_material35.Box,
   Breadcrumbs: () => Breadcrumbs,
   Button: () => Button,
   Card: () => Card,
@@ -46,6 +47,7 @@ __export(index_exports, {
   FormControl: () => import_material15.FormControl,
   FormControlLabel: () => import_material23.FormControlLabel,
   FormLayout: () => FormLayout,
+  Grid: () => import_material36.Grid,
   IconButton: () => IconButton,
   InputLabel: () => import_material15.InputLabel,
   LinearProgress: () => import_material22.LinearProgress,
@@ -64,6 +66,7 @@ __export(index_exports, {
   Select: () => Select,
   SettingsTemplate: () => SettingsTemplate,
   Slider: () => Slider,
+  Stack: () => import_material36.Stack,
   Switch: () => Switch,
   Tab: () => import_material20.Tab,
   Table: () => Table,
@@ -113,6 +116,10 @@ var Card = ({ children, ...props }) => {
   return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(import_material5.Card, { ...props, children });
 };
 
+// src/index.ts
+var import_material35 = require("@mui/material");
+var import_material36 = require("@mui/material");
+
 // src/atoms/Checkbox/Checkbox.tsx
 var import_material6 = require("@mui/material");
 var import_jsx_runtime6 = require("react/jsx-runtime");
@@ -138,6 +145,13 @@ var Switch = (props) => {
 var import_material9 = require("@mui/material");
 var import_jsx_runtime9 = require("react/jsx-runtime");
 var IconButton = (props) => {
+  if (process.env.NODE_ENV === "development") {
+    if (!props["aria-label"] && !props["aria-labelledby"]) {
+      console.warn(
+        "IconButton requires either aria-label or aria-labelledby for accessibility. Icon-only buttons must have an accessible name (WCAG 2.2)."
+      );
+    }
+  }
   return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_material9.IconButton, { ...props });
 };
 
@@ -386,12 +400,12 @@ var LoginPage = () => {
         bgcolor: theme.palette.background.default
         // ✅ Semantic meaning: "default surface"
       },
-      children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Card, { sx: { width: "100%" }, children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(import_material34.Stack, { spacing: 4, sx: { p: 4 }, children: [
+      children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Card, { sx: { width: "100%" }, children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(import_material34.CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(import_material34.Stack, { spacing: 4, children: [
         /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Typography, { variant: "h5", component: "h1", children: "Login" }),
         /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(TextField, { label: "Email", type: "email", fullWidth: true }),
         /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(TextField, { label: "Password", type: "password", fullWidth: true }),
         /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button, { variant: "contained", color: "primary", fullWidth: true, children: "Sign In" })
-      ] }) })
+      ] }) }) })
     }
   ) });
 };
@@ -405,6 +419,7 @@ var LoginPage = () => {
   Autocomplete,
   Avatar,
   Badge,
+  Box,
   Breadcrumbs,
   Button,
   Card,
@@ -423,6 +438,7 @@ var LoginPage = () => {
   FormControl,
   FormControlLabel,
   FormLayout,
+  Grid,
   IconButton,
   InputLabel,
   LinearProgress,
@@ -441,6 +457,7 @@ var LoginPage = () => {
   Select,
   SettingsTemplate,
   Slider,
+  Stack,
   Switch,
   Tab,
   Table,

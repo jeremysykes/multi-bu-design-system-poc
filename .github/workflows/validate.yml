@@ -13,29 +13,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'pnpm'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm ci
 
       - name: Validate tokens
-        run: pnpm run validate:tokens
+        run: npm run validate:tokens
 
       - name: Lint design system
-        run: pnpm run lint:design-system
+        run: npm run lint:design-system
 
       - name: Type check
-        run: pnpm run type-check
+        run: npm run type-check
 
       - name: Visual regression (if configured)
         continue-on-error: true
-        run: pnpm run test:visual
+        run: npm run test:visual

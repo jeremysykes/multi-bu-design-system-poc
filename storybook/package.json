@@ -13,8 +13,8 @@
 		"@emotion/styled": "^11.11.0",
 		"@mui/icons-material": "^5.15.0",
 		"@mui/material": "^5.15.0",
-		"@multi-bu/themes": "workspace:*",
-		"@multi-bu/ui": "workspace:*",
+		"@multi-bu/themes": "0.1.0",
+		"@multi-bu/ui": "0.1.0",
 		"@storybook/addon-essentials": "^7.6.6",
 		"@storybook/addon-interactions": "^7.6.6",
 		"@storybook/addon-links": "^7.6.6",
@@ -26,6 +26,7 @@
 		"react-dom": "^18.2.0"
 	},
 	"devDependencies": {
+		"@vitejs/plugin-react": "^4.2.1",
 		"@chromatic-com/storybook": "^1.2.0",
 		"@storybook/test-runner": "^0.15.0",
 		"@types/react": "^18.2.0",

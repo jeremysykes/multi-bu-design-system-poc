@@ -1,45 +1,48 @@
 {
-  "name": "multi-bu-design-system-poc",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Proof of concept demonstrating multi-BU design system on MUI with token-driven theming, governance, and validation",
-  "scripts": {
-    "build": "pnpm --filter \"*\" run build",
-    "validate:tokens": "tsx scripts/validate-tokens.ts",
-    "lint:design-system": "tsx scripts/lint-design-system.ts",
-    "build:themes": "pnpm --filter theme-engine run build",
-    "test": "pnpm --filter \"*\" run test",
-    "test:visual": "pnpm --filter storybook run test:visual",
-    "storybook": "pnpm --filter storybook run storybook",
-    "lint": "pnpm --filter \"*\" run lint",
-    "type-check": "pnpm exec tsc --noEmit",
-    "generate:tokens-json": "tsx scripts/generate-tokens-json.ts",
-    "migrate-to-dtcg": "tsx scripts/migrate-to-dtcg.ts",
-    "figma:import": "tsx scripts/figmaBuToTokens.ts import",
-    "figma:import:bu-a": "pnpm figma:import bu-a",
-    "figma:import:bu-b": "pnpm figma:import bu-b",
-    "figma:export": "tsx scripts/figmaBuToTokens.ts export",
-    "figma:export:bu-a": "pnpm figma:export bu-a",
-    "figma:export:bu-b": "pnpm figma:export bu-b",
-    "tokens:validate": "pnpm validate:tokens",
-    "tokens:diff": "tsx scripts/diff-tokens.ts",
-    "tokens:check-version": "tsx scripts/check-version-bumps.ts",
-    "demo:dev": "pnpm --filter @multi-bu/demo-site run dev",
-    "demo:build": "pnpm --filter @multi-bu/demo-site run build"
-  },
-  "devDependencies": {
-    "@types/node": "^20.10.0",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
-  },
-  "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "@emotion/react": "^11.11.1",
-      "@emotion/styled": "^11.11.0"
-    }
-  }
+	"name": "multi-bu-design-system-poc",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Proof of concept demonstrating multi-BU design system on MUI with token-driven theming, governance, and validation",
+	"workspaces": [
+		"packages/*",
+		"theme-engine",
+		"storybook",
+		"apps/*"
+	],
+	"scripts": {
+		"build": "npm run build --workspaces --if-present",
+		"validate:tokens": "tsx scripts/validate-tokens.ts",
+		"lint:design-system": "tsx scripts/lint-design-system.ts",
+		"build:themes": "npm run build -w @multi-bu/theme-engine",
+		"test": "npm run test --workspaces --if-present",
+		"test:visual": "npm run test:visual -w @multi-bu/storybook",
+		"storybook": "npm run storybook -w @multi-bu/storybook",
+		"lint": "npm run lint --workspaces --if-present",
+		"type-check": "npx tsc --noEmit",
+		"generate:tokens-json": "tsx scripts/generate-tokens-json.ts",
+		"migrate-to-dtcg": "tsx scripts/migrate-to-dtcg.ts",
+		"figma:import": "tsx scripts/figmaBuToTokens.ts import",
+		"figma:import:bu-a": "npm run figma:import -- bu-a",
+		"figma:import:bu-b": "npm run figma:import -- bu-b",
+		"figma:export": "tsx scripts/figmaBuToTokens.ts export",
+		"figma:export:bu-a": "npm run figma:export -- bu-a",
+		"figma:export:bu-b": "npm run figma:export -- bu-b",
+		"tokens:validate": "npm run validate:tokens",
+		"tokens:diff": "tsx scripts/diff-tokens.ts",
+		"tokens:check-version": "tsx scripts/check-version-bumps.ts",
+		"demo:dev": "npm run dev -w @multi-bu/demo-site",
+		"demo:build": "npm run build -w @multi-bu/demo-site"
+	},
+	"devDependencies": {
+		"@types/node": "^20.10.0",
+		"tsx": "^4.7.0",
+		"typescript": "^5.3.3"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"overrides": {
+		"@emotion/react": "^11.11.1",
+		"@emotion/styled": "^11.11.0"
+	}
 }

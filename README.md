@@ -1,6 +1,6 @@
 # Multi-BU Design System POC
 
-Enterprise-grade multi business-unit design system platform built on MUI. **Token-first, design-to-code pipeline** with enforced governance, versioning, and shared component APIs.
+Multi business-unit design system built on MUI. **Token-first, design-to-code pipeline** with enforced governance, versioning, and shared component APIs.
 
 ## Not a Theme Switcher Demo
 
@@ -14,9 +14,7 @@ This is a complete **design system platform**, not a theme switcher demo:
 | Ad-hoc changes | Versioned changes with enforcement |
 | No validation/versioning | Schema validation + versioning discipline |
 
-**Key differentiators**: Token-first architecture, enforced governance (CI blocks violations), versioning discipline, zero code changes to add BUs, production-ready patterns.
-
-See `docs/enterprise-readiness.md` for comprehensive enterprise considerations.
+**Key differentiators**: Token-first architecture, enforced governance (CI blocks violations), versioning discipline, zero code changes to add BUs.
 
 ## Overview
 
@@ -35,32 +33,31 @@ See `docs/enterprise-readiness.md` for comprehensive enterprise considerations.
 ### Prerequisites
 
 - Node.js >= 18.0.0
-- pnpm >= 8.0.0
 
 ### Installation
 
 ```bash
-pnpm install
+npm install
 ```
 
 ### Available Scripts
 
 **Build & Development:**
-- `pnpm build` - Build all packages
-- `pnpm run storybook` - Start Storybook (theme switcher for all four BUs)
-- `pnpm run demo:dev` - Start demo site with runtime BU switching
-- `pnpm run demo:build` - Build demo site
+- `npm run build` - Build all packages
+- `npm run storybook` - Start Storybook (theme switcher for all four BUs)
+- `npm run demo:dev` - Start demo site with runtime BU switching
+- `npm run demo:build` - Build demo site
 
 **Token Governance:**
-- `pnpm run tokens:validate` - Validate all token files against schema
-- `pnpm run tokens:diff` - Compare token files/directories (shows added/removed/changed)
-- `pnpm run tokens:check-version` - Enforce version bumps for token changes
+- `npm run tokens:validate` - Validate all token files against schema
+- `npm run tokens:diff` - Compare token files/directories (shows added/removed/changed)
+- `npm run tokens:check-version` - Enforce version bumps for token changes
 
 **Quality Checks:**
-- `pnpm run lint:design-system` - Lint for hardcoded values and design system violations
-- `pnpm run type-check` - Type check all packages
-- `pnpm run lint` - Lint all packages
-- `pnpm run test:visual` - Run visual regression tests (Chromatic)
+- `npm run lint:design-system` - Lint for hardcoded values and design system violations
+- `npm run type-check` - Type check all packages
+- `npm run lint` - Lint all packages
+- `npm run test:visual` - Run visual regression tests (Chromatic)
 
 ## Project Structure
 
@@ -94,9 +91,9 @@ pnpm install
 ### 1. Validate Tokens & Run Governance Checks
 
 ```bash
-pnpm run tokens:validate        # Schema validation
-pnpm run tokens:check-version   # Version enforcement
-pnpm run lint:design-system     # Lint for hardcoded values
+npm run tokens:validate        # Schema validation
+npm run tokens:check-version   # Version enforcement
+npm run lint:design-system     # Lint for hardcoded values
 ```
 
 **These checks run automatically in CI and must pass before merging.**
@@ -104,8 +101,8 @@ pnpm run lint:design-system     # Lint for hardcoded values
 ### 2. View Components & Demo
 
 ```bash
-pnpm run storybook    # Component documentation (http://localhost:6006)
-pnpm run demo:dev     # Demo site with runtime BU switching (http://localhost:3000)
+npm run storybook    # Component documentation (http://localhost:6006)
+npm run demo:dev     # Demo site with runtime BU switching (http://localhost:3000)
 ```
 
 Use theme switcher in Storybook or tabs in demo site to see visual divergence across all four BUs.
@@ -134,15 +131,13 @@ See `docs/consuming-themes.md` for detailed consumption patterns.
 
 See `docs/architecture.md` for detailed documentation.
 
-## Enterprise Features
+## Features
 
-**Governance**: CI fails on violations (validation, versioning, linting enforced). Schema validation prevents errors. Version enforcement prevents breaking changes. Token diffing provides audit trails.
+**Governance**: CI fails on violations (validation, versioning, linting enforced). Schema validation, version enforcement, token diffing for audit trails.
 
-**Scalability**: Add new BUs through token files only (zero code changes). Framework-agnostic tokens (can compile to Vue, Angular). Shared component APIs across all BUs.
+**Scalability**: Add new BUs through token files only (zero code changes). Framework-agnostic tokens. Shared component APIs across all BUs.
 
-**Production Ready**: Full TypeScript support, tree-shaking, deterministic compilation, error handling patterns, packaged themes (ESM/CJS).
-
-See `docs/enterprise-readiness.md` for comprehensive enterprise considerations and production patterns.
+**Tech**: TypeScript, tree-shaking, deterministic compilation, packaged themes (ESM/CJS).
 
 ## Business Units
 
@@ -183,20 +178,20 @@ All components are token-driven, BU-agnostic, and work seamlessly across all fou
 
 All checks run automatically in CI. See `docs/governance.md` for detailed rules and CI integration patterns.
 
-## Production Readiness
+## Technical details
 
-**Bundle & Performance**: Tree-shaking support, deterministic compilation, ~20KB single-BU footprint. **TypeScript**: Full type safety with IDE autocomplete. **CI/CD**: Blocking checks prevent violations. **Error Handling**: Clear validation errors, graceful fallbacks.
+**Bundle & Performance**: Tree-shaking, deterministic compilation, ~20KB single-BU footprint. **TypeScript**: Full type safety. **CI/CD**: Blocking checks prevent violations.
 
-See `docs/enterprise-readiness.md` and `docs/consuming-themes.md` for deployment strategies, team workflows, and production patterns.
+See `docs/consuming-themes.md` for consumption and deployment.
 
 ## Documentation
 
 **Architecture & Pipeline**: `docs/architecture.md`, `docs/pipeline.md`, `docs/business-units.md`  
-**Enterprise & Governance**: `docs/enterprise-readiness.md`, `docs/governance.md`, `docs/versioning.md`  
+**Governance**: `docs/governance.md`, `docs/versioning.md`  
 **Consumption & Reference**: `docs/consuming-themes.md`, `docs/adding-a-bu.md`, `docs/tokens.md`, `docs/multi-bu-demo.md`
 
 ## Status
 
-This is a proof of concept demonstrating enterprise-grade multi-BU design system capabilities. See `PROJECT_PROGRESS.md` for project intent, requirements, and progress tracking.
+This is a proof of concept for multi-BU design system capabilities. See `PROJECT_PROGRESS.md` for project intent and progress.
 
-**Key achievements**: Token-driven architecture, enforced governance (CI blocks violations), four fully realized BUs, comprehensive component library (32+ components), zero code changes to add BUs, production-ready patterns (TypeScript, tree-shaking, error handling), comprehensive documentation.
+**Key achievements**: Token-driven architecture, enforced governance (CI blocks violations), four BUs, component library (32+ components), zero code changes to add BUs, TypeScript, tree-shaking, documentation.

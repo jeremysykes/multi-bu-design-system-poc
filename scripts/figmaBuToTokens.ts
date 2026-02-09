@@ -108,7 +108,7 @@ async function main() {
 	const buildArg = process.argv[3];
 
 	if (direction !== 'import' && direction !== 'export') {
-		console.error('Usage: pnpm figma:import <bu-a|bu-b> or pnpm figma:export <bu-a|bu-b>');
+		console.error('Usage: npm run figma:import -- <bu-a|bu-b> or npm run figma:export -- <bu-a|bu-b>');
 		console.error('  export: Read tokens/{bu}/tokens.json → Write tokens/figma/{bu}.json');
 		console.error('  import: Read tokens/figma/{bu}.json → Write tokens/{bu}/tokens.json');
 		console.error('');
@@ -129,7 +129,7 @@ async function main() {
 			const tokens = await loadBuTokens(build);
 			await writeFigmaTokens(build, tokens);
 			console.log(`✓ Exported ${build} tokens to tokens/figma/${build}.json`);
-			console.log(`  → Copy this file into Figma, edit, export, then run: pnpm figma:import ${build}`);
+			console.log(`  → Copy this file into Figma, edit, export, then run: npm run figma:import -- ${build}`);
 		} else {
 			const tokens = await loadFigmaTokens(build);
 			await writeBuTokens(build, tokens);

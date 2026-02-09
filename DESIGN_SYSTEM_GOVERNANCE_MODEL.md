@@ -8,7 +8,7 @@ This document formally documents the governance model for the Multi-Business Uni
 
 ## Governance Overview
 
-This design system implements a **governance-by-enforcement** model where design system rules are automatically validated and enforced, not suggested. Violations break builds, preventing design system drift at enterprise scale.
+This design system implements a **governance-by-enforcement** model where design system rules are automatically validated and enforced, not suggested. Violations break builds, preventing design system drift.
 
 **Core Principles**:
 - **Automated Enforcement**: Governance is enforced through code, not documentation
@@ -326,9 +326,9 @@ const theme = getBuATheme();
 
 **Manual Validation**:
 - Developers can run validation scripts locally
-- `pnpm run tokens:validate` - Validate token schema
-- `pnpm run tokens:check-version` - Check version bumps
-- `pnpm run lint:design-system` - Lint code patterns
+- `npm run tokens:validate` - Validate token schema
+- `npm run tokens:check-version` - Check version bumps
+- `npm run lint:design-system` - Lint code patterns
 
 **Pre-Commit Hooks** (Optional):
 - Git hooks can run validation before commits
@@ -402,9 +402,7 @@ const theme = getBuATheme();
 
 ## Conclusion
 
-This governance model provides automated, enforceable design system compliance at enterprise scale. By treating governance as code (not documentation), the platform prevents design system drift and ensures consistency across all business units.
-
-The model is production-ready, enterprise-grade, and designed for scale. All governance mechanisms are automated, validated, and enforced, ensuring design system consistency at enterprise scale.
+This governance model provides automated, enforceable design system compliance. By treating governance as code (not documentation), the platform prevents design system drift and ensures consistency across all business units.
 
 ---
 

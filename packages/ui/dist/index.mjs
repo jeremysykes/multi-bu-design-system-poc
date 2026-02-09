@@ -33,6 +33,10 @@ var Card = ({ children, ...props }) => {
   return /* @__PURE__ */ jsx5(MuiCard, { ...props, children });
 };
 
+// src/index.ts
+import { Box as Box5 } from "@mui/material";
+import { Grid as Grid2, Stack as Stack4 } from "@mui/material";
+
 // src/atoms/Checkbox/Checkbox.tsx
 import { Checkbox as MuiCheckbox } from "@mui/material";
 import { jsx as jsx6 } from "react/jsx-runtime";
@@ -58,6 +62,13 @@ var Switch = (props) => {
 import { IconButton as MuiIconButton } from "@mui/material";
 import { jsx as jsx9 } from "react/jsx-runtime";
 var IconButton = (props) => {
+  if (process.env.NODE_ENV === "development") {
+    if (!props["aria-label"] && !props["aria-labelledby"]) {
+      console.warn(
+        "IconButton requires either aria-label or aria-labelledby for accessibility. Icon-only buttons must have an accessible name (WCAG 2.2)."
+      );
+    }
+  }
   return /* @__PURE__ */ jsx9(MuiIconButton, { ...props });
 };
 
@@ -330,7 +341,7 @@ var SettingsTemplate = ({ sections, children, ...props }) => {
 };
 
 // src/pages/LoginPage/LoginPage.tsx
-import { Container, Box as Box4, Stack as Stack3, useTheme as useTheme4 } from "@mui/material";
+import { Container, Box as Box4, Stack as Stack3, useTheme as useTheme4, CardContent } from "@mui/material";
 import { jsx as jsx30, jsxs as jsxs3 } from "react/jsx-runtime";
 var LoginPage = () => {
   const theme = useTheme4();
@@ -349,12 +360,12 @@ var LoginPage = () => {
         bgcolor: theme.palette.background.default
         // ✅ Semantic meaning: "default surface"
       },
-      children: /* @__PURE__ */ jsx30(Card, { sx: { width: "100%" }, children: /* @__PURE__ */ jsxs3(Stack3, { spacing: 4, sx: { p: 4 }, children: [
+      children: /* @__PURE__ */ jsx30(Card, { sx: { width: "100%" }, children: /* @__PURE__ */ jsx30(CardContent, { children: /* @__PURE__ */ jsxs3(Stack3, { spacing: 4, children: [
         /* @__PURE__ */ jsx30(Typography, { variant: "h5", component: "h1", children: "Login" }),
         /* @__PURE__ */ jsx30(TextField, { label: "Email", type: "email", fullWidth: true }),
         /* @__PURE__ */ jsx30(TextField, { label: "Password", type: "password", fullWidth: true }),
         /* @__PURE__ */ jsx30(Button, { variant: "contained", color: "primary", fullWidth: true, children: "Sign In" })
-      ] }) })
+      ] }) }) })
     }
   ) });
 };
@@ -367,6 +378,7 @@ export {
   Autocomplete,
   Avatar,
   Badge,
+  Box5 as Box,
   Breadcrumbs,
   Button,
   Card,
@@ -385,6 +397,7 @@ export {
   FormControl,
   FormControlLabel3 as FormControlLabel,
   FormLayout,
+  Grid2 as Grid,
   IconButton,
   InputLabel,
   LinearProgress,
@@ -403,6 +416,7 @@ export {
   Select,
   SettingsTemplate,
   Slider,
+  Stack4 as Stack,
   Switch,
   Tab,
   Table,

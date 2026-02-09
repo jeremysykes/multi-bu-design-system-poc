@@ -4,11 +4,9 @@
 
 Governance in this design system is enforced through automated validation and linting, not suggestions. Builds fail if violations are detected.
 
-## Enterprise Context
+## Why Governance Matters
 
-### Why Governance Matters at Enterprise Scale
-
-At enterprise scale, design system violations have significant costs:
+Design system violations have significant costs:
 
 **Without Governance**:
 - Design drift: Components diverge from design system over time
@@ -68,7 +66,7 @@ The `validate:tokens` script checks:
 
 **Run validation:**
 ```bash
-pnpm run validate:tokens
+npm run validate:tokens
 ```
 
 ### Code Pattern Linting
@@ -81,7 +79,7 @@ The `lint:design-system` script detects:
 
 **Run linting:**
 ```bash
-pnpm run lint:design-system
+npm run lint:design-system
 ```
 
 ## Forbidden Patterns
@@ -117,10 +115,10 @@ The `tokens:diff` script compares token files or directories:
 
 ```bash
 # Compare two BUs
-pnpm run tokens:diff tokens/bu-a tokens/bu-b
+npm run tokens:diff tokens/bu-a tokens/bu-b
 
 # Compare a file with a backup
-pnpm run tokens:diff tokens/bu-a/tokens.json tokens/bu-a/tokens.json.backup
+npm run tokens:diff tokens/bu-a/tokens.json tokens/bu-a/tokens.json.backup
 ```
 
 **Output**: Markdown report showing:
@@ -138,7 +136,7 @@ pnpm run tokens:diff tokens/bu-a/tokens.json tokens/bu-a/tokens.json.backup
 The `tokens:check-version` script enforces version bumps:
 
 ```bash
-pnpm run tokens:check-version
+npm run tokens:check-version
 ```
 
 **What it checks**:
@@ -184,25 +182,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'pnpm'
-      - run: pnpm install
+          cache: 'npm'
+      - run: npm ci
       
       # Governance checks (blocking, not warnings)
       - name: Validate tokens
-        run: pnpm run tokens:validate
+        run: npm run tokens:validate
         
       - name: Check token versions
-        run: pnpm run tokens:check-version
+        run: npm run tokens:check-version
         
       - name: Lint design system
-        run: pnpm run lint:design-system
+        run: npm run lint:design-system
         
       - name: Type check
-        run: pnpm run type-check
+        run: npm run type-check
 ```
 
 **Workflow File**: `.github/workflows/validate.yml` (if implemented)
@@ -279,7 +276,7 @@ jobs:
 1. Engineer modifies token file
 2. Updates version file (at least patch bump)
 3. Creates PR with token changes
-4. Reviewer runs `pnpm run tokens:diff` to see changes
+4. Reviewer runs `npm run tokens:diff` to see changes
 5. Review focuses on visual impact of token changes
 6. CI runs validation checks (blocks merge if fails)
 

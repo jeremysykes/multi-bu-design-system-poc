@@ -1,4 +1,3 @@
-import React from 'react';
 import {
 	Box,
 	Typography,
@@ -18,6 +17,7 @@ const pageTitles: Record<BU, string> = {
 	'bu-a': 'Core Banking Platform - Dashboard',
 	'bu-b': 'Growth & Payments Experience - Dashboard',
 	'bu-c': 'Wealth Advisory Dashboard',
+	'bu-d': 'Developer Platform - Dashboard',
 };
 
 export function DashboardPage({ buId }: DashboardPageProps) {

@@ -6,7 +6,7 @@
  * This script creates tokens/{bu}/tokens.json files in TokenSchema format
  * by merging core tokens with BU-specific tokens.
  * 
- * Usage: pnpm generate:tokens-json <bu-a|bu-b|bu-c>
+ * Usage: npm run generate:tokens-json -- <bu-a|bu-b|bu-c>
  * 
  * This is a one-time migration script to convert from the legacy multi-file
  * structure to the new single-file structure for Figma integration.
@@ -52,17 +52,17 @@ async function generateTokensJson(buId: 'bu-a' | 'bu-b' | 'bu-c'): Promise<void>
 	const outputPath = join(process.cwd(), 'tokens', buId, 'tokens.json');
 	await writeJsonFile(outputPath, mergedTokens);
 	console.log(`✓ Generated tokens/${buId}/tokens.json`);
-	console.log(`  → This file can now be exported to Figma using: pnpm figma:export:${buId}`);
+	console.log(`  → This file can now be exported to Figma using: npm run figma:export -- ${buId}`);
 }
 
 async function main() {
 	const buIdArg = process.argv[2];
 
 	if (buIdArg !== 'bu-a' && buIdArg !== 'bu-b' && buIdArg !== 'bu-c') {
-		console.error('Usage: pnpm generate:tokens-json <bu-a|bu-b|bu-c>');
+		console.error('Usage: npm run generate:tokens-json -- <bu-a|bu-b|bu-c>');
 		console.error('');
 		console.error('This script generates tokens/{bu}/tokens.json from the existing multi-file structure.');
-		console.error('After generation, you can export to Figma using: pnpm figma:export:{bu}');
+		console.error('After generation, you can export to Figma using: npm run figma:export -- <bu>');
 		process.exit(1);
 	}
 

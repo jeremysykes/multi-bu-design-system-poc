@@ -11,11 +11,16 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./node": {
+      "import": "./dist/node.mjs",
+      "require": "./dist/node.js",
+      "types": "./dist/node.d.ts"
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --external @mui/material --external @mui/system --external zod",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch --external @mui/material --external @mui/system --external zod",
+    "build": "tsup src/index.ts src/node.ts --format cjs,esm --dts --external @mui/material --external @mui/system --external zod",
+    "dev": "tsup src/index.ts src/node.ts --format cjs,esm --dts --watch --external @mui/material --external @mui/system --external zod",
     "lint": "eslint src --ext .ts",
     "test": "vitest run",
     "type-check": "tsc --noEmit"

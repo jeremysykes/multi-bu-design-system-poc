@@ -50,7 +50,7 @@ A designer or engineer modifies a token file:
 Run validation:
 
 ```bash
-pnpm run tokens:validate
+npm run tokens:validate
 ```
 
 **What happens:**
@@ -71,7 +71,7 @@ pnpm run tokens:validate
 Run version bump check:
 
 ```bash
-pnpm run tokens:check-version
+npm run tokens:check-version
 ```
 
 **What happens:**
@@ -131,7 +131,7 @@ export async function getBuATheme(): Promise<Theme> {
 
 **Build:**
 ```bash
-pnpm --filter @multi-bu/themes run build
+npm run build -w @multi-bu/themes
 ```
 
 ### 6. Storybook Consumption
@@ -248,7 +248,7 @@ Governance is enforced at multiple points:
                        ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    Validation                                │
-│  pnpm run tokens:validate                                   │
+│  npm run tokens:validate                                   │
 │  ✓ Schema validation                                        │
 │  ✓ DTCG format                                              │
 └──────────────────────┬──────────────────────────────────────┘
@@ -256,7 +256,7 @@ Governance is enforced at multiple points:
                        ▼
 ┌─────────────────────────────────────────────────────────────┐
 │               Version Check                                  │
-│  pnpm run tokens:check-version                              │
+│  npm run tokens:check-version                              │
 │  ✓ Version bumped                                           │
 └──────────────────────┬──────────────────────────────────────┘
                        │
@@ -288,9 +288,9 @@ Governance is enforced at multiple points:
 └──────────────┘ └──────────┘ └─────────────┘
 ```
 
-## Enterprise Workflow
+## Workflow
 
-The governance hooks function as required gates in the enterprise workflow:
+The governance hooks function as required gates:
 
 ### Governance Hooks as Required Gates
 
@@ -329,10 +329,10 @@ The governance hooks function as required gates in the enterprise workflow:
 **Workflow**:
 1. Engineer modifies token file
 2. Updates version file (at least patch bump)
-3. Runs validation checks locally: `pnpm run tokens:validate`, `pnpm run tokens:check-version`
+3. Runs validation checks locally: `npm run tokens:validate`, `npm run tokens:check-version`
 4. Creates PR with token changes and version bump
 5. CI runs governance checks automatically (blocks merge if fails)
-6. Reviewer uses `pnpm run tokens:diff` to review token changes
+6. Reviewer uses `npm run tokens:diff` to review token changes
 7. Review focuses on visual impact and version bump appropriateness
 8. Merge triggers automatic theme recompilation
 
@@ -374,18 +374,18 @@ Let's trace changing the primary color for BU A with governance enforcement:
    }
    ```
 
-3. **Validate** (Required): Run `pnpm run tokens:validate`
+3. **Validate** (Required): Run `npm run tokens:validate`
    - ✓ Schema valid
    - ✓ DTCG format correct
    - ✓ Token type valid (color)
    - **If fails**: CI fails, cannot merge
 
-4. **Version Check** (Required): Run `pnpm run tokens:check-version`
+4. **Version Check** (Required): Run `npm run tokens:check-version`
    - ✓ Version file exists
    - ✓ Version bumped correctly (1.0.0 → 1.0.1)
    - **If fails**: CI fails, cannot merge (must update version file)
 
-5. **Linting** (Required): Run `pnpm run lint:design-system`
+5. **Linting** (Required): Run `npm run lint:design-system`
    - ✓ No hardcoded values in components
    - **If fails**: CI fails, cannot merge (must fix hardcoded values)
 
@@ -413,7 +413,7 @@ If version file is not updated:
 1. Engineer modifies token file
 2. Forgets to update version file
 3. Creates PR
-4. CI runs `pnpm run tokens:check-version`
+4. CI runs `npm run tokens:check-version`
 5. CI fails: "Token files changed but version not bumped"
 6. PR cannot merge
 7. Engineer updates version file
@@ -439,7 +439,7 @@ If validation fails:
    }
    ```
 
-3. Runs validation locally: `pnpm run tokens:validate`
+3. Runs validation locally: `npm run tokens:validate`
    - ✓ Schema valid
 
 4. Pushes fix
@@ -465,11 +465,11 @@ Let's trace changing the primary color for BU A:
    }
    ```
 
-3. **Validate**: Run `pnpm run tokens:validate`
+3. **Validate**: Run `npm run tokens:validate`
    - ✓ Schema valid
    - ✓ DTCG format correct
 
-4. **Version Check**: Run `pnpm run tokens:check-version`
+4. **Version Check**: Run `npm run tokens:check-version`
    - ✓ Version bumped correctly
 
 5. **Compile**: Theme compiles at runtime

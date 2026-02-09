@@ -100,7 +100,7 @@ Shows how settings interfaces adapt to different BU themes.
 ### Development
 
 ```bash
-pnpm run demo:dev
+npm run demo:dev
 ```
 
 Starts the development server at `http://localhost:3000`.
@@ -108,7 +108,7 @@ Starts the development server at `http://localhost:3000`.
 ### Build
 
 ```bash
-pnpm run demo:build
+npm run demo:build
 ```
 
 Builds the production bundle in `apps/demo-site/dist`.
@@ -117,7 +117,7 @@ Builds the production bundle in `apps/demo-site/dist`.
 
 ```bash
 cd apps/demo-site
-pnpm preview
+npm run preview
 ```
 
 ## Usage Patterns

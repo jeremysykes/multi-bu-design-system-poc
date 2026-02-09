@@ -8,7 +8,7 @@ This document describes the system architecture of the Multi-Business Unit Desig
 
 ## Executive Summary
 
-This platform implements a production-grade, multi-tenant design system architecture that enables multiple business units to share component APIs while maintaining distinct brand identities. The system is built on a 4-layer model that separates design intent from implementation, ensuring scalability, maintainability, and governance at enterprise scale.
+This platform implements a multi-tenant design system architecture that enables multiple business units to share component APIs while maintaining distinct brand identities. The system is built on a 4-layer model that separates design intent from implementation.
 
 **Key Architectural Principles:**
 - **Token-Driven**: Design tokens are the single source of truth
@@ -431,7 +431,7 @@ const buBTheme = buildTheme(buBTokens);
 
 This 4-layer architecture provides a scalable, maintainable, and governed foundation for multi-tenant design systems. By separating design intent (tokens) from implementation (themes/components), the platform enables unlimited business units to share component APIs while maintaining distinct brand identities.
 
-The architecture is production-ready, enterprise-grade, and designed for scale. All layers are automated, validated, and enforced, ensuring design system consistency at enterprise scale.
+All layers are automated, validated, and enforced for design system consistency.
 
 ---
 

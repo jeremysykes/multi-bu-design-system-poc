@@ -1,5 +1,0 @@
-packages:
-  - 'packages/*'
-  - 'theme-engine'
-  - 'storybook'
-  - 'apps/*'

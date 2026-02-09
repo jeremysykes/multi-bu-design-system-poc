@@ -91,7 +91,7 @@ Each version file uses semver format: `{ "version": "1.0.0" }`
 Check if token files have changed without version bumps:
 
 ```bash
-pnpm run tokens:check-version
+npm run tokens:check-version
 ```
 
 This script:
@@ -105,7 +105,7 @@ Add version checks to your CI pipeline:
 
 ```yaml
 - name: Check token versions
-  run: pnpm run tokens:check-version
+  run: npm run tokens:check-version
 ```
 
 This ensures that token changes are always accompanied by version updates.
@@ -157,16 +157,16 @@ Major version upgrades require:
 Compare token files or directories to see what changed:
 
 ```bash
-pnpm run tokens:diff <old-file-or-dir> <new-file-or-dir>
+npm run tokens:diff <old-file-or-dir> <new-file-or-dir>
 ```
 
 Examples:
 ```bash
 # Compare two BUs
-pnpm run tokens:diff tokens/bu-a tokens/bu-b
+npm run tokens:diff tokens/bu-a tokens/bu-b
 
 # Compare a file with a backup
-pnpm run tokens:diff tokens/bu-a/tokens.json tokens/bu-a/tokens.json.backup
+npm run tokens:diff tokens/bu-a/tokens.json tokens/bu-a/tokens.json.backup
 ```
 
 The diff script outputs a markdown report showing:

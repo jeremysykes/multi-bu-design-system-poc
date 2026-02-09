@@ -4,9 +4,9 @@
 
 ### Purpose
 
-Build a **protected, enterprise-grade, multi-tenant design system platform** that demonstrates capability to manage multiple business-unit (BU) design systems on top of MUI, including the layers MUI does not provide out of the box: governance, token orchestration, deterministic theme compilation, validation, versioning discipline, and a clear scaling path.
+Build a **multi-tenant design system platform** that demonstrates capability to manage multiple business-unit (BU) design systems on top of MUI, including the layers MUI does not provide out of the box: governance, token orchestration, deterministic theme compilation, validation, versioning discipline, and a clear scaling path.
 
-This is not a "theme switcher" demo. It is a **production-ready, legally protected, multi-BU design system platform**, implemented as a high-quality, reviewable engineering artifact with comprehensive governance, licensing, and documentation.
+This is not a "theme switcher" demo. It is a **multi-BU design system platform**, implemented as a reviewable engineering artifact with governance, licensing, and documentation.
 
 ### What this POC Must Prove
 
@@ -51,7 +51,7 @@ Multi-BU Design System - Implementation Progress
 
 **Status:** Completed
 
-- **Feature 1:** Setup pnpm monorepo workspace with package.json, pnpm-workspace.yaml, .gitignore, and basic README
+- **Feature 1:** Setup npm monorepo workspace with package.json, workspaces, .gitignore, and basic README
 - **Feature 2:** Configure TypeScript for all packages (root, base, ui, themes, theme-engine)
 - **Feature 3:** Create UI package structure with package.json, index.ts, and ESLint config
 - **Feature 4:** Create themes package structure with package.json and index.ts
@@ -296,7 +296,7 @@ Replaced generic BU A and BU B with two fintech business units by adjusting valu
 
 **Token Validation:** ✅ All tokens pass schema validation
 
-- Run: `pnpm run validate:tokens`
+- Run: `npm run validate:tokens`
 - Result: All token files valid, no schema violations
 
 ### Limitations & Constraints
@@ -413,7 +413,7 @@ Reorganized the component library to follow atomic design principles, creating a
 ## Enhancement Cycle: Production Readiness
 
 **Date Started:** 2024-12-21  
-**Objective:** Transform POC into production-ready multi-BU design system platform
+**Objective:** Transform POC into multi-BU design system platform
 
 ### Current Status Before Enhancement
 
@@ -663,7 +663,7 @@ Reorganized the component library to follow atomic design principles, creating a
 
 - Added `demo:dev` script to root `package.json`
 - Added `demo:build` script to root `package.json`
-- Updated `pnpm-workspace.yaml` to include `apps/*`
+- Updated workspace globs to include `apps/*`
 
 **Next Steps:** Phase 5 - Documentation and Polish
 
@@ -760,7 +760,7 @@ Reorganized the component library to follow atomic design principles, creating a
   - **BU A**: Conservative colors (#3A5B81 navy, #45AE60 sage), 0.875rem base (dense), neutral-400 borders (stronger)
   - **BU B**: Vibrant accents (#00BCD4 teal, #FF5C5C coral), 1.125rem base (spacious), neutral-200 borders (lighter)
   - **BU C**: Refined tones (#673AB7 purple, #D4AF37 gold), 1rem base (balanced), neutral-300 borders (standard)
-- Token validation passed (`pnpm run tokens:validate`)
+- Token validation passed (`npm run tokens:validate`)
 - **Result**: No token adjustments needed - values align with guidelines
 
 #### Checkpoint 4: Component Fixes ✓
@@ -783,7 +783,7 @@ Reorganized the component library to follow atomic design principles, creating a
   - Added new story demonstrating `aria-labelledby` usage
 
 **Verification:**
-- TypeScript compilation passes (`pnpm run type-check`)
+- TypeScript compilation passes (`npm run type-check`)
 - No linter errors detected
 - All components now use theme roles consistently (no hardcoded values in UI code)
 
@@ -813,7 +813,7 @@ Reorganized the component library to follow atomic design principles, creating a
 
 ---
 
-### Phase 14: Legal Protection & Enterprise Platform Status ✅
+### Phase 14: Legal Protection & Platform Status ✅
 
 **Status:** Completed
 
@@ -821,7 +821,7 @@ Reorganized the component library to follow atomic design principles, creating a
 
 **Overview:**
 
-The project has been elevated from a proof of concept to a **protected multi-tenant design system platform** with comprehensive legal protection, governance documentation, and enterprise-grade licensing.
+The project has been elevated from a proof of concept to a **multi-tenant design system platform** with legal protection, governance documentation, and licensing.
 
 **Key Achievements:**
 
@@ -858,7 +858,7 @@ The project has been elevated from a proof of concept to a **protected multi-ten
 
 **Platform Status:**
 
-This is now a **production-grade, enterprise-ready, multi-tenant design system platform** with:
+This is now a **multi-tenant design system platform** with:
 - Legal protection through BSL 1.1 license
 - Comprehensive governance documentation
 - Clear commercial use policy
@@ -877,7 +877,7 @@ This is now a **production-grade, enterprise-ready, multi-tenant design system p
 **Impact:**
 
 - **Legal Protection**: Platform is now legally protected while remaining publicly accessible
-- **Enterprise Readiness**: Documentation establishes platform as enterprise-grade solution
+- **Documentation**: Platform capabilities and usage documented
 - **Commercial Clarity**: Clear boundaries for allowed vs. disallowed commercial use
 - **Defensive Publication**: Architecture and governance approach formally documented
 - **Ownership Assertion**: Copyright asserted on all documentation
@@ -885,7 +885,7 @@ This is now a **production-grade, enterprise-ready, multi-tenant design system p
 **Next Steps:**
 
 The platform is now ready for:
-- Enterprise evaluation and adoption
+- Evaluation and adoption
 - Commercial licensing discussions
 - Further development with legal protection in place
 - Public demonstration while maintaining commercial protection
